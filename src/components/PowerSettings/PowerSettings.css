@@ -1,0 +1,12 @@
+.PowerSettings{
+    background: #251a0e;
+    width: 60%;
+    margin: 10px auto;
+    border: 1px solid #eee;
+    box-shadow: 0 2px 3px #ccc;
+    padding: 10px;
+    text-align: center;
+    font-size:18px;
+    font-family: 'Raleway', sans-serif;
+    color: white;
+}
