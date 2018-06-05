@@ -23,13 +23,16 @@ class App extends Component {
     this.addStartTime=this.addStartTime.bind(this);
     this.addEndTime=this.addEndTime.bind(this);
     this.loopPromoScreen= this.loopPromoScreen.bind(this);
+    this.powerScreenName= this.powerScreenName.bind(this);
+    this.powerON=this.powerON.bind(this);
+    this.powerOFF=this.powerOFF.bind(this);
 
     this.app= firebase.initializeApp(DB_CONFIG);
 
     this.db= this.app.database().ref().child('BirthdaySection'); 
-    //this.db2= this.app.database().ref().child('birthdayScreen'); 
+    this.db2= this.app.database().ref().child('PowerSettings'); 
     this.db3= this.app.database().ref().child('Trigger'); 
-    this.db4= this.app.database().ref().child('Schedule'); 
+    this.db4= this.app.database().ref().child('LoopPromo'); 
 
   }
 
@@ -48,29 +51,49 @@ class App extends Component {
   }
 
   addHBDName(name){
-    this.db.push().set({birthdayPerson:name});
+    //this.db.push().set({birthdayPerson:name});
+    this.db.update({birthdayPerson:name});
   }
 
   bdayScreenName (screen){
-    this.db.push().set({screenName:screen});
+    //this.db.push().set({screenName:screen});
+    this.db.update({screenName:screen});
   }
 
   setNewTrigger(newTrigger){
-    this.db3.push().set({trigger:newTrigger});
+    //this.db3.push().set({trigger:newTrigger});
+    this.db3.update({trigger:newTrigger});
   }
 
   addStartTime(time){
-    this.db4.push().set({startTime:time});
+    //this.db4.push().set({startTime:time});
+    this.db4.update({startTime:time});
   }
 
   addEndTime(time){
-    this.db4.push().set({EndTime:time});
+    //this.db4.push().set({EndTime:time});
+    this.db4.update({EndTime:time});
   }
 
   loopPromoScreen(screen){
-    this.db4.push().set({screenName:screen});
+    //this.db4.push().set({screenName:screen});
+    this.db4.update({screenName:screen});
   }
   
+  powerScreenName(screen){
+    this.db2.update({screenName:screen});
+  }
+
+  powerON (boolval){
+    this.db2.update(({value:boolval}));
+  }
+
+  powerOFF (boolval){
+    this.db2.update(({value:boolval}));
+  }
+
+
+
 
   render() {
     return (
@@ -89,6 +112,9 @@ class App extends Component {
                  setNewTrigger={this.setNewTrigger}
                  addStartTime ={this.addStartTime}
                  addEndTime ={this.addEndTime}
+                 powerScreenName ={this.powerScreenName}
+                 powerON= {this.powerON}
+                 powerOFF= {this.powerOFF}
                  loopPromoScreen={this.loopPromoScreen}
 
         />    
