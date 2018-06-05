@@ -1,59 +1,91 @@
-import React from 'react';
-import {Button,NavItem, Dropdown} from 'react-materialize';
+import React, { Component } from 'react';
+import { Button, NavItem, Dropdown, Row } from 'react-materialize';
 import Icon from 'react-materialize/lib/Icon';
 import './PromoLoop.css';
-  
-const promoLoop = (props) => {
-    return (
-        <div className= "PromoLoop" > 
-            <div className="row">
-                <div className="col s12" >
-                    <Dropdown trigger={
-                        <Button>DMP Name</Button>
-                    }>
-                        <NavItem>Screen 1</NavItem>
-                        <NavItem divider />
-                        <NavItem>Screen 2</NavItem>
-                        <NavItem divider />
-                        <NavItem>Screen 3</NavItem>
-                    </Dropdown>
-                </div>
 
-                <div className="col s12">
-                <br/>
-                <br/>
-                <Dropdown trigger={
-                    <Button>Video Name</Button>
-                }>
-                    <NavItem>Breakfast</NavItem>
-                    <NavItem divider />
-                    <NavItem>Brunch</NavItem>
-                    <NavItem divider />
-                    <NavItem>Lunch</NavItem>
-                    <NavItem divider />
-                    <NavItem>Dinner</NavItem>
-                </Dropdown>   
-                </div>
-                
-                <div className="col s12">
-                    <br/>
-                    <br/>
-                </div>
 
-                <div className="col s6">
-                    <Button className="btn waves-effect waves-light" type="submit" name="action">Submit
-                        <Icon className="material-icons right">send</Icon>
-                    </Button>
-                </div>
-                <br/>
-                <div className="col s6">
-                    <Button className="btn waves-effect waves-light" type="submit" name="action">Apply to all screens
+class PromoLoop extends Component {
+
+    addStartTime = () => {
+        console.log(this.textInputStart.value);
+        this.props.addStartTime(this.textInputStart.value);
+        this.textInputStart.value = '';
+        this.textInputStart.focus();
+
+    }
+
+    addEndTime = () => {
+        console.log(this.textInputEnd.value);
+        this.props.addEndTime(this.textInputEnd.value);
+        this.textInputEnd.value = '';
+        this.textInputEnd.focus();
+    }
+
+    setNewTrigger = () => {
+        let newTrigger = "promoLoop";
+        this.props.setNewTrigger(newTrigger);
+        console.log("newTrigger");
+    }
+
+    loopPromoScreen = () => {
+        console.log(this.textInputScreen2.value);
+        this.props.loopPromoScreen(this.textInputScreen2.value);
+        this.textInputScreen2.value = '';
+        this.textInputScreen2.focus();
+    }   
+
+
+    render() {
+        return (
+            <div className="PromoLoop" >
+                <div className="row">
+                    <div className="col s12">
+                        <h6> Set time for video promo looping </h6>
+                        <Row >
+                            <input
+                                ref={input => { this.textInputStart = input; }}
+                                placeholder="Start time (hh:mm:ss)"
+                                s={8}
+                                type="text" />
+                        </Row>
+
+                        <Row>
+                            <input
+                                ref={input => { this.textInputEnd = input; }}
+                                placeholder="End time (hh:mm:ss)"
+                                s={8}
+                                type="text" />
+                        </Row>
+                    </div>
+
+
+                    <div className="col s12">
+                        <Row >
+                            <h6 > Select a screen for trigger </h6>
+                            <br />
+                            <input
+                                ref={input => { this.textInputScreen2 = input; }}
+                                placeholder="Screen1, Screen2, Screen3"
+                                type="text" />
+                        </Row>
+
+                    </div>
+
+                    <div className="col s12">
+                        <Button className="btn waves-effect waves-light"
+                            type="submit"
+                            onClick={() => {
+                                this.addStartTime(); this.loopPromoScreen();
+                                this.addEndTime(); this.setNewTrigger()
+                            }} >Apply!
+
+
                         <Icon className="material-icons right">done_all</Icon>
-                    </Button>
+                        </Button>
+                    </div>
                 </div>
             </div>
-        </div>          
-    )
+        )
+    }
 }
-
-export default promoLoop;
+export default PromoLoop;

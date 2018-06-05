@@ -7,53 +7,53 @@ const schedulerContent = (props) => {
     return (
         <div > 
             <div className="row">
-                <div className="col s6">
-                <Dropdown trigger={
-                    <Button>DMP Name</Button>
-                }>
-                    <NavItem>Screen 1</NavItem>
-                    <NavItem divider />
-                    <NavItem>Screen 2</NavItem>
-                    <NavItem divider />
-                    <NavItem>Screen 3</NavItem>
-                </Dropdown>
-                </div>
-
-                <div className="col s6">
-                <Dropdown trigger={
-                    <Button>Video Name</Button>
-                }>
-                    <NavItem>Breakfast</NavItem>
-                    <NavItem divider />
-                    <NavItem>Brunch</NavItem>
-                    <NavItem divider />
-                    <NavItem>Lunch</NavItem>
-                    <NavItem divider />
-                    <NavItem>Dinner</NavItem>
-                </Dropdown>   
-                </div>
-            </div>
-              
-            <div className="row">
+                <div className="col s12">
+                        <Row >
+                            <input 
+                                ref= {input=> {this.textInputScreen= input;}}
+                                placeholder="Screen1, Screen2, Screen3"
+                                type="text"/>       
+                        </Row>
+                 </div>
+                
                 <div className="col s12">
                     <Row >
-                        <Input className="ScheduleContent" placeholder="Start time" s={8} label="hh:mm:ss" />        
+                        <input 
+                            ref= {input=> {this.textInput= input;}}
+                            placeholder="Video Name"
+                            type="text"/>       
+                    </Row>
+                
+                </div>
+            
+                <div className="col s12">
+                    <Row >
+                        <input  className="ScheduleContent"
+                                ref= {input=> {this.textInputScreen= input;}}
+                                placeholder="Start time (hh:mm:ss)"
+                                s={8} 
+                                type="text"/>       
                     </Row>
                     
                     <Row>
-                        <Input  className="ScheduleContent" placeholder="End time" s={8} label="hh:mm:ss" />
+                        <input  className="ScheduleContent"
+                                    ref= {input=> {this.textInputScreen= input;}}
+                                    placeholder="End time (hh:mm:ss)"
+                                    s={8} 
+                                    type="text"/>  
                     </Row>
+                
+                </div>
+           
+                
+                <div className="col12">
+                    <Button className="btn waves-effect waves-light" type="submit" name="action">Apply!
+                        <Icon className="material-icons right">done_all</Icon>
+                    </Button>
                 
                 </div>
             </div>
 
-            <div className="row">
-                <div className="col12">
-                <Button className="btn waves-effect waves-light" type="submit" name="action">Submit
-                    <Icon className="material-icons right">send</Icon>
-                </Button>
-                </div>
-            </div>
         </div>          
     )
 }

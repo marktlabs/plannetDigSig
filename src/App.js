@@ -13,16 +13,24 @@ class App extends Component {
     super();
     this.state = {
       poncho:1,
-      notes: []
+      notes: [],
+      trigger:''
     };
 
     this.addHBDName = this.addHBDName.bind(this);
     this.bdayScreenName = this.bdayScreenName.bind(this);
-    
+    this.setNewTrigger=this.setNewTrigger.bind(this);
+    this.addStartTime=this.addStartTime.bind(this);
+    this.addEndTime=this.addEndTime.bind(this);
+    this.loopPromoScreen= this.loopPromoScreen.bind(this);
+
     this.app= firebase.initializeApp(DB_CONFIG);
 
-    this.db= this.app.database().ref().child('birthdayName'); 
-    this.db2= this.app.database().ref().child('birthdayScreen'); 
+    this.db= this.app.database().ref().child('BirthdaySection'); 
+    //this.db2= this.app.database().ref().child('birthdayScreen'); 
+    this.db3= this.app.database().ref().child('Trigger'); 
+    this.db4= this.app.database().ref().child('Schedule'); 
+
   }
 
   componentDidMount(){
@@ -34,28 +42,36 @@ class App extends Component {
         noteContent: snap.val().noteContent
       })
       this.setState({notes});
+      this.setState({})
     });
     
-    this.db.on('child_removed', snap => {
-      for(let i=0; i< notes.length; i++){ //remueve del array el item con el snap.key seleccionado
-        if(notes[i].noteId = snap.key){ 
-          notes.splice(i,1);
-        }
-      }
-      this.setState({notes});
-    });
   }
 
   addHBDName(name){
     this.db.push().set({birthdayPerson:name});
-    
   }
 
   bdayScreenName (screen){
-    this.db2.push().set({screenName:screen});
+    this.db.push().set({screenName:screen});
   }
 
+  setNewTrigger(newTrigger){
+    this.db3.push().set({trigger:newTrigger});
+  }
+
+  addStartTime(time){
+    this.db4.push().set({startTime:time});
+  }
+
+  addEndTime(time){
+    this.db4.push().set({EndTime:time});
+  }
+
+  loopPromoScreen(screen){
+    this.db4.push().set({screenName:screen});
+  }
   
+
   render() {
     return (
     
@@ -70,6 +86,11 @@ class App extends Component {
         
         <Toolbar addHBDName={this.addHBDName}
                  bdayScreenName={this.bdayScreenName}
+                 setNewTrigger={this.setNewTrigger}
+                 addStartTime ={this.addStartTime}
+                 addEndTime ={this.addEndTime}
+                 loopPromoScreen={this.loopPromoScreen}
+
         />    
         
 

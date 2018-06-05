@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, NavItem, Dropdown} from 'react-materialize';
+import { Button, NavItem, Dropdown, Row} from 'react-materialize';
 import Icon from 'react-materialize/lib/Icon';
 import './PowerSettings.css';
   
@@ -8,15 +8,13 @@ const powerSettings = (props) => {
         <div className="PowerSettings" > 
             <div className="row">
                 <div className="col s12 ">
-                    <Dropdown trigger={
-                        <Button>DMP Name</Button>
-                        }>
-                            <NavItem>Screen 1</NavItem>
-                            <NavItem divider />
-                            <NavItem>Screen 2</NavItem>
-                            <NavItem divider />
-                            <NavItem>Screen 3</NavItem>
-                        </Dropdown>
+                    <p> Select screen name</p>
+                     <Row >
+                        <input 
+                            ref= {input=> {this.textInputScreen= input;}}
+                            placeholder="Screen1, Screen2, Screen3"
+                            type="text"/>       
+                    </Row>
                 </div>
                 
                 <br/>
@@ -32,11 +30,12 @@ const powerSettings = (props) => {
                 <br/>
                 <br/>
                 <br/>
-
+                {/*
                 <div className="col12"> 
                      <Button waves='light'>Apply<Icon left>check_box</Icon></Button>
 
-                </div>                
+                </div>  
+                */}              
 
             </div>
         </div>          

@@ -6,6 +6,7 @@ import HBDPromo from '../HBDPromo/HBDPromo';
 import AddScreen from '../AddScreen/AddScreen';
 import PromoLoop from '../PromoLoop/PromoLoop';
 import PowerSettings from '../PowerSettings/PowerSettings';
+import ProofPlaying from '../ProofPlaying/ProofPlaying';
 
 import {Icon, Navbar} from 'react-materialize';
 
@@ -28,8 +29,8 @@ class Toolbar extends Component {
           </li> 
               
           <li>
-            <Link to="/addScreen">
-              <Icon className="material-icons left">add_circle</Icon> Add Screen
+            <Link to="/proofPlaying">
+              <Icon className="material-icons left">insert_chart</Icon> Proof of Playing
             </Link>
           </li> 
               
@@ -50,12 +51,18 @@ class Toolbar extends Component {
 
         <Switch>
           <Route path="/Scheduler" component={Scheduler} />
-          <Route path="/addScreen"component={AddScreen} /> 
+          <Route path="/proofPlaying"component={ProofPlaying} /> 
           <Route exact path="/promoHBD" render={() => <HBDPromo 
                                             addHBDName={this.props.addHBDName}
+                                            setNewTrigger={this.props.setNewTrigger}
                                             bdayScreenName= {this.props.bdayScreenName}/> }
             />
-          <Route path="/promoLoop" component={PromoLoop} />
+          <Route exac path="/promoLoop" render={() => <PromoLoop 
+                                          addEndTime={this.props.addEndTime}
+                                          setNewTrigger={this.props.setNewTrigger}
+                                          loopPromoScreen={this.props.loopPromoScreen}
+                                          addStartTime ={this.props.addStartTime}/> }
+            />
           <Route path="/powerONOFF" component={PowerSettings} />
         </Switch>
       </div>
