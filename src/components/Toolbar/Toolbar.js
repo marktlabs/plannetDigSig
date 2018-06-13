@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
 import './Toolbar.css';
 import Scheduler from '../Scheduler/Scheduler';
 import HBDPromo from '../HBDPromo/HBDPromo';
-import AddScreen from '../AddScreen/AddScreen';
 import PromoLoop from '../PromoLoop/PromoLoop';
 import PowerSettings from '../PowerSettings/PowerSettings';
 import ProofPlaying from '../ProofPlaying/ProofPlaying';
@@ -50,20 +49,27 @@ class Toolbar extends Component {
           <hr />
 
           <Switch>
-            <Route path="/Scheduler" component={Scheduler} />
+            <Route exact path="/Scheduler" render={() => <Scheduler
+              verifyDayOfWeek={this.props.verifyDayOfWeek}
+              submitSchedules={this.props.submitSchedules}
+              setNewTrigger={this.props.setNewTrigger}
+              schedulerSection={this.props.schedulerSection} />}
+            />
+
             <Route path="/proofPlaying" component={ProofPlaying} />
+
             <Route exact path="/promoHBD" render={() => <HBDPromo
               addHBDName={this.props.addHBDName}
               setNewTrigger={this.props.setNewTrigger}
               bdayScreenName={this.props.bdayScreenName} />}
             />
-            <Route exac path="/promoLoop" render={() => <PromoLoop
+            <Route exact path="/promoLoop" render={() => <PromoLoop
               addEndTime={this.props.addEndTime}
               setNewTrigger={this.props.setNewTrigger}
               loopPromoScreen={this.props.loopPromoScreen}
               addStartTime={this.props.addStartTime} />}
             />
-            <Route exac path="/powerONOFF" render={() => <PowerSettings
+            <Route exact path="/powerONOFF" render={() => <PowerSettings
               setNewTrigger={this.props.setNewTrigger}
               powerON={this.props.powerON}
               powerOFF={this.props.powerOFF}

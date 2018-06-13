@@ -1,11 +1,9 @@
 import React from 'react';
-import {Button,Input, Row} from 'react-materialize';
-import Icon from 'react-materialize/lib/Icon';
 import './ProofPlaying.css';
 
 const ProofPlaying = (props) => {
     return (
-        <div className="AddScreen" > 
+        <div className="ProofPlaying" > 
             <div className="row">
 
                 <div className="col s12">

@@ -1,5 +1,5 @@
 .ProofPlaying{
-    background: #251a0e;
+    background: white;
     width: 60%;
     margin: 10px auto;
     border: 1px solid #eee;
@@ -8,5 +8,5 @@
     text-align: center;
     font-size:18px;
     font-family: 'Raleway', sans-serif;
-    color: white;
+    color: black;
 }

@@ -9,87 +9,135 @@ import 'firebase/database';
 
 class App extends Component {
 
-  constructor(){
+  state = {
+    poncho: 1,
+    notes: [],
+    trigger: ''
+  };
+
+  constructor() {
     super();
-    this.state = {
-      poncho:1,
-      notes: [],
-      trigger:''
-    };
 
-    this.addHBDName = this.addHBDName.bind(this);
-    this.bdayScreenName = this.bdayScreenName.bind(this);
-    this.setNewTrigger=this.setNewTrigger.bind(this);
-    this.addStartTime=this.addStartTime.bind(this);
-    this.addEndTime=this.addEndTime.bind(this);
-    this.loopPromoScreen= this.loopPromoScreen.bind(this);
-    this.powerScreenName= this.powerScreenName.bind(this);
-    this.powerON=this.powerON.bind(this);
-    this.powerOFF=this.powerOFF.bind(this);
-
-    this.app= firebase.initializeApp(DB_CONFIG);
-
-    this.db= this.app.database().ref().child('BirthdaySection'); 
-    this.db2= this.app.database().ref().child('PowerSettings'); 
-    this.db3= this.app.database().ref().child('Trigger'); 
-    this.db4= this.app.database().ref().child('LoopPromo'); 
-
+    this.app = firebase.initializeApp(DB_CONFIG);
+    this.db = this.app.database().ref().child('BirthdaySection');
+    this.db2 = this.app.database().ref().child('PowerSettings');
+    this.db3 = this.app.database().ref().child('Trigger');
+    this.db4 = this.app.database().ref().child('LoopPromo');
+    this.db5 = this.app.database().ref().child('Scheduler');
   }
 
-  componentDidMount(){
-    const {notes}= this.state;  
-    
+  componentDidMount() {
+    const { notes } = this.state;
+
     this.db.on('child_added', snap => {
       notes.push({
         noteId: snap.key,
         noteContent: snap.val().noteContent
       })
-      this.setState({notes});
+      this.setState({ notes });
       this.setState({})
     });
+
+  }
+
+  addHBDName = (name) => {
+    //this.db.push().set({birthdayPerson:name});
+    this.db.update({ birthdayPerson: name });
+  }
+
+  bdayScreenName = (screen) => {
+    this.db3.update({ screenName: screen });
+  }
+
+  setNewTrigger = (newTrigger) => {
+    this.db3.update({ trigger: newTrigger });
+  }
+
+  addStartTime = (time) => {
+    this.db4.update({ startTime: time });
+  }
+
+  addEndTime = (time) => {
+    this.db4.update({ EndTime: time });
+  }
+
+  loopPromoScreen = (screen) => {
+    this.db3.update({ screenName: screen });
+  }
+
+  powerScreenName = (screen) => {
+    this.db3.update({ screenName: screen });
+  }
+
+  powerON = (boolval) => {
+    this.db2.update(({ value: boolval }));
+  }
+
+  powerOFF = (boolval) => {
+    this.db2.update(({ value: boolval }));
+  }
+
+  submitSchedules = (scheduleList, dayIndex) => {
+    // Mandarselo a la rasp
     
   }
 
-  addHBDName(name){
-    //this.db.push().set({birthdayPerson:name});
-    this.db.update({birthdayPerson:name});
+  //insert en la db
+  verifyDayOfWeek = (day) => {
+    console.log("juat")
+
+    
+
+
+    //  this.db3.update({ trigger: newTrigger });
+
+    //this.db2.update(({ value: boolval }));
   }
 
-  bdayScreenName (screen){
-    //this.db.push().set({screenName:screen});
-    this.db.update({screenName:screen});
-  }
+  schedulerSection = (array , array1, array2, array3 ) => {
 
-  setNewTrigger(newTrigger){
-    //this.db3.push().set({trigger:newTrigger});
-    this.db3.update({trigger:newTrigger});
-  }
+    /*
+    console.log("is here!", array);
+    console.log("ScreenName",array[0]);
+    console.log("VideoName",array[1]);
+    console.log("StartTime",array[2]);
+    console.log("EndTime",array[3]);
+    */
+    
+    //this.db5.child("Scheduler").child("Screen").update({"screenName": array[0]});
+    
+    //this.db5.child("Scheduler").child(array[0]).child(array[4]).update({"VideoName": array[0]});
+    
+    console.log("array1", array);
+    console.log("array2",array1);
+    console.log("array3",array2);
+    console.log("array4",array3);
 
-  addStartTime(time){
-    //this.db4.push().set({startTime:time});
-    this.db4.update({startTime:time});
-  }
+    //array[4] day of the week
+    //array[0] screenName
+    //array[1] videoName
+    //array[2] startTime
+    //array[3] endTime
 
-  addEndTime(time){
-    //this.db4.push().set({EndTime:time});
-    this.db4.update({EndTime:time});
-  }
+    
+    // per schedule
 
-  loopPromoScreen(screen){
-    //this.db4.push().set({screenName:screen});
-    this.db4.update({screenName:screen});
-  }
-  
-  powerScreenName(screen){
-    this.db2.update({screenName:screen});
-  }
+    this.db5.child(array[0]).child(array[4]).child("schedule1").update({"VideoName": array[1]});
+    this.db5.child(array[0]).child(array[4]).child("schedule1").update({"startTime": array[2]});
+    this.db5.child(array[0]).child(array[4]).child("schedule1").update({"endTime": array[3]});
 
-  powerON (boolval){
-    this.db2.update(({value:boolval}));
-  }
+    this.db5.child(array[0]).child(array[4]).child("schedule2").update({"VideoName": array[1]});
+    this.db5.child(array[0]).child(array[4]).child("schedule2").update({"startTime": array[2]});
+    this.db5.child(array[0]).child(array[4]).child("schedule2").update({"endTime": array[3]});
 
-  powerOFF (boolval){
-    this.db2.update(({value:boolval}));
+    this.db5.child(array[0]).child(array[4]).child("schedule3").update({"VideoName": array[1]});
+    this.db5.child(array[0]).child(array[4]).child("schedule3").update({"startTime": array[2]});
+    this.db5.child(array[0]).child(array[4]).child("schedule3").update({"endTime": array[3]});
+
+    this.db5.child(array[0]).child(array[4]).child("schedule4").update({"VideoName": array[1]});
+    this.db5.child(array[0]).child(array[4]).child("schedule4").update({"startTime": array[2]});
+    this.db5.child(array[0]).child(array[4]).child("schedule4").update({"endTime": array[3]});
+
   }
 
 
@@ -97,31 +145,34 @@ class App extends Component {
 
   render() {
     return (
-    
+
       <div className="notesContainer">
-        <div className="notesHeader"> 
+        <div className="notesHeader">
           <h1>
-            Digital Signage Management 
-          </h1> 
+            Digital Signage Management
+          </h1>
           <h5>Change your screen's content from a web</h5>
         </div>
-        
-        
-        <Toolbar addHBDName={this.addHBDName}
-                 bdayScreenName={this.bdayScreenName}
-                 setNewTrigger={this.setNewTrigger}
-                 addStartTime ={this.addStartTime}
-                 addEndTime ={this.addEndTime}
-                 powerScreenName ={this.powerScreenName}
-                 powerON= {this.powerON}
-                 powerOFF= {this.powerOFF}
-                 loopPromoScreen={this.loopPromoScreen}
 
-        />    
-        
+
+        <Toolbar addHBDName={this.addHBDName}
+          bdayScreenName={this.bdayScreenName}
+          setNewTrigger={this.setNewTrigger}
+          addStartTime={this.addStartTime}
+          addEndTime={this.addEndTime}
+          powerScreenName={this.powerScreenName}
+          powerON={this.powerON}
+          powerOFF={this.powerOFF}
+          loopPromoScreen={this.loopPromoScreen}
+          verifyDayOfWeek={this.verifyDayOfWeek}
+          schedulerSection={this.schedulerSection}
+          submitSchedules= {this.submitSchedules}
+
+        />
+
 
       </div>
-      
+
     );
   }
 }

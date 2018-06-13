@@ -1,6 +1,6 @@
 .HBDPromo{
-    background: #251a0e;
-    width: 60%;
+    background:white;
+    width: 90%;
     margin: 10px auto;
     border: 1px solid #eee;
     box-shadow: 0 2px 3px #ccc;
@@ -8,11 +8,28 @@
     text-align: center;
     font-size:18px;
     font-family: 'Raleway', sans-serif;
-    color: white;
+    color: black;
 }
 
 .fixPadding{
     padding-bottom: 30px;
     padding-top: 10px;
     position:absolute;
+}
+
+.inputName {
+    padding-top: 25px;
+
+}
+
+
+.subtitlesHead3{
+    color:#08b219;
+    padding-top: 20px;
+    padding-bottom: 5px;
+}
+
+.subtitlesHead4{
+    color:#08b219;
+    padding-top: 25px;
 }

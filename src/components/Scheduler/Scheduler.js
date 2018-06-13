@@ -1,43 +1,41 @@
-import React from 'react';
+import React, { Component } from 'react';
 import './Scheduler.css';
 import SchedulerContent from '../ScheduleContent/ScheduleContent'
-import {Collapsible, CollapsibleItem} from 'react-materialize';
-  
-const scheduler = (props) => {
-    return (
-        <div className="Scheduler" >
-           <h5> Set a daily schedule for each DMP: </h5>
-            <Collapsible>
-                <CollapsibleItem header='Sunday' icon='toc'>
-                    <SchedulerContent/>
-                </CollapsibleItem>
+import { Collapsible, CollapsibleItem } from 'react-materialize';
 
-                <CollapsibleItem header='Monday' icon='toc'>
-                 <SchedulerContent/>
-                </CollapsibleItem>
+const Days = [
+    { name: "Monday", key: 0 },
+    { name: "Tuesday", key: 1 },
+    { name: "Wednesday", key: 2 },
+    { name: "Thursday", key: 3 },
+    { name: "Friday", key: 4 },
+    { name: "Saturday", key: 5 },
+    { name: "Sunday", key: 6 }
+]
 
-                <CollapsibleItem header='Tuesday' icon='toc'>
-                   <SchedulerContent/>
-                </CollapsibleItem>
+class Scheduler extends Component {
 
-                <CollapsibleItem header='Wednesday' icon='toc'>
-                    <SchedulerContent/>
-                </CollapsibleItem>
+    render() {
+        return (
+            <div className="Scheduler" >
+                <h5 className="titleHead" > Set a daily schedule for each DMP: </h5>
+                <Collapsible>
+                    {Days.map(({ name, key }) => (
+                        <CollapsibleItem
+                            key={key}
+                            header={name}
+                            icon='toc'>
+                            <SchedulerContent dayIndex={key}
+                                setNewTrigger={this.props.setNewTrigger}
+                                handleSubmit={this.props.submitSchedules}
+                                schedulerSection={this.props.schedulerSection}
+                                getDayOfWeek={this.props.getDayOfWeek} />
+                        </CollapsibleItem>
+                    ))}
 
-                <CollapsibleItem header='Thursday' icon='toc'>
-                    <SchedulerContent/>
-                </CollapsibleItem>
-
-                <CollapsibleItem header='Friday' icon='toc'>
-                    <SchedulerContent/>
-                </CollapsibleItem>
-
-                <CollapsibleItem header='Saturday' icon='toc'>
-                    <SchedulerContent/>
-                </CollapsibleItem>
-            </Collapsible>
-        </div>
-    )
+                </Collapsible>
+            </div>
+        )
+    }
 }
-
-export default scheduler;
+export default Scheduler;

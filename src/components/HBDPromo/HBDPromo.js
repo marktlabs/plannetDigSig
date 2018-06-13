@@ -1,29 +1,41 @@
 import React, { Component } from 'react';
-import { Button, Row, Dropdown } from 'react-materialize';
-import Icon from 'react-materialize/lib/Icon';
 import './HBDPromo.css';
+import DropdownScreen from '../DropdownScreen/DropdownScreen';
+
+
+const screenName = [
+    { name: 'screen 1', key: 1 },
+    { name: 'screen 2', key: 2 },
+    { name: 'screen 3', key: 3 },
+];
+
 
 class HBDPromo extends Component {
+    
+    state = {
+        screenName: '',
+        name: '',
+    }
 
+    handleScreenChange = (name, value) => {
+        this.setState({ screenName : value });
+    }
 
-    addHBDName = () => {
-        //console.log(this.textInput.value);
-        this.props.addHBDName(this.textInput.value);
+    handleChange = (event) => {
+        this.setState({ name: event.target.value});
+      }
+
+    sendToDb = () => {
+        console.log("Clicked!")
+        
+        
+        this.setState(prevState => {    
+            console.log("the name is: ",this.state.name)
+            console.log("the screenName is: ",this.state.screenName);
+        });
+        
+
         this.textInput.value = '';
-        this.textInput.focus();
-
-    }
-
-    selectScreen = () => {
-        this.props.bdayScreenName(this.textInputScreen.value);
-        this.textInputScreen.value = '';
-        this.textInputScreen.focus();
-    }
-
-    setNewTrigger = () => {
-        let newTrigger = "hbdPromo";
-        this.props.setNewTrigger(newTrigger);
-        console.log("newTrigger");
     }
 
 
@@ -32,46 +44,35 @@ class HBDPromo extends Component {
         return (
             <div className="HBDPromo" >
                 <div className="row">
-                    {/* 
-                        <Dropdown 
-                         trigger={<Button>DMP Name</Button>}>
-
-                        <NavItem>Screen 1</NavItem>
-                        <NavItem divider />
-                        <NavItem>Screen 2</NavItem>
-                        <NavItem divid2er />
-                        <NavItem>Screen 3</NavItem>
-                        </Dropdown>
-                    */}
-
+                    
                     <div className="col s12">
-                        <p className="fixPadding"> Select a screen for trigger </p>
-                        <br />
-                        <br />
-                        <Row >
-                            <input
-                                ref={input => { this.textInputScreen = input; }}
-                                placeholder="Screen1, Screen2, Screen3"
-                                type="text" />
-                        </Row>
-
-                        <Row >
-                            <input
-                                ref={input => { this.textInput = input; }}
-                                placeholder="Name"
-                                type="text" />
-                        </Row>
-
-                        <Button className="btn waves-effect waves-light"
-                            onClick={() => {
-                                this.addHBDName();
-                                this.selectScreen(); this.setNewTrigger()
-                            }} > Apply!
-                            {/* onClick={() => this.addHBDName()} > Apply!
-                            */}
-                            <Icon className="material-icons right">done</Icon>
-                        </Button>
+                        <p className="subtitlesHead3"> Select a screen for trigger </p>
+                       
+                        <DropdownScreen 
+                            handleChange={this.handleScreenChange}
+                            name="video"
+                            items={screenName}
+                        />
                     </div>
+                    
+                    <div className="col s12">
+                         <p className="subtitlesHead4"> Enter person's name </p>
+                        <input className="inputName" 
+                                ref={input => { this.textInput = input; }}
+                                type="text" value={this.state.value} 
+                                onChange={this.handleChange} 
+                        />
+                    </div>
+
+                    
+                    <div className="col12">
+                            <input className='buttonSubmit' 
+                                onClick={() => {
+                                    this.sendToDb();
+                            }}
+                            type="submit" value="Apply"/>
+                    </div>
+                    
                 </div>
             </div>
         )

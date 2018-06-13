@@ -1,18 +1,29 @@
 import React, { Component } from 'react';
-import { Button, Row } from 'react-materialize';
+import { Button } from 'react-materialize';
 import Icon from 'react-materialize/lib/Icon';
 import './PowerSettings.css';
+import DropdownScreen from '../DropdownScreen/DropdownScreen';
+
+const screenName = [
+    { name: 'screen 1', key: 1 },
+    { name: 'screen 2', key: 2 },
+    { name: 'screen 3', key: 3 },
+];  
 
 
 class PowerSettings extends Component {
 
-    powerScreenName = () => {
-        console.log(this.textInput.value);
-        this.props.powerScreenName(this.textInput.value);
-        this.textInput.value = '';
-        this.textInput.focus();
+    state = {
+        screenName: '',
+        status: '',
     }
 
+    handleScreenChange = (name, value) => {
+        this.setState({ screenName : value });
+    }
+    
+   
+    /*
     powerON = () => {
         const boolValue = 1;
         console.log(boolValue);
@@ -25,56 +36,78 @@ class PowerSettings extends Component {
         console.log(boolValue);
         this.props.powerOFF(boolValue);
     }
+    */
 
-    setNewTrigger = () => {
-        let newTrigger = "powerSettings";
-        this.props.setNewTrigger(newTrigger);
-        console.log("newTrigger");
+    sendToDb = () => {
+        console.log("Clicked!")
+        
+        this.setState(prevState => {    
+            console.log("tv status: ",this.state.status)
+            console.log("the screenName is: ",this.state.screenName);
+        });
+       
     }
+
+
+    powerON = () => {
+        //this.setState({ status : "TURN ON" });
+        this.setState({ status : 1 });
+    }
+
+    powerOFF = () => {
+        //this.setState({ status : "TURN OFF" });
+        this.setState({ status : 2 });
+    }
+
+
+    
 
     render() {
         return (
             <div className="PowerSettings" >
                 <div className="row">
                     <div className="col s12 ">
-                        <p> Select screen name</p>
-                        <Row >
-                            <input
-                                ref={input => { this.textInput = input; }}
-                                placeholder="Screen1, Screen2, Screen3"
-                                type="text" />
-                        </Row>
+                        <p className="subtitlesHead4"> Select screen name</p>
+                        <DropdownScreen 
+                            handleChange={this.handleScreenChange}
+                            name="video"
+                            items={screenName}
+                        />
                     </div>
-
-                    <br />
-
+                </div>
+                <div className="row">
                     <div className="col12">
-                        <Button waves='light'
+                        <Button 
+                            
+                            waves='light'
                             onClick = {() => {
-                                this.powerScreenName(); this.powerON(); this.setNewTrigger()
+                                this.powerON();
+                                
                             }}
                         >ON <Icon left>brightness_low</Icon>
                         </Button>
                         {` `}
 
-                        <Button waves='light'
+                        <Button  waves='light'
                             onClick ={() => {
-                                this.powerScreenName(); this.powerOFF(); this.setNewTrigger()
+                                this.powerOFF();
                             }}
                         >OFF<Icon left>brightness_2</Icon>
                         </Button>
                     </div>
-
-                    <br />
-
-                    {/*
-                <div className="col12"> 
-                     <Button waves='light'>Apply<Icon left>check_box</Icon></Button>
-
-                </div>  
-                */}
-
                 </div>
+
+                <div className="row">
+                    <div className="col12">
+                        <Button waves='light'
+                            onClick = {() => {
+                                this.sendToDb();
+                            }}
+                        > Apply!
+                        </Button>  
+                    </div>
+                </div>
+
             </div>
         )
     }
