@@ -9,6 +9,12 @@
     font-size:18px;
     font-family: 'Raleway', sans-serif;
     color: black;
+
+
+    padding-left: 40px;
+    padding-right: 40px;
+    padding-top: 15px;
+
 }
 
 .collapsible-header {

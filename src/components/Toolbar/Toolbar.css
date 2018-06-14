@@ -3,3 +3,10 @@
     font-family: 'Raleway', sans-serif;
   }
 
+  .logoutButton{
+    margin-top:8px;
+    margin-bottom:8px;
+    position: relative;    
+    left: 100px;
+
+  }

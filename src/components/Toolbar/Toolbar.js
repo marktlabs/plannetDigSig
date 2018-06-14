@@ -6,10 +6,23 @@ import HBDPromo from '../HBDPromo/HBDPromo';
 import PromoLoop from '../PromoLoop/PromoLoop';
 import PowerSettings from '../PowerSettings/PowerSettings';
 import ProofPlaying from '../ProofPlaying/ProofPlaying';
+import firebase from 'firebase';
 
-import { Icon, Navbar } from 'react-materialize';
+import { Icon, Navbar, Button } from 'react-materialize';
 
 class Toolbar extends Component {
+  
+  constructor(props){
+    super(props);
+
+    this.logout = this.logout.bind(this);
+  }
+
+  logout() {
+    console.log("Hi Logout!")
+    firebase.auth().signOut();
+  }
+
   render() {
     return (
       <Router>
@@ -44,6 +57,12 @@ class Toolbar extends Component {
                 <Icon className="material-icons left">power_settings_new</Icon>Power Settings
             </Link>
             </li>
+
+
+            <li>
+              <Button onClick={this.logout}> Logout </Button>
+            </li>
+
           </Navbar>
 
           <hr />
@@ -76,6 +95,8 @@ class Toolbar extends Component {
               powerScreenName={this.props.powerScreenName} />}
             />
           </Switch>
+
+            
         </div>
 
       </Router>

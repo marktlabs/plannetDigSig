@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './HBDPromo.css';
+import { Button } from 'react-materialize';
 import DropdownScreen from '../DropdownScreen/DropdownScreen';
 
 
@@ -21,20 +22,22 @@ class HBDPromo extends Component {
         this.setState({ screenName : value });
     }
 
+     handleChangeToAll = () => {
+        this.setState({ screenName : "Apply to all!" });
+    }
+
     handleChange = (event) => {
         this.setState({ name: event.target.value});
-      }
+    }
 
     sendToDb = () => {
         console.log("Clicked!")
-        
         
         this.setState(prevState => {    
             console.log("the name is: ",this.state.name)
             console.log("the screenName is: ",this.state.screenName);
         });
         
-
         this.textInput.value = '';
     }
 
@@ -43,18 +46,30 @@ class HBDPromo extends Component {
 
         return (
             <div className="HBDPromo" >
-                <div className="row">
-                    
-                    <div className="col s12">
-                        <p className="subtitlesHead3"> Select a screen for trigger </p>
-                       
+                <div className="row"> 
+                    <div className="col s6">
+                           <p className="subtitlesHead3"> Select a screen for trigger </p>
+                        
                         <DropdownScreen 
                             handleChange={this.handleScreenChange}
                             name="video"
                             items={screenName}
                         />
                     </div>
-                    
+
+                    <div className="col s6">
+                        <p className="subtitlesHead4"> Trigger all screens </p>
+                            <Button waves='light'
+                                onClick = {() => {
+                                this.handleChangeToAll();
+                            }}
+                            > Apply to All
+                            </Button>  
+                    </div>
+
+                    </div>
+                
+                <div className = "row">  
                     <div className="col s12">
                          <p className="subtitlesHead4"> Enter person's name </p>
                         <input className="inputName" 

@@ -40,6 +40,26 @@ class PowerSettings extends Component {
 
     sendToDb = () => {
         console.log("Clicked!")
+        const response = window.confirm('Are you sure?')
+        
+        this.setState(prevState => {    
+            console.log("tv status: ",this.state.status)
+            console.log("the screenName is: ",this.state.screenName);
+        });
+       
+    }
+
+
+    handleChangeToAll = () => {
+        this.setState({ screenName : "Apply to all!" });
+    }
+
+
+
+    sendToAllDB = () => {
+        console.log("Clicked!2")
+
+        const response = window.confirm('Are you sure?')
         
         this.setState(prevState => {    
             console.log("tv status: ",this.state.status)
@@ -66,7 +86,7 @@ class PowerSettings extends Component {
         return (
             <div className="PowerSettings" >
                 <div className="row">
-                    <div className="col s12 ">
+                    <div className="col s6 ">
                         <p className="subtitlesHead4"> Select screen name</p>
                         <DropdownScreen 
                             handleChange={this.handleScreenChange}
@@ -74,9 +94,19 @@ class PowerSettings extends Component {
                             items={screenName}
                         />
                     </div>
+
+                     <div className="col s6">
+                     <p className="subtitlesHead4"> Trigger all screens </p>
+                        <Button waves='light'
+                            onClick = {() => {
+                                this.handleChangeToAll();
+                            }}
+                        > Apply to All
+                        </Button>  
+                    </div>
                 </div>
                 <div className="row">
-                    <div className="col12">
+                    <div className="col s12">
                         <Button 
                             
                             waves='light'
@@ -98,14 +128,16 @@ class PowerSettings extends Component {
                 </div>
 
                 <div className="row">
-                    <div className="col12">
+                    <div className="col s12">
                         <Button waves='light'
                             onClick = {() => {
                                 this.sendToDb();
                             }}
-                        > Apply!
+                        > Apply
                         </Button>  
                     </div>
+
+                    
                 </div>
 
             </div>

@@ -1,0 +1,35 @@
+.LoginForm {
+    background:white;
+    width: 45%;
+    margin: 40px auto;
+    border: 1px solid #eee;
+    box-shadow: 0 2px 3px #ccc;
+    padding: 10px;
+    text-align: center;
+    font-size:18px;
+    font-family: 'Raleway', sans-serif;
+    color: black;
+
+    padding-left: 35px;
+    padding-right: 35px;
+    padding-top: 25px;
+    padding-bottom: 25px;
+
+}
+
+.signUpButton {
+    margin-left: '25px';
+ }
+ 
+
+ .smallText {
+    color:#08b219;
+ }
+
+ .inputFixMargin1 {
+    margin-bottom: 10px;
+ }
+
+ .fixPadding-bottom{
+    margin-bottom: 35px;
+ }

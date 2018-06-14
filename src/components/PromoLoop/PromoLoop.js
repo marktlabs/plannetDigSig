@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Row} from 'react-materialize';
+import { Row, Button} from 'react-materialize';
 import Dropdown from '../Dropdown/Dropdown';
 import DropdownScreen from '../DropdownScreen/DropdownScreen';
 
@@ -101,19 +101,12 @@ class PromoLoop extends Component {
 
 
     handleScreenChange = (name, value) => {
-        //console.log(value);
-        //const screen = this.state.screenName;
-
         this.setState({ screenName: value});
-
-        /*
-        this.setState({screen}, () => {
-            screenName: value;
-            console.log(this.state.screenName);
-        });
-        */
     }
 
+    handleChangeToAll = () => {
+        this.setState({ screenName : "Apply to all!" });
+    }
 
     handleSubmit = () => {
         this.props.handleSubmit(this.state.schedules);
@@ -129,11 +122,66 @@ class PromoLoop extends Component {
 
     sendToDb = () => {
         console.log("Clicked!")
+    
         this.setState(prevState => {
-            console.log("video ",this.state.schedules[0].video);
+
+        //concat mp4 format
+        let startTime;
+        let endTime;
+        let startMin;
+        let startHr;
+        let endMin;
+        let endHr;
+        let IntStartHr;
+        let IntStartMin;
+        let IntEndtHr;
+        let IntEndMin;
+        
+        //pull states
+        startTime= this.state.schedules[0].start;
+        endTime= this.state.schedules[0].end;
+
+        //negative indexes
+        startHr = startTime.slice(0,-3);
+        startMin = startTime.slice(-2);
+
+        IntStartHr = parseInt(startHr);
+        IntStartMin = parseInt(startMin);
+
+        endHr = endTime.slice(0,-3);
+        endMin = endTime.slice(-2);
+
+        IntEndtHr = parseInt(endHr);
+        IntEndMin = parseInt(endMin);
+        
+        /*
+        console.log("start hours", IntStartHr);
+        console.log("start min", IntStartMin);
+        
+        console.log("end hours", IntEndtHr);
+        console.log("end min", IntEndMin);
+        */
+        
+        if (startHr > endHr){
+            alert('Invalid Schedule');
+        }
+
+        if (startHr === endHr && startMin > endMin){
+            alert('Invalid Schedule');
+        }
+
+        if (startHr === endHr && startMin === endMin){
+            alert('Invalid Schedule');
+        }
+
+        
+        else{
+            console.log("video ",`${this.state.schedules[0].video}.mp4`);
             console.log("start ",this.state.schedules[0].start);
             console.log("end ",this.state.schedules[0].end);
             console.log("the screenName is: ",this.state.screenName);
+        }
+        
         });
     }
 
@@ -142,20 +190,28 @@ class PromoLoop extends Component {
         return (
             <div className="PromoLoop" >
                 <div className="row">
-
-                    <div className="col s12">
-                        
+                    <div className="col s6">
                         <p className="subtitlesHead2"> Select the screen for scheduling content </p>
-
                         <DropdownScreen 
                             handleChange={this.handleScreenChange}
                             name="video"
                             items={screenName}
                         />
-                            
-                        
                     </div>
 
+                    <div className="col s6">
+                     <p className="subtitlesHead4"> Trigger all screens </p>
+                        <Button waves='light'
+                            onClick = {() => {
+                                this.handleChangeToAll();
+                            }}
+                        > Apply to All
+                        </Button>  
+                    </div>
+
+                </div>    
+
+                <div className="row">
                     <div className="col s12">
                         <p className="subtitlesHead2" > Set time for video promo looping </p>
                     {

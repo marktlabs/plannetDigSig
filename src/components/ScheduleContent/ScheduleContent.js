@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import './ScheduleContent.css';
-import {Row } from 'react-materialize';
+import { Row } from 'react-materialize';
 import Dropdown from '../Dropdown/Dropdown';
 import DropdownScreen from '../DropdownScreen/DropdownScreen'
 
@@ -117,45 +117,69 @@ class SchedulerContent extends Component {
     }
 
 
-    validateHour = () => {
-        this.setState(prevState => {
-            //concat mp4 format
-            let startTime;
-            let endTime;
-            let startMin;
-            let startHr;
-
-            startTime= this.state.schedules[0].start;
-            endTime= this.state.schedules[0].end;
-            
-            startMin= startTime.slice(1,3);
-            //startHr= startTime.slice(2,3);
-            
-            console.log(startTime.length);
-            console.log(startTime.slice(3));
-            console.log("hoursss", startMin);
-
-            
-            /*
-            if(){
-
-            }*/
-        });
-    }
-
     sendToDb = () => {
         console.log("Clicked!")
     
         this.setState(prevState => {
 
-            this.validateHour();
-    
+        //concat mp4 format
+        let startTime;
+        let endTime;
+        let startMin;
+        let startHr;
+        let endMin;
+        let endHr;
+        let IntStartHr;
+        let IntStartMin;
+        let IntEndtHr;
+        let IntEndMin;
+        
+        //pull states
+        startTime= this.state.schedules[0].start;
+        endTime= this.state.schedules[0].end;
+
+        //negative indexes
+        startHr = startTime.slice(0,-3);
+        startMin = startTime.slice(-2);
+
+        IntStartHr = parseInt(startHr);
+        IntStartMin = parseInt(startMin);
+
+        endHr = endTime.slice(0,-3);
+        endMin = endTime.slice(-2);
+
+        IntEndtHr = parseInt(endHr);
+        IntEndMin = parseInt(endMin);
+        
+        /*
+        console.log("start hours", IntStartHr);
+        console.log("start min", IntStartMin);
+        
+        console.log("end hours", IntEndtHr);
+        console.log("end min", IntEndMin);
+        */
+        
+        if (startHr > endHr){
+            alert('Invalid Schedule');
+        }
+
+        if (startHr === endHr && startMin > endMin){
+            alert('Invalid Schedule');
+        }
+
+        if (startHr === endHr && startMin === endMin){
+            alert('Invalid Schedule');
+        }
+
+        
+        else{
             console.log("video ",`${this.state.schedules[0].video}.mp4`);
             console.log("start ",this.state.schedules[0].start);
             console.log("end ",this.state.schedules[0].end);
             console.log("the screenName is: ",this.state.screenName);
             console.log("dayIndex", this.props.dayIndex);
-
+        }
+        
         });
     }
 
@@ -240,7 +264,7 @@ class SchedulerContent extends Component {
                             onClick={() => {
                             this.sendToDb();
                         }}
-                         type="submit" value="Submit" />
+                         type="submit" value="Apply" />
                     </div>
                 </div>
 
