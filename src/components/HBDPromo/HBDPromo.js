@@ -1,20 +1,23 @@
 import React, { Component } from 'react';
 import './HBDPromo.css';
-import { Button } from 'react-materialize';
+import { Button, Modal, Icon } from 'react-materialize';
 import DropdownScreen from '../DropdownScreen/DropdownScreen';
 
+let response = [];
+let screen2Push;
 
 const screenName = [
-    { name: 'screen 1', key: 1 },
-    { name: 'screen 2', key: 2 },
-    { name: 'screen 3', key: 3 },
+    { name: 'Screen 1', key: 1 },
+    { name: 'Screen 2', key: 2 },
+    { name: 'Screen 3', key: 3 },
+    { name: 'All Screens', key: 4 },
 ];
 
 
 class HBDPromo extends Component {
     
     state = {
-        screenName: '',
+        screenName: 'Screen 1',
         name: '',
     }
 
@@ -22,23 +25,45 @@ class HBDPromo extends Component {
         this.setState({ screenName : value });
     }
 
-     handleChangeToAll = () => {
-        this.setState({ screenName : "Apply to all!" });
-    }
 
     handleChange = (event) => {
         this.setState({ name: event.target.value});
     }
 
+
     sendToDb = () => {
         console.log("Clicked!")
         
         this.setState(prevState => {    
-            console.log("the name is: ",this.state.name)
-            console.log("the screenName is: ",this.state.screenName);
+
+            let name2render= this.state.name;
+
+            if (name2render === ""){
+                alert("Fill all the inputs!")
+            }
+
+            else{
+                screen2Push= this.state.screenName;
+
+                if (screen2Push === 'All Screens' ){
+                    screen2Push="all";
+                    response.push(this.state.name,screen2Push);
+                    console.log("the response array: ",response);
+                    this.props.updateAnnouncement(response);
+                }
+
+                else{
+                    screen2Push= screen2Push.replace(" ","");
+                    response.push(this.state.name,screen2Push);
+                    console.log("the response array: ",response);
+                    this.props.updateAnnouncement(response);
+                }
+
+            }
         });
         
         this.textInput.value = '';
+        window.location.reload();
     }
 
 
@@ -47,7 +72,23 @@ class HBDPromo extends Component {
         return (
             <div className="HBDPromo" >
                 <div className="row"> 
-                    <div className="col s6">
+
+                    <div>
+                        <h2 className="headerScheduler"> Announcements </h2> 
+                       
+                        <span className="modalScheduler">
+                            <Modal 
+                            header='Modal Header'
+                            trigger={<Button waves='light'>Help!<Icon right> help </Icon></Button>}>
+                            <p>Lorem ipsum dolor sit gmet, consectetur adipiscing elit, sed do eiusmod tempor
+                                incididunt ut labore et dolore magna aliqua.</p>
+                            </Modal>
+                        </span>
+                    
+                    </div>
+
+
+                    <div className="col s12">
                            <p className="subtitlesHead3"> Select a screen for trigger </p>
                         
                         <DropdownScreen 
@@ -56,22 +97,11 @@ class HBDPromo extends Component {
                             items={screenName}
                         />
                     </div>
-
-                    <div className="col s6">
-                        <p className="subtitlesHead4"> Trigger all screens </p>
-                            <Button waves='light'
-                                onClick = {() => {
-                                this.handleChangeToAll();
-                            }}
-                            > Apply to All
-                            </Button>  
-                    </div>
-
-                    </div>
+                </div>
                 
                 <div className = "row">  
                     <div className="col s12">
-                         <p className="subtitlesHead4"> Enter person's name </p>
+                         <p className="subtitlesHead4"> Enter input name </p>
                         <input className="inputName" 
                                 ref={input => { this.textInput = input; }}
                                 type="text" value={this.state.value} 
@@ -81,11 +111,11 @@ class HBDPromo extends Component {
 
                     
                     <div className="col12">
-                            <input className='buttonSubmit' 
+                            <Button  
                                 onClick={() => {
                                     this.sendToDb();
                             }}
-                            type="submit" value="Apply"/>
+                            type="submit" value="Apply"> Apply! </Button>
                     </div>
                     
                 </div>

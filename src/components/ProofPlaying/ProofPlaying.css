@@ -1,6 +1,6 @@
 .ProofPlaying{
     background: white;
-    width: 60%;
+    width: 90%;
     margin: 10px auto;
     border: 1px solid #eee;
     box-shadow: 0 2px 3px #ccc;
@@ -9,4 +9,8 @@
     font-size:18px;
     font-family: 'Raleway', sans-serif;
     color: black;
+}
+
+.firstDiv{
+    width: 30%;
 }

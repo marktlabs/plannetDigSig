@@ -6,6 +6,7 @@ import HBDPromo from '../HBDPromo/HBDPromo';
 import PromoLoop from '../PromoLoop/PromoLoop';
 import PowerSettings from '../PowerSettings/PowerSettings';
 import ProofPlaying from '../ProofPlaying/ProofPlaying';
+import QuickViewSchedule from '../QuickViewSchedule/QuickViewSchedule';
 import firebase from 'firebase';
 
 import { Icon, Navbar, Button } from 'react-materialize';
@@ -35,8 +36,14 @@ class Toolbar extends Component {
             </li>
 
             <li>
+              <Link to="/QuickViewSchedule">
+                <Icon className="material-icons left">view_list</Icon> Schedule Quick View
+            </Link>
+            </li>
+
+            <li>
               <Link to="/promoHBD">
-                <Icon className="material-icons left">cake</Icon>Birthday Promo
+                <Icon className="material-icons left">access_alarm</Icon> Announcements
             </Link>
             </li>
 
@@ -71,28 +78,27 @@ class Toolbar extends Component {
             <Route exact path="/Scheduler" render={() => <Scheduler
               verifyDayOfWeek={this.props.verifyDayOfWeek}
               submitSchedules={this.props.submitSchedules}
-              setNewTrigger={this.props.setNewTrigger}
+              updateScheduler={this.props.updateScheduler}
               schedulerSection={this.props.schedulerSection} />}
+            />
+            
+            <Route exact path="/QuickViewSchedule" render={() => <QuickViewSchedule
+              showSchedules={this.props.showSchedules}
+              />}
             />
 
             <Route path="/proofPlaying" component={ProofPlaying} />
 
             <Route exact path="/promoHBD" render={() => <HBDPromo
-              addHBDName={this.props.addHBDName}
-              setNewTrigger={this.props.setNewTrigger}
-              bdayScreenName={this.props.bdayScreenName} />}
+              updateAnnouncement={this.props.updateAnnouncement} />}
             />
+
             <Route exact path="/promoLoop" render={() => <PromoLoop
-              addEndTime={this.props.addEndTime}
-              setNewTrigger={this.props.setNewTrigger}
-              loopPromoScreen={this.props.loopPromoScreen}
-              addStartTime={this.props.addStartTime} />}
+              updateLoopPromo={this.props.updateLoopPromo} />}
             />
+
             <Route exact path="/powerONOFF" render={() => <PowerSettings
-              setNewTrigger={this.props.setNewTrigger}
-              powerON={this.props.powerON}
-              powerOFF={this.props.powerOFF}
-              powerScreenName={this.props.powerScreenName} />}
+              updatePowerSettings={this.props.updatePowerSettings} />}
             />
           </Switch>
 

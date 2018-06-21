@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './Scheduler.css';
 import SchedulerContent from '../ScheduleContent/ScheduleContent'
-import { Collapsible, CollapsibleItem } from 'react-materialize';
+import { Collapsible, CollapsibleItem, Modal, Button, Icon } from 'react-materialize';
 
 const Days = [
     { name: "Monday", key: 0 },
@@ -18,7 +18,21 @@ class Scheduler extends Component {
     render() {
         return (
             <div className="Scheduler" >
-                <h5 className="titleHead" > Set a daily schedule for each DMP: </h5>
+                <div className="row"> 
+                    <div className="col s12">
+                        <h2 className="headerScheduler"> Scheduler </h2> 
+                        
+                        <span className="modalScheduler">
+                            <Modal 
+                            header='Modal Header'
+                            trigger={<Button waves='light'>Help!<Icon right> help </Icon></Button>}>
+                            <p>Lorem ipsum dolor sit gmet, consectetur adipiscing elit, sed do eiusmod tempor
+                                incididunt ut labore et dolore magna aliqua.</p>
+                            </Modal>
+                        </span>
+                    </div>
+                </div>
+
                 <Collapsible>
                     {Days.map(({ name, key }) => (
                         <CollapsibleItem
@@ -26,6 +40,7 @@ class Scheduler extends Component {
                             header={name}
                             icon='toc'>
                             <SchedulerContent dayIndex={key}
+                                updateScheduler={this.props.updateScheduler}
                                 setNewTrigger={this.props.setNewTrigger}
                                 handleSubmit={this.props.submitSchedules}
                                 schedulerSection={this.props.schedulerSection}

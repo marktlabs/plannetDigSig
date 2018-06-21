@@ -1,4 +1,4 @@
-.HBDPromo{
+.QuickViewSchedule{
     background:white;
     width: 90%;
     margin: 10px auto;
@@ -9,34 +9,40 @@
     font-size:18px;
     font-family: 'Raleway', sans-serif;
     color: black;
+
+
     padding-left: 40px;
     padding-right: 40px;
-}
-
-.fixPadding{
-    padding-bottom: 30px;
-    padding-top: 10px;
-    position:absolute;
-}
-
-.inputName {
-    padding-top: 25px;
+    padding-top: 15px;
 
 }
 
-
-.subtitlesHead3{
-    color:#08b219;
-    padding-top: 20px;
-    padding-bottom: 5px;
+.selectScreenQS{
+    width: 60%;
+    margin: 10px auto;
+    padding: 10px;
+    text-align: center;
 }
 
-.subtitlesHead4{
-    color:#08b219;
-    padding-top: 25px;
+.collapsible-header {
+    background: #FC6716;
+    color: white;
 }
 
-.headerHBDPromo{
+.col input-field s8{
+    text-align: center;
+}
+
+
+.titleHead{
+    color: #f4612c;
+}
+
+.headerScheduler {
     font-family: 'Lobster', cursive;
     color: #f4c242;
+}
+
+.modalScheduler{
+
 }

@@ -1,21 +1,37 @@
 import React, { Component, Fragment } from 'react';
-import { Row, Button} from 'react-materialize';
+import { Row, Button, Modal, Icon} from 'react-materialize';
 import Dropdown from '../Dropdown/Dropdown';
 import DropdownScreen from '../DropdownScreen/DropdownScreen';
 
 import './PromoLoop.css';
 
+let response = [];
+let screen2Push;
+let video2Push;
+
+let startTime;
+let endTime;
+let startMin;
+let startHr;
+let endMin;
+let endHr;
+let IntStartHr;
+let IntStartMin;
+let IntEndtHr;
+let IntEndMin;
 
 const videoName = [
-    { name: 'promo 1.mp4', key: 1 },
-    { name: 'promo 2.mp4', key: 2 },
-    { name: 'promo 3.mp4', key: 3 },
+    { name: 'promo 1', key: 1 },
+    { name: 'promo 2', key: 2 },
+    { name: 'promo 3', key: 3 },
+    { name:'default_video', key:4},
 ];
 
 const screenName = [
-    { name: 'screen 1', key: 1 },
-    { name: 'screen 2', key: 2 },
-    { name: 'screen 3', key: 3 },
+    { name: 'Screen 1', key: 1 },
+    { name: 'Screen 2', key: 2 },
+    { name: 'Screen 3', key: 3 },
+    { name: 'All Screens', key: 4 },
 ];
 
 const timeNumberMin = [];
@@ -59,30 +75,15 @@ for (let i=0; i <= 23 ; i++){
 
 class PromoLoop extends Component {
 
-
     state = {
-        screenName: '',
+        screenName: 'Screen 1',
         schedules: [
             {
-                video: 1,
-                start: 0,
-                end: 0,
+                video: 'promo 1',
+                start: '00:00',
+                end: '00:00',
             },
         ]
-    }
-
-
-    handleScheduleChange = (index, name, value) => {
-        console.log(index);
-        const schedules = this.state.schedules;
-        const scheduleToModify = schedules[index];
-
-        scheduleToModify[name] = value;
-        schedules[index] = scheduleToModify;
-
-        this.setState({schedules}, () => {
-            console.log(this.state.schedules[index]);
-        });
     }
 
 
@@ -105,18 +106,7 @@ class PromoLoop extends Component {
     }
 
     handleChangeToAll = () => {
-        this.setState({ screenName : "Apply to all!" });
-    }
-
-    handleSubmit = () => {
-        this.props.handleSubmit(this.state.schedules);
-    }
-
-
-    setNewTrigger = () => {
-        let newTrigger = "promoLoop";
-        this.props.setNewTrigger(newTrigger);
-        console.log("newTrigger");
+        this.setState({ screenName : "all" });
     }
 
 
@@ -124,73 +114,82 @@ class PromoLoop extends Component {
         console.log("Clicked!")
     
         this.setState(prevState => {
+            //pull states
+            startTime= this.state.schedules[0].start;
+            endTime= this.state.schedules[0].end;
 
-        //concat mp4 format
-        let startTime;
-        let endTime;
-        let startMin;
-        let startHr;
-        let endMin;
-        let endHr;
-        let IntStartHr;
-        let IntStartMin;
-        let IntEndtHr;
-        let IntEndMin;
-        
-        //pull states
-        startTime= this.state.schedules[0].start;
-        endTime= this.state.schedules[0].end;
+            //negative indexes
+            startHr = startTime.slice(0,-3);
+            startMin = startTime.slice(-2);
 
-        //negative indexes
-        startHr = startTime.slice(0,-3);
-        startMin = startTime.slice(-2);
+            IntStartHr = parseInt(startHr);
+            IntStartMin = parseInt(startMin);
 
-        IntStartHr = parseInt(startHr);
-        IntStartMin = parseInt(startMin);
+            endHr = endTime.slice(0,-3);
+            endMin = endTime.slice(-2);
 
-        endHr = endTime.slice(0,-3);
-        endMin = endTime.slice(-2);
+            IntEndtHr = parseInt(endHr);
+            IntEndMin = parseInt(endMin);
+            
+            if (IntStartHr > IntEndtHr){
+                alert('Invalid Schedule');
+            }
 
-        IntEndtHr = parseInt(endHr);
-        IntEndMin = parseInt(endMin);
-        
-        /*
-        console.log("start hours", IntStartHr);
-        console.log("start min", IntStartMin);
-        
-        console.log("end hours", IntEndtHr);
-        console.log("end min", IntEndMin);
-        */
-        
-        if (startHr > endHr){
-            alert('Invalid Schedule');
-        }
+            if (IntStartHr === IntEndtHr && IntStartMin > IntEndMin){
+                alert('Invalid Schedule');
+            }
 
-        if (startHr === endHr && startMin > endMin){
-            alert('Invalid Schedule');
-        }
+            if (IntStartHr === IntEndtHr && IntStartMin === IntEndMin){
+                alert('Invalid Schedule');
+            }
 
-        if (startHr === endHr && startMin === endMin){
-            alert('Invalid Schedule');
-        }
+            
+            else{
+                //console.log("video ",`${this.state.schedules[0].video}.mp4`);
+                video2Push= this.state.schedules[0].video + '.mp4';
+                screen2Push= this.state.screenName;
 
-        
-        else{
-            console.log("video ",`${this.state.schedules[0].video}.mp4`);
-            console.log("start ",this.state.schedules[0].start);
-            console.log("end ",this.state.schedules[0].end);
-            console.log("the screenName is: ",this.state.screenName);
-        }
-        
+                if (screen2Push === 'All Screens' ){
+                    screen2Push="all";
+
+                    response.push(screen2Push,video2Push,this.state.schedules[0].start,this.state.schedules[0].end);
+                    console.log(response);
+                    this.props.updateLoopPromo(response);
+                }
+
+                else{
+                    screen2Push= screen2Push.replace(" ",""); 
+                    response.push(screen2Push,video2Push,this.state.schedules[0].start,this.state.schedules[0].end);
+                    console.log(response);
+                    this.props.updateLoopPromo(response);
+                }
+
+            }
+            
         });
+
+        window.location.reload();
     }
 
  
     render() {
         return (
             <div className="PromoLoop" >
+
+                <div>
+                     <h2 className="headerScheduler"> Loop Promo </h2> 
+                         <span className="modalScheduler">
+                            <Modal 
+                            header='Modal Header'
+                            trigger={<Button waves='light'>Help!<Icon right> help </Icon></Button>}>
+                            <p>Lorem ipsum dolor sit agffgfgfgdgfgfgfgfgmet, consectetur adipiscing elit, sed do eiusmod tempor
+                                incididunt ut labore et dolore magna aliqua.</p>
+                            </Modal>
+                        </span>
+                </div>
+
                 <div className="row">
-                    <div className="col s6">
+                    <div className="col s12">
                         <p className="subtitlesHead2"> Select the screen for scheduling content </p>
                         <DropdownScreen 
                             handleChange={this.handleScreenChange}
@@ -198,17 +197,6 @@ class PromoLoop extends Component {
                             items={screenName}
                         />
                     </div>
-
-                    <div className="col s6">
-                     <p className="subtitlesHead4"> Trigger all screens </p>
-                        <Button waves='light'
-                            onClick = {() => {
-                                this.handleChangeToAll();
-                            }}
-                        > Apply to All
-                        </Button>  
-                    </div>
-
                 </div>    
 
                 <div className="row">
@@ -220,25 +208,20 @@ class PromoLoop extends Component {
                                 <div className="row">
 
                                     <div className="col s4">
-                                        <Row >
-                                            <Dropdown 
-                                                handleChange={this.handleScheduleChange}
-                                                name="video"
-                                                index={index} 
-                                                items={videoName} />
-                                        </Row >
+                                        <Dropdown 
+                                            handleChange={this.handleScheduleChange}
+                                            name="video"
+                                            index={index} 
+                                            items={videoName} />
+                                        
                                     </div>
 
                                     <div className="col s4">
-                                        <Row >
-                                            <Dropdown handleChange={this.handleScheduleChange} name="start" index={index} items={timeNumber} />
-                                        </Row >
+                                        <Dropdown handleChange={this.handleScheduleChange} name="start" index={index} items={timeNumber} />                                       
                                     </div>
 
                                     <div className="col s4">
-                                        <Row >
-                                            <Dropdown handleChange={this.handleScheduleChange} name="end" index={index} items={timeNumber} />
-                                        </Row >
+                                        <Dropdown handleChange={this.handleScheduleChange} name="end" index={index} items={timeNumber} />
                                     </div>
                                 </div>
                             </Fragment>
@@ -249,11 +232,11 @@ class PromoLoop extends Component {
 
                 <div className="row">
                     <div className="col12">
-                        <input className='buttonSubmit' 
+                        <Button 
                             onClick={() => {
                                 this.sendToDb();
                             }}
-                        type="submit" value="Submit"  />
+                        type="submit" value="Submit" > Apply! </Button>
                       
                     </div>
                 </div>

@@ -26,3 +26,8 @@
     background-color: black;
     color: black;
   }
+
+  .fix-row-padding{
+    margin-top: 30px;
+
+  }

@@ -20,13 +20,6 @@ let screen2Push;
 
 let response= [];
 
-const scheduleNumber = [
-    { name: 'Schedule 1', key: 1 },
-    { name: 'Schedule 2', key: 2 },
-    { name: 'Schedule 3', key: 3 },
-    { name: 'Schedule 4', key: 4 },
-]
-
 const videoName = [
     { name: 'video 1', key: 1 },
     { name: 'video 2', key: 2 },
@@ -39,6 +32,13 @@ const screenName = [
     { name: 'Screen 3', key: 3 },
     { name: 'All Screens', key: 4 },
 ];
+
+const scheduleNumber = [
+    { name: 'Schedule 1', key: 1 },
+    { name: 'Schedule 2', key: 2 },
+    { name: 'Schedule 3', key: 3 },
+    { name: 'Schedule 4', key: 4 },
+]
 
 const timeNumber = [];
 
@@ -70,7 +70,7 @@ class SchedulerContent extends Component {
         indexState: '',
         value: 'coconut',
         screenName: 'Screen 1',
-        listOfSchedule: [],
+        scheduleSelected: 'Schedule 1',
         schedules: [
             {
                 video: 'video 1',
@@ -87,8 +87,8 @@ class SchedulerContent extends Component {
         this.setState(prevState => ({
             schedules: [...schedules, {
                 video: 'video 1',
-                start: 0,
-                end: 0,
+                start: '00:00',
+                end: '00:01',
             }]
         }));
     }
@@ -100,11 +100,11 @@ class SchedulerContent extends Component {
 
         scheduleToModify[name] = value;
         schedules[index] = scheduleToModify;
-        /*
+        
         this.setState({ schedules }, () => {
             console.log(this.state.schedules[index]);
         });
-        */
+        
     }
 
 
@@ -112,6 +112,9 @@ class SchedulerContent extends Component {
         this.setState({ screenName: value });
     }
 
+    handleScheduleChange = (name,value) =>{
+        this.setState({scheduleSelected: value});
+    }
 
 
     removeSchedule = (index) => {
@@ -133,10 +136,11 @@ class SchedulerContent extends Component {
 
     sendToDb = () => {
         console.log("Clicked!")
-        //console.log("length:", this.state.schedules.length);
+        console.log("length:", this.state.schedules.length);
         this.setState(prevState => {
         
         for (let i=0; i < this.state.schedules.length; i++ ){
+                
                 if (this.state.schedules[0].start === "" ||
                     this.state.schedules[0].end === "" ||
                     this.state.screenName === "" ||
@@ -150,9 +154,12 @@ class SchedulerContent extends Component {
                     //pull states
                     startTime = this.state.schedules[0].start;
                     endTime = this.state.schedules[0].end;
+                    
                     console.log('StartTime',startTime);
-
+                    console.log('EndTime',endTime);
                     //negative indexes
+                    
+
                     startHr = startTime.slice(0, -3);
                     startMin = startTime.slice(-2);
 
@@ -181,8 +188,26 @@ class SchedulerContent extends Component {
                         screen2Push= this.state.screenName;
 
                         if (screen2Push === 'All Screens' ){
-                            
                             screen2Push="all";
+
+                            response.push({
+                                scheduleIndex: 'schedule'+ (i+1),
+                                dayIndex:this.props.dayIndex,
+                                screen: screen2Push,
+                                video: this.state.schedules[i].video +'.mp4',
+                                start:this.state.schedules[i].start,
+                                end: this.state.schedules[i].end,
+                                scheduleSelected: this.state.scheduleSelected,
+                            });
+                                
+                            console.log("send response", response);
+                            //console.log("videoooo", response[0].video);
+                            //this.props.updateScheduler(response);
+
+                        }    
+
+                        else{
+                            screen2Push= screen2Push.replace(" ",""); 
                             
                             response.push({
                                 scheduleIndex: 'schedule'+ (i+1),
@@ -194,52 +219,23 @@ class SchedulerContent extends Component {
                                 scheduleSelected: this.state.scheduleSelected,
                             });
                                 
-                            //console.log("send response", response);
-                            this.props.updateScheduler(response);
-
-                        }   
-
-                        else{
-                            console.log("entra else")
-                            screen2Push= screen2Push.replace(" ",""); 
-                            
-                            response.push({
-                                scheduleIndex: 'schedule'+ (i+1),
-                                dayIndex:this.props.dayIndex,
-                                screen: screen2Push,
-                                video: this.state.schedules[i].video +'.mp4',
-                                start:this.state.schedules[i].start,
-                                end: this.state.schedules[i].end,
-                            });
-                                
-                            //console.log("send response", response);
-                            
-                            this.props.updateScheduler(response);
+                            console.log("send response", response);
+                            //console.log("videoooo", response[0].video);
+                           // this.props.updateScheduler(response);
                         }
-
-
                     }
 
                 }
              }
         });
-        window.location.reload();
     }
 
     render() {
         return (
             <div className="ScheduleContent" >
                 <div className="row">
-                    <div className="col s12">
-                        <h6 className="headerSContent"> Only four schedules per day can be added </h6>
-                    </div>
-
-                    <br />
-                    <br />
-
-                    <div className="col s12 ">
-
-                        <p className="subtitlesHead "> Select the screen for scheduling content </p>
+                    <div className="col s12 fixPaddingTitles">
+                        <p className="subtitlesHead"> Select the screen for scheduling content </p>
 
                         <DropdownScreen
                             handleChange={this.handleScreenChange}
@@ -248,43 +244,47 @@ class SchedulerContent extends Component {
                         />
                     </div>
 
+                     <div className="col s12 fixPaddingTitles">
+                        <p className="subtitlesHead"> Select schedule to modify </p>
+                        <DropdownScreen
+                            handleChange={this.handleScheduleChange}
+                            name="video"
+                            items={scheduleNumber}
+                        />
+                    </div>
+
                     {
                         this.state.schedules.map((value, index) => (
                             <Fragment key={index}>
-                                <div className="row">
+                               
                                     <div className="col s12">
-                                        <h5 className="titleHead">Schedule {index + 1}</h5>
+                                        <div className="col s4">
+                                            <Row >
+                                                <p className="subtitlesHead"> Video name </p>
+                                                <Dropdown
+                                                    handleChange={this.handleScheduleChange}
+                                                    name="video"
+                                                    index={index}
+                                                    items={videoName} />
+                                            </Row >
+                                        </div>
+
+                                        <div className="col s4">
+                                            <Row >
+                                                <p className="subtitlesHead" > Start time </p>
+                                                <Dropdown handleChange={this.handleScheduleChange} name="start" index={index} items={timeNumber} />
+                                            </Row >
+                                        </div>
+
+                                        <div className="col s4">
+                                            <Row >
+                                                <p className="subtitlesHead"> End time </p>
+                                                <Dropdown handleChange={this.handleScheduleChange} name="end" index={index} items={timeNumber} />
+                                            </Row >
+                                        </div>
                                     </div>
-                                </div>
-
-                                <div className="row" >
-
-                                    <div className="col s4">
-                                        <Row >
-                                            <p className="subtitlesHead"> Video name </p>
-                                            <Dropdown
-                                                handleChange={this.handleScheduleChange}
-                                                name="video"
-                                                index={index}
-                                                items={videoName} />
-                                        </Row >
-                                    </div>
-
-                                    <div className="col s4">
-                                        <Row >
-                                            <p className="subtitlesHead" > Start time </p>
-                                            <Dropdown handleChange={this.handleScheduleChange} name="start" index={index} items={timeNumber} />
-                                        </Row >
-                                    </div>
-
-                                    <div className="col s4">
-                                        <Row >
-                                            <p className="subtitlesHead"> End time </p>
-                                            <Dropdown handleChange={this.handleScheduleChange} name="end" index={index} items={timeNumber} />
-                                        </Row >
-                                    </div>
-                                </div>
-
+                              
+                            
                                 <div className="row">
 
                                     <div className="col s6">
@@ -296,6 +296,7 @@ class SchedulerContent extends Component {
                                     </div>
                                     
                                 </div>
+                        
                                 
                             </Fragment>
                         ))
