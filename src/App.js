@@ -46,39 +46,8 @@ class App extends Component {
 
     function gotData (data) {
       console.log(data.val());
-
       let values= data.val();
       console.log("all dictionary:", values.schedule1.VideoName);
-      //console.log("all dictionary:", values.schedule1.startTime);
-      //console.log("all dictionary:", values.schedule1.endTime);
-
-
-      //console.log("all dictionary:", values.Screen1.selectedDay.schedule1);
-      let results= [];
-     // console.log(JSON.stringify(values))
-
-      //let keys = Object.keys(values)[0];
-      //console.log("the key:***", keys);
-      
-
-      /*
-      for (var key in keys)
-        {
-          results.push(key);
-          
-          console.log("the key is:", keys.videoName);
-        }
-        console.log(results);
-      */
-
-      
-      /*
-            console.log("values length: ", Object.keys(values).length);
-            console.log("Object.keys(values)[0] ", Object.keys(values)[0]);
-
-            console.log("selectedDay", selectedDay);
-            //console.log("values selectedDay is:", values.Screen1[selectedDay]);
-      */
     }
     
     function errData (err) {
