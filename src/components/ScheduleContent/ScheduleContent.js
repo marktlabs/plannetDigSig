@@ -1,9 +1,8 @@
 import React, { Component, Fragment } from 'react';
 import './ScheduleContent.css';
-import { Row } from 'react-materialize';
+import { Row, Button } from 'react-materialize';
 import Dropdown from '../Dropdown/Dropdown';
 import DropdownScreen from '../DropdownScreen/DropdownScreen'
-
 
 //concat mp4 format
 let startTime;
@@ -19,13 +18,6 @@ let IntEndMin;
 let screen2Push;
 
 let response= [];
-
-const scheduleNumber = [
-    { name: 'Schedule 1', key: 1 },
-    { name: 'Schedule 2', key: 2 },
-    { name: 'Schedule 3', key: 3 },
-    { name: 'Schedule 4', key: 4 },
-]
 
 const videoName = [
     { name: 'video 1', key: 1 },
@@ -74,8 +66,8 @@ class SchedulerContent extends Component {
         schedules: [
             {
                 video: 'video 1',
-                start: 0,
-                end: 0,
+                start: '00:00',
+                end: '00:00',
             },
         ]
     }
@@ -100,19 +92,12 @@ class SchedulerContent extends Component {
 
         scheduleToModify[name] = value;
         schedules[index] = scheduleToModify;
-        /*
-        this.setState({ schedules }, () => {
-            console.log(this.state.schedules[index]);
-        });
-        */
+        
     }
-
 
     handleScreenChange = (name, value) => {
         this.setState({ screenName: value });
     }
-
-
 
     removeSchedule = (index) => {
         if (this.state.schedules.length === 1) return;
@@ -129,11 +114,8 @@ class SchedulerContent extends Component {
     handleSubmit = () => {
         this.props.handleSubmit(this.state.schedules, this.props.dayIndex);
     }
-
-
+    
     sendToDb = () => {
-        console.log("Clicked!")
-        //console.log("length:", this.state.schedules.length);
         this.setState(prevState => {
         
         for (let i=0; i < this.state.schedules.length; i++ ){
@@ -150,20 +132,20 @@ class SchedulerContent extends Component {
                     //pull states
                     startTime = this.state.schedules[0].start;
                     endTime = this.state.schedules[0].end;
-                    console.log('StartTime',startTime);
+                    //console.log('StartTime',startTime);
 
                     //negative indexes
                     startHr = startTime.slice(0, -3);
                     startMin = startTime.slice(-2);
 
-                    IntStartHr = parseInt(startHr);
-                    IntStartMin = parseInt(startMin);
+                    IntStartHr = parseInt(startHr,10);
+                    IntStartMin = parseInt(startMin,10);
 
                     endHr = endTime.slice(0, -3);
                     endMin = endTime.slice(-2);
 
-                    IntEndtHr = parseInt(endHr);
-                    IntEndMin = parseInt(endMin);
+                    IntEndtHr = parseInt(endHr,10);
+                    IntEndMin = parseInt(endMin,10);
 
                     if (IntStartHr > IntEndtHr) {
                         alert('Invalid Schedule');
@@ -223,7 +205,7 @@ class SchedulerContent extends Component {
                 }
              }
         });
-        window.location.reload();
+      
     }
 
     render() {
@@ -239,7 +221,7 @@ class SchedulerContent extends Component {
 
                     <div className="col s12 ">
 
-                        <p className="subtitlesHead "> Select the screen for scheduling content </p>
+                        <p className="subtitlesHead2 "> Select the screen for scheduling content </p>
 
                         <DropdownScreen
                             handleChange={this.handleScreenChange}
@@ -261,7 +243,7 @@ class SchedulerContent extends Component {
 
                                     <div className="col s4">
                                         <Row >
-                                            <p className="subtitlesHead"> Video name </p>
+                                            <p className="subtitlesHead2"> Video name </p>
                                             <Dropdown
                                                 handleChange={this.handleScheduleChange}
                                                 name="video"
@@ -272,14 +254,14 @@ class SchedulerContent extends Component {
 
                                     <div className="col s4">
                                         <Row >
-                                            <p className="subtitlesHead" > Start time </p>
+                                            <p className="subtitlesHead2" > Start time </p>
                                             <Dropdown handleChange={this.handleScheduleChange} name="start" index={index} items={timeNumber} />
                                         </Row >
                                     </div>
 
                                     <div className="col s4">
                                         <Row >
-                                            <p className="subtitlesHead"> End time </p>
+                                            <p className="subtitlesHead2"> End time </p>
                                             <Dropdown handleChange={this.handleScheduleChange} name="end" index={index} items={timeNumber} />
                                         </Row >
                                     </div>
@@ -288,11 +270,11 @@ class SchedulerContent extends Component {
                                 <div className="row">
 
                                     <div className="col s6">
-                                        <button onClick={() => this.addSchedule()} className="buttonSubmit"> Add </button>
+                                        <Button onClick={() => this.addSchedule()} > Add </Button>
                                     </div>
 
                                     <div className="col s6">
-                                        <button onClick={() => this.removeSchedule(index)} className="buttonSubmit">Remove </button>
+                                        <Button onClick={() => this.removeSchedule(index)}>Remove </Button>
                                     </div>
                                     
                                 </div>
@@ -305,11 +287,11 @@ class SchedulerContent extends Component {
 
                 <div className="row">
                     <div className="col12">
-                        <input className='buttonSubmit'
+                        <Button 
                             onClick={() => {
                                 this.sendToDb();
                             }}
-                            type="submit" value="Apply" />
+                            > Apply </Button>
                     </div>
                 </div>
 

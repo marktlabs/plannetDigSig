@@ -7,9 +7,10 @@ import PromoLoop from '../PromoLoop/PromoLoop';
 import PowerSettings from '../PowerSettings/PowerSettings';
 import ProofPlaying from '../ProofPlaying/ProofPlaying';
 import QuickViewSchedule from '../QuickViewSchedule/QuickViewSchedule';
+import MyProfile from '../MyProfile/MyProfile';
 import firebase from 'firebase';
 
-import { Icon, Navbar, Button } from 'react-materialize';
+import { Icon, Button, SideNav, SideNavItem } from 'react-materialize';
 
 class Toolbar extends Component {
   
@@ -27,84 +28,84 @@ class Toolbar extends Component {
   render() {
     return (
       <Router>
-        <div >
-          <Navbar className="Toolbar">
-            <li>
-              <Link to="/scheduler">
-                <Icon className="material-icons left">access_time</Icon> Scheduler
-            </Link>
-            </li>
+        <span className= "Toolbar">
+        <SideNav  
+          trigger={<Button className="sideMenuButton" > <Icon className="material-icons left"> dehaze </Icon> Menu  </Button>}
+          options={{ closeOnClick: true }}
+          >
+         
+          <li>
+              <Link to="/myprofile"> <Icon className="material-icons left">tag_faces</Icon> My Profile</Link>
+          </li>
+         
+          <SideNavItem divider />
+          
+          <SideNavItem subheader>Features</SideNavItem>
 
-            <li>
-              <Link to="/QuickViewSchedule">
-                <Icon className="material-icons left">view_list</Icon> Schedule Quick View
-            </Link>
-            </li>
+          <li>
+             <Link to="/scheduler"><Icon className="material-icons left">access_time</Icon> Scheduler</Link>
+          </li>
+          
+          <li>
+              <Link to="/QuickViewSchedule"><Icon className="material-icons left">view_list</Icon> View Schedule</Link>
+          </li>
 
-            <li>
-              <Link to="/promoHBD">
-                <Icon className="material-icons left">access_alarm</Icon> Announcements
-            </Link>
-            </li>
+          <li>
+            <Link to="/announcements"><Icon className="material-icons left">access_alarm</Icon> Announcements</Link>
+          </li>
+        
+          <li>
+            <Link to="/proofPlaying"><Icon className="material-icons left">insert_drive_file</Icon> Proof of Playing</Link>
+          </li>
+        
+          <li>
+              <Link to="/loopPromo"><Icon className="material-icons left">cached</Icon>Loop Promo</Link>
+          </li>
+        
+          <li>
+              <Link to="/powerSettings"><Icon className="material-icons left">power_settings_new</Icon>Power Settings</Link>
+          </li>
+        
+          <li>
+            <Button onClick={this.logout}> Logout </Button>
+          </li>        
+        
+        </SideNav>
 
-            <li>
-              <Link to="/proofPlaying">
-                <Icon className="material-icons left">insert_chart</Icon> Proof of Playing
-            </Link>
-            </li>
-
-            <li>
-              <Link to="/promoLoop">
-                <Icon className="material-icons left">cached</Icon>Loop Promo
-            </Link>
-            </li>
-
-            <li>
-              <Link to="/powerONOFF">
-                <Icon className="material-icons left">power_settings_new</Icon>Power Settings
-            </Link>
-            </li>
-
-
-            <li>
-              <Button onClick={this.logout}> Logout </Button>
-            </li>
-
-          </Navbar>
 
           <hr />
 
           <Switch>
-            <Route exact path="/Scheduler" render={() => <Scheduler
+          <Route exact path="/myProfile" render={() => <MyProfile/>}
+            />
+
+            <Route exact path="/scheduler" render={() => <Scheduler
               verifyDayOfWeek={this.props.verifyDayOfWeek}
               submitSchedules={this.props.submitSchedules}
               updateScheduler={this.props.updateScheduler}
               schedulerSection={this.props.schedulerSection} />}
             />
             
-            <Route exact path="/QuickViewSchedule" render={() => <QuickViewSchedule
+            <Route exact path="/quickViewSchedule" render={() => <QuickViewSchedule
               showSchedules={this.props.showSchedules}
               />}
             />
 
             <Route path="/proofPlaying" component={ProofPlaying} />
 
-            <Route exact path="/promoHBD" render={() => <HBDPromo
+            <Route exact path="/announcements" render={() => <HBDPromo
               updateAnnouncement={this.props.updateAnnouncement} />}
             />
 
-            <Route exact path="/promoLoop" render={() => <PromoLoop
+            <Route exact path="/loopPromo" render={() => <PromoLoop
               updateLoopPromo={this.props.updateLoopPromo} />}
             />
 
-            <Route exact path="/powerONOFF" render={() => <PowerSettings
+            <Route exact path="/powerSettings" render={() => <PowerSettings
               updatePowerSettings={this.props.updatePowerSettings} />}
             />
-          </Switch>
-
-            
-        </div>
-
+          </Switch>       
+        </span>
       </Router>
     )
   }

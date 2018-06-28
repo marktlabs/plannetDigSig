@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
 import './App.css';
 // set database config   "npm i firebase"
-import firebase from 'firebase';
-import { DB_CONFIG } from "./config/config";
-import 'firebase/database';
 import Toolbar from './components/Toolbar/Toolbar';
 import Login from './components/Login/Login';
-
+import firebaseApp from './firebase/firebaseApp';
 
 class App extends Component {
   state = {
@@ -18,7 +15,7 @@ class App extends Component {
   constructor() {
     super();
 
-    this.app = firebase.initializeApp(DB_CONFIG);
+    this.app = firebaseApp;
     this.db = this.app.database().ref().child('BirthdaySection');
     this.db2 = this.app.database().ref().child('LoopPromo');
     this.db3 = this.app.database().ref().child('PowerSettings');
@@ -29,34 +26,13 @@ class App extends Component {
   
   componentDidMount() {
     this.authListener();
-    this.showSchedules();
+    //this.showSchedules();
      
   }
 
-  showSchedules = (screenName) => {
-    //quick view
-    console.log("selected Screen", screenName);
-    let selectedDay='0';
-
-    var ref= this.app.database().ref('Scheduler/Screen1/'+selectedDay +'/');
-    ref.on('value', gotData, errData);
-
-    
-    let randomScreen='Screen1';
-
-    function gotData (data) {
-      console.log(data.val());
-      let values= data.val();
-      console.log("all dictionary:", values.schedule1.VideoName);
-    }
-    
-    function errData (err) {
-      console.log(err);
-    }
-  }
 
   authListener = () => {
-    firebase.auth().onAuthStateChanged((user) => {
+    this.app.auth().onAuthStateChanged((user) => {
       if (user) {
         this.setState({ user });
       }
@@ -66,44 +42,17 @@ class App extends Component {
     });
   }
 
-  updateAnnouncement = (announArray) => {
-    if (announArray[1] === 'all') {
-     
-      this.db.child("Screen1").update({ "birthdayPerson": announArray[0], "Trigger": 1 });
-      this.db.child("Screen2").update({ "birthdayPerson": announArray[0], "Trigger": 1 });
-      this.db.child("Screen3").update({ "birthdayPerson": announArray[0], "Trigger": 1 });
-    }
-
-    else {
-      this.db.child(announArray[1]).update({ "birthdayPerson": announArray[0], "Trigger": 1 });
-    }
-  }
 
   updateLoopPromo = (promoArray) => {
 
-    if (promoArray[0] === 'all') {
-      
-      this.db2.child("Screen1").update({
-        "videoName": promoArray[1],
-        "startTime": promoArray[2],
-        "endTime": promoArray[3],
-        "Trigger": 1
-      });
-
-      this.db2.child("Screen2").update({
-        "videoName": promoArray[1],
-        "startTime": promoArray[2],
-        "endTime": promoArray[3],
-        "Trigger": 1
-      });
-
-      this.db2.child("Screen3").update({
-        "videoName": promoArray[1],
-        "startTime": promoArray[2],
-        "endTime": promoArray[3],
-        "Trigger": 1
-      });
-
+    if (promoArray[0] === 'all') {    
+      for(let j=1; j<= 3; j++){
+          this.db2.child("Screen"+ j + '/').update({   "videoName": promoArray[1],
+                                                      "startTime": promoArray[2],
+                                                      "endTime": promoArray[3],
+                                                      "Trigger": 1
+                                                              });
+      }
     }
 
     else {
@@ -121,10 +70,9 @@ class App extends Component {
       console.log("the powerArray is:", powerArray);
 
       if (powerArray[0] === 'all') {
-        
-        this.db3.child("Screen1").update({ "value": powerArray[1], "Trigger": 1 });
-        this.db3.child("Screen2").update({ "value": powerArray[1], "Trigger": 1 });
-        this.db3.child("Screen3").update({ "value": powerArray[1], "Trigger": 1 });
+        for(let j=1; j<= 3; j++){
+          this.db3.child("Screen"+ j + '/').update({ "value": powerArray[1], "Trigger": 1 });
+        }
       }
   
       else {
@@ -144,7 +92,7 @@ class App extends Component {
         
           for(let j=1; j<= 3; j++){
               this.db4.child("Screen"+ j + '/').child(schedulerArray[i].dayIndex + '/' )
-              .child(schedulerArray[i].scheduleIndex+'/').update({    "VideoName": schedulerArray[i].video,
+                .child(schedulerArray[i].scheduleIndex+'/').update({    "VideoName": schedulerArray[i].video,
                                                                       "startTime": schedulerArray[i].start,
                                                                       "endTime": schedulerArray[i].end,
                                                                   });
@@ -153,13 +101,15 @@ class App extends Component {
 
         else{
         this.db4.child(schedulerArray[i].screen + '/').child(schedulerArray[i].dayIndex + '/' )
-        .child(schedulerArray[i].scheduleIndex+'/').update({    "VideoName": schedulerArray[i].video,
+          .child(schedulerArray[i].scheduleIndex+'/').update({    "VideoName": schedulerArray[i].video,
                                                                 "startTime": schedulerArray[i].start,
                                                                 "endTime": schedulerArray[i].end,
                                                             });
         }
         
     }
+
+    window.location.reload();
 
   }
 

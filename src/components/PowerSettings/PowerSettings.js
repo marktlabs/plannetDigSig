@@ -51,11 +51,11 @@ class PowerSettings extends Component {
             
             else{
                 if(this.state.status === 0){
-                    alert("Turning "+ this.state.screenName + ": "+ " OFF" );
+                    alert(`Turning ${this.state.screenName}: OFF` );
                 }
 
                 if(this.state.status === 1){
-                    alert("Turning "+ this.state.screenName + ": "+ " ON" );
+                    alert(`Turning ${this.state.screenName}: ON` );
                 }
 
                 if (screen2Push === 'All Screens' ){
@@ -67,7 +67,7 @@ class PowerSettings extends Component {
                     
                 else{
                     screen2Push= screen2Push.replace(" ",""); 
-                    console.log(screen2Push);
+                    //console.log(screen2Push);
                     response.push(screen2Push,this.state.status);
                     this.props.updatePowerSettings(response);
                 }
@@ -94,11 +94,11 @@ class PowerSettings extends Component {
             
             else{
                 if(this.state.status === 0){
-                    alert("Turning "+ this.state.screenName + ": "+ " OFF" );
+                    alert(`Turning ${this.state.screenName}: ON` );
                 }
 
                 if(this.state.status === 1){
-                    alert("Turning "+ this.state.screenName + ": "+ " ON" );
+                    alert(`Turning ${this.state.screenName}: ON` );
                 }
 
                 
@@ -132,13 +132,15 @@ class PowerSettings extends Component {
                 </div>    
 
                 <div className="row">
-                    <div className="col s12 ">
-                        <p className="subtitlesHead4"> Select screen name</p>
-                        <DropdownScreen 
-                            handleChange={this.handleScreenChange}
-                            name="video"
-                            items={screenName}
-                        />
+                    <div className= "selectScreenQS">
+                        <div className="col s12">
+                            <p className="subtitlesHead2"> Select screen name</p>
+                            <DropdownScreen 
+                                handleChange={this.handleScreenChange}
+                                name="video"
+                                items={screenName}
+                            />
+                        </div>
                     </div>
 
                     

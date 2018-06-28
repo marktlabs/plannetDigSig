@@ -4,22 +4,9 @@ import DropdownScreen from '../DropdownScreen/DropdownScreen';
 import {Button, Modal, Icon} from 'react-materialize';
 
 import firebase from 'firebase';
-//import { DB_CONFIG } from ".../config/config";
 import 'firebase/database';
 
-const DB_CONFIG = {
-    apiKey: "AIzaSyDx0A7kkHGkxpZPYloaC6YkrgOMjNZmBT4",
-    authDomain: "digitalsignage-acb79.firebaseapp.com",
-    databaseURL: "https://digitalsignage-acb79.firebaseio.com",
-    projectId: "digitalsignage-acb79",
-    storageBucket: "digitalsignage-acb79.appspot.com",
-    messagingSenderId: "627452923513"
-}
-
-
 let storageRef;
-
-let result = '';
 
 const screenName = [
     { name: 'Screen 1', key: 1 },
@@ -49,7 +36,6 @@ for(let i = 1 ; i <= 31 ; i++ ) {
     days.push({name: `${i}`, key: i})
 }
 
-
 class ProofPlaying extends Component {
     state = {
         screenName: 'Screen 1',
@@ -57,13 +43,10 @@ class ProofPlaying extends Component {
         month: 'January',
     }
 
-
     componentDidMount() {
         storageRef= firebase.storage().ref();
-        console.log("initialize!")
+        //console.log("initialize!")
     }
-
-    
 
     handleScreenChange = (name, value) => {
         this.setState({ screenName: value});
@@ -99,7 +82,6 @@ class ProofPlaying extends Component {
     }
     
     sendToDb = () => {
-        console.log("Clicked!")
         this.setState(prevState => {  
             
             function isMonth(monthSel){
@@ -114,11 +96,6 @@ class ProofPlaying extends Component {
             let months = this.state.month ;
             let screen= this.state.screenName;
 
-            /*
-            console.log("the screenName is: ",this.state.screenName);
-            console.log("the day is: ",this.state.day);
-            console.log("the month is: ",this.state.month);  
-            */
 
             if( day === "" || months  === "" || screen  === ""){
                 alert("Not valid entry!, fill all the inputs")
@@ -129,15 +106,15 @@ class ProofPlaying extends Component {
                 let foundMonth= month.find(isMonth);
                 months= foundMonth.key;
                
-                logFileName = screen + '_' +'('+ currentYear + '-' + months + '-'+ day + ')'+'.txt';
                 
-                console.log(logFileName);
-
-                this.dowloadLogFile(screen, logFileName);   
+                logFileName= `${screen}_(${currentYear}-${months}-${day}).txt`;
+                //console.log(logFileName);
+               
+                 this.dowloadLogFile(screen, logFileName);   
             }
         });
 
-        window.location.reload();
+        
     }
 
  

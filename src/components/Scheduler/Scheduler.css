@@ -1,9 +1,8 @@
 .Scheduler{
-    background:white;
+    background: white;
     width: 90%;
     margin: 10px auto;
-    border: 1px solid #eee;
-    box-shadow: 0 2px 3px #ccc;
+   
     padding: 10px;
     text-align: center;
     font-size:18px;
@@ -14,11 +13,11 @@
     padding-left: 40px;
     padding-right: 40px;
     padding-top: 15px;
-
+    
 }
 
 .collapsible-header {
-    background: #FC6716;
+    background: #14a76c;
     color: white;
 }
 
@@ -28,14 +27,6 @@
 
 
 .titleHead{
-    color: #f4612c;
+    color: #14a76c;
 }
 
-.headerScheduler {
-    font-family: 'Lobster', cursive;
-    color: #f4c242;
-}
-
-.modalScheduler{
-
-}

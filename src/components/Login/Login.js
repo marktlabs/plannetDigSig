@@ -8,9 +8,9 @@ class Login extends Component {
     constructor(props) {
         super(props);
         this.login = this.login.bind(this);
-        this.signup = this.signup.bind(this);
+        //this.signup = this.signup.bind(this);
         this.handleChange = this.handleChange.bind(this);
-        this.signup = this.signup.bind(this);
+        //this.signup = this.signup.bind(this);
         this.state = {
             email: '',
             password: ''
@@ -18,12 +18,10 @@ class Login extends Component {
     }
 
     handleChange(e) {
-        console.log("credentiaaalssss");
         this.setState({ [e.target.name]: e.target.value });
     }
 
     login(e) {
-        console.log("loginssdfsf");
         e.preventDefault();
         firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password).then((u) => {
         }).catch((error) => {
@@ -38,7 +36,7 @@ class Login extends Component {
         });
     }
 
-
+    /*
     signup(e) {
         e.preventDefault();
         firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
@@ -46,7 +44,29 @@ class Login extends Component {
                 console.log(error);
             })
     }
+    */
 
+    resetPassword = () => {
+        alert("reset");
+        console.log("the email is ", this.state.email);
+        let resetEmail= this.state.email;
+        console.log("the resetEmail is ", resetEmail);
+        firebase.auth().sendPasswordResetEmail(resetEmail).then(function (){
+            alert('Password Reset Email Sent! ');
+        }).catch(function(error){
+            let errorCode= error.code;
+            let errorMessage= error.message;
+
+            if(errorCode === 'auth/invalid-email'){
+                alert(errorMessage);
+            } 
+            else if (errorCode === 'auth/user-not-found'){
+                alert(errorMessage);
+            }
+            console.log(error);
+        
+        });
+    }
 
     render() {
         return (
@@ -64,15 +84,22 @@ class Login extends Component {
                             </div>
 
                             <div className="col s12">
-                                <div className="col s6">
+                                <div className="col s12">
                                     <Button type="submit" onClick={this.login} >Login</Button>
                                 </div>
-
+                                
+                                {/*
                                 <div className="col s6">
                                     <Button onClick={this.signup} className="signUpButton" >Signup</Button>
                                 </div>
+                                */}
 
+                                <div className="col s12">
+                                <br/>
+                                <Button type="submit" onClick={this.resetPassword} >Recover Password</Button>
+                                </div> 
                             </div>
+
                         </form>
                     </div>
                 </div>

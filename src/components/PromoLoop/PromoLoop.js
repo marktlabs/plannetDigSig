@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Row, Button, Modal, Icon} from 'react-materialize';
+import { Button, Modal, Icon} from 'react-materialize';
 import Dropdown from '../Dropdown/Dropdown';
 import DropdownScreen from '../DropdownScreen/DropdownScreen';
 
@@ -122,14 +122,14 @@ class PromoLoop extends Component {
             startHr = startTime.slice(0,-3);
             startMin = startTime.slice(-2);
 
-            IntStartHr = parseInt(startHr);
-            IntStartMin = parseInt(startMin);
+            IntStartHr = parseInt(startHr,10);
+            IntStartMin = parseInt(startMin,10);
 
             endHr = endTime.slice(0,-3);
             endMin = endTime.slice(-2);
 
-            IntEndtHr = parseInt(endHr);
-            IntEndMin = parseInt(endMin);
+            IntEndtHr = parseInt(endHr,10);
+            IntEndMin = parseInt(endMin,10);
             
             if (IntStartHr > IntEndtHr){
                 alert('Invalid Schedule');
@@ -189,13 +189,15 @@ class PromoLoop extends Component {
                 </div>
 
                 <div className="row">
-                    <div className="col s12">
-                        <p className="subtitlesHead2"> Select the screen for scheduling content </p>
-                        <DropdownScreen 
-                            handleChange={this.handleScreenChange}
-                            name="video"
-                            items={screenName}
-                        />
+                    <div className= "selectScreenQS">
+                        <div className="col s12">
+                            <p className="subtitlesHead2"> Select the screen for scheduling content </p>
+                            <DropdownScreen 
+                                handleChange={this.handleScreenChange}
+                                name="video"
+                                items={screenName}
+                            />
+                        </div>
                     </div>
                 </div>    
 

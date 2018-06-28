@@ -1,15 +1,19 @@
 body {
   
-  background: #f12711;  /* fallback for old browsers */
-  background: -webkit-linear-gradient(to right, #f5af19, #f12711);  /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to right, #f5af19, #f12711); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-
-
+  /*background: #f12711;  /* fallback for old browsers */
+  /*background: -webkit-linear-gradient(to right, #f5af19, #f12711);  /* Chrome 10-25, Safari 5.1-6 */
+  /*background: linear-gradient(to right, #f5af19, #f12711); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: #0F292F;
+  text-align: center;
   color:black; 
   text-align: center;
+  margin-bottom: 50px;
+
 }
 
-
+input[type="text"] {
+  width: 400px;
+}
 
 
 *{
@@ -22,6 +26,7 @@ body {
   padding: 20px;
   margin: 0 auto;
   font-family: 'Source Sans Pro', sans-serif;
+  
 }
 
 .notesHeader{
@@ -43,4 +48,18 @@ body {
   font-family: 'Source Sans Pro', sans-serif;
   color: white;
 
+}
+
+.btn,.btn-large:focus{ 
+  background-color: #cb2d6f; 
+}
+.btn:focus, .btn-large:focus, .btn-floating:focus{
+  background-color: #C2185B; 
+}
+.btn:hover {
+  background-color:#C2185B;
+}
+
+.btn:active{
+  background-color: #C2185B;
 }

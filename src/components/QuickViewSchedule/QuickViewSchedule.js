@@ -1,30 +1,18 @@
-import React, { Component, Fragment } from 'react';
-import { Row, Button, Modal, Icon} from 'react-materialize';
-import Dropdown from '../Dropdown/Dropdown';
+import React, { Component } from 'react';
+import { Table, Button, Modal, Icon } from 'react-materialize';
 import DropdownScreen from '../DropdownScreen/DropdownScreen';
 
 import './QuickViewSchedule.css';
+import firebaseApp from '../../firebase/firebaseApp';
 
-let response = [];
-let screen2Push;
-let video2Push;
-
-let startTime;
-let endTime;
-let startMin;
-let startHr;
-let endMin;
-let endHr;
-let IntStartHr;
-let IntStartMin;
-let IntEndtHr;
-let IntEndMin;
-
-const days = [
-    { name: 'Monday', key: 1 },
-    { name: 'Tuesday', key: 2 },
-    { name: 'Wednesday', key: 3 },
-    { name:'default_video', key:4},
+const daysName = [
+    { name: 'Monday', key: 0 },
+    { name: 'Tuesday', key: 1 },
+    { name: 'Wednesday', key: 2 },
+    { name: 'Thursday', key: 3 },
+    { name: 'Friday', key: 4 },
+    { name: 'Saturday', key: 5 },
+    { name: 'Sunday', key: 6 },
 ];
 
 const screenName = [
@@ -33,156 +21,154 @@ const screenName = [
     { name: 'Screen 3', key: 3 },
 ];
 
-const timeNumberMin = [];
-
-const timeNumberHour = [];
-
-const timeNumber = [];
-
-for(let i = 0 ; i <= 59 ; i++ ) {
-    timeNumberMin.push({name: `${i}`, key: i})
-}
-
-for(let i = 0 ; i <= 23 ; i++ ) {
-    timeNumberHour.push({name: `${i}`, key: i})
-}
-
-
-for (let i=0; i <= 23 ; i++){
-
-    for (let j=0 ; j<= 59 ; j=j+15){
-        
-        if (i<10 && j < 10)
-        {
-            timeNumber.push({key: `0${i}:0${j}`, name: `0${i}:0${j}`});
-        }
-
-        if (i<10 && j >= 10)
-        {
-            timeNumber.push({key: `0${i}:${j}`, name: `0${i}:${j}`});
-        }
-
-        if (i>=10 && j >= 10)
-        {
-            timeNumber.push({key: `${i}:${j}`, name: `${i}:${j}`})
-        }
-        
-    }
-
-}
-
-
 class PromoLoop extends Component {
 
     state = {
         screenName: 'Screen 1',
-        schedules: [
-            {
-                video: 'promo 1',
-                start: '00:00',
-                end: '00:00',
-            },
-        ]
+        daySelected: 'Monday',
+        schedules: [],
+        showResults: false,
     }
 
+    showSchedules = () => {
+        this.setState({ showResults: true});
+        const daySelected= this.state.daySelected;
+        let screenName2 = this.state.screenName;
 
-    handleScheduleChange = (index, name, value) => {
-        console.log(index);
-        const schedules = this.state.schedules;
-        const scheduleToModify = schedules[index];
+        //const { screenName, daySelected } = this.state;
+        const dayIndex = daysName.find(day => day.name === daySelected).key;
+        screenName2= screenName2.replace(" ",""); 
 
-        scheduleToModify[name] = value;
-        schedules[index] = scheduleToModify;
+        console.log(`Scheduler/${screenName2}/${dayIndex}`);
 
-        this.setState({schedules}, () => {
-            console.log(this.state.schedules[index]);
+        firebaseApp.database().ref(`Scheduler/${screenName2}/${dayIndex}`)
+            .on('value', (data) => {
+                let values = data.val();
+                console.log("values", values);
+                this.setState({ schedules: values });
+
+            }, (err) => {
+                console.log(err);
+            });
+    }
+
+    handleDayChange = (name, value) => {
+        this.setState({ daySelected: value });
+
+        /*
+        this.setState(prevState => {
+            console.log("selectedDay;",this.state.daySelected);
         });
+        */
     }
-
 
     handleScreenChange = (name, value) => {
-        this.setState({ screenName: value});
+        this.setState({ screenName: value });
+
     }
 
     handleChangeToAll = () => {
-        this.setState({ screenName : "all" });
+        this.setState({ screenName: "all" });
     }
 
-    showData = () => {
-        console.log("Show data for all week for Monday!")
-        this.setState(prevState => {
-            console.log(this.state.screenName);
-            screen2Push= this.state.screenName;
-            screen2Push= screen2Push.replace(" ","");
-            console.log("state:", screen2Push);
-            this.props.showSchedules(screen2Push);
-        });
-
-       
-       //window.location.reload();
-
+    renderObject = (values) => {
+        return Object.entries(values).map(([key, value], i) => {
+            return (
+                <div key={key}>
+                    videoname is: {value.VideoName};
+					startTime is: {value.startTime};
+				</div>
+            )
+        })
     }
 
- 
     render() {
         return (
             <div className="QuickViewSchedule" >
 
                 <div>
-                     <h2 className="headerScheduler"> Quick View Schedule </h2> 
-                         <span className="modalScheduler">
-                            <Modal 
+                    <h2 className="headerScheduler"> Quick View Schedule </h2>
+                    <span className="modalScheduler">
+                        <Modal
                             header='Modal Header'
                             trigger={<Button waves='light'>Help!<Icon right> help </Icon></Button>}>
                             <p>Lorem ipsum dolor sit gmet, consectetur adipiscing elit, sed do eiusmod tempor
                                 incididunt ut labore et dolore magna aliqua.</p>
-                            </Modal>
-                        </span>
+                        </Modal>
+                    </span>
                 </div>
 
                 <div className="row">
                     <div className="col s6">
-                        <div className="selectScreenQS">    
+                        <div className="selectScreenQS">
                             <p className="subtitlesHead2"> Select the screen for scheduling content </p>
-                            <DropdownScreen 
+                            <DropdownScreen
                                 handleChange={this.handleScreenChange}
                                 name="video"
                                 items={screenName}
-                            /> 
+                            />
                         </div>
                     </div>
 
                     <div className="col s6">
-                        <div className="selectScreenQS">    
-                            <p className="subtitlesHead2"> Select the screen for scheduling content </p>
-                            <DropdownScreen 
+                        <div className="selectScreenQS">
+                            <p className="subtitlesHead2"> Select day for view schedule content </p>
+                            <DropdownScreen
                                 handleChange={this.handleDayChange}
                                 name="video"
-                                items={days}
-                            /> 
+                                items={daysName}
+                            />
                         </div>
                     </div>
-                </div>    
-
-                <div className="row">
-                    <div className="col s12">
-                        <h5> Render tablaaa </h5>
-                    </div>
                 </div>
-                   
+                
+                { this.state.showResults ? (
+                    <div className="row">
+                            <div className="pageCenter">
+                                <Table className="quickTable">
+                                    <thead>
+                                        <tr>
+                                            <th> Schedule Name</th>
+                                            <th>Video Name</th>
+                                            <th>Start Time</th>
+                                            <th>End Time</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        {
+                                            Object.entries(this.state.schedules).map(([key, schedule]) => (
+                                                <tr key={key}>
+                                                    <td> {key} </td>
+                                                    <td> {schedule.VideoName} </td>
+                                                    <td> {schedule.startTime} </td>
+                                                    <td> {schedule.endTime} </td>
+                                                </tr>
+
+                                            ))
+                                        }
+                                    </tbody>
+
+                                </Table>
+                            </div>
+                     </div>) : <br/>
+                }
+
 
                 <div className="row">
                     <div className="col12">
-                        <Button 
-                            onClick={() => {
-                                this.showData();
-                            }}
-                        type="submit" value="Submit" > Show </Button>
-                      
+                        <Button
+                            onClick={() => this.showSchedules()}
+                            type="submit"
+                            value="Submit"
+                        >
+                            Show
+                        </Button>
+
                     </div>
                 </div>
             </div>
-         
+
         )
     }
 }
