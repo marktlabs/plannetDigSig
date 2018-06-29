@@ -71,7 +71,8 @@ class PowerSettings extends Component {
                     response.push(screen2Push,this.state.status);
                     this.props.updatePowerSettings(response);
                 }
-            
+                
+                window.location.reload();
                 
             }
             
@@ -101,13 +102,14 @@ class PowerSettings extends Component {
                     alert(`Turning ${this.state.screenName}: ON` );
                 }
 
+                window.location.reload();
                 
                 screen2Push= screen2Push.replace(" ",""); 
                 console.log(screen2Push);
-            
+                
                 response.push(screen2Push,this.state.status);
                 this.props.updatePowerSettings(response);
-                window.location.reload();
+                
             }
             
         });
