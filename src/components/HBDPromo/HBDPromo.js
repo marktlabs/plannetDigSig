@@ -136,7 +136,7 @@ class HBDPromo extends Component {
                     for (let i=1; i<=3 ; i++){
                         firebaseApp.database().ref().child(`Announcements/Screen${i}`)
                         .update({ "Text2": name2render,
-                                "VideoName2": videoRender,
+                                "VideoName2": videoRender + '.mp4',
                                 "Trigger2": 1 });  
                         
                     }
@@ -147,7 +147,7 @@ class HBDPromo extends Component {
 
                     firebaseApp.database().ref().child(`Announcements/${screen2Push}`)
                     .update({ "Text2": name2render,
-                            "VideoName2": videoRender,
+                            "VideoName2": videoRender + '.mp4',
                             "Trigger2": 1 });                      
                 }
             
