@@ -126,7 +126,8 @@ class HBDPromo extends Component {
             name2render= this.state.name;
             screen2Push= this.state.screenName;
             videoRender= this.state.schedules[0].video;
-            
+            videoRender= videoRender.replace(" ",""); 
+
             if (name2render === ""){
                 alert("Fill all the inputs!");
             }  
