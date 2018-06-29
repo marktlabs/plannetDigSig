@@ -107,11 +107,12 @@ class PowerSettings extends Component {
             
                 response.push(screen2Push,this.state.status);
                 this.props.updatePowerSettings(response);
+                window.location.reload();
             }
             
         });
 
-        window.location.reload();
+       
        
     }
 
