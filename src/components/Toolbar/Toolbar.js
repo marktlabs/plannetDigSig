@@ -7,6 +7,7 @@ import PromoLoop from '../PromoLoop/PromoLoop';
 import PowerSettings from '../PowerSettings/PowerSettings';
 import ProofPlaying from '../ProofPlaying/ProofPlaying';
 import QuickViewSchedule from '../QuickViewSchedule/QuickViewSchedule';
+import Home from '../Home/Home';
 import MyProfile from '../MyProfile/MyProfile';
 import firebase from 'firebase';
 
@@ -76,6 +77,9 @@ class Toolbar extends Component {
           <hr />
 
           <Switch>
+          <Route exact path="/" render={() => <Home/>}
+          />
+
           <Route exact path="/myProfile" render={() => <MyProfile/>}
             />
 
