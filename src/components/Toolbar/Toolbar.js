@@ -8,6 +8,7 @@ import PowerSettings from '../PowerSettings/PowerSettings';
 import ProofPlaying from '../ProofPlaying/ProofPlaying';
 import QuickViewSchedule from '../QuickViewSchedule/QuickViewSchedule';
 import Home from '../Home/Home';
+import UploadVideo from '../UploadVideo/UploadVideo';
 import MyProfile from '../MyProfile/MyProfile';
 import firebase from 'firebase';
 
@@ -66,6 +67,10 @@ class Toolbar extends Component {
           <li>
               <Link to="/powerSettings"><Icon className="material-icons left">power_settings_new</Icon>Power Settings</Link>
           </li>
+
+          <li>
+              <Link to="/uploadVideo"><Icon className="material-icons left">power_settings_new</Icon> Upload Video </Link>
+          </li>
         
           <li>
             <Button onClick={this.logout}> Logout </Button>
@@ -96,6 +101,8 @@ class Toolbar extends Component {
             />
 
             <Route path="/proofPlaying" component={ProofPlaying} />
+            
+            <Route path="/uploadVideo" component={UploadVideo} />
 
             <Route exact path="/announcements" render={() => <HBDPromo
               updateAnnouncement={this.props.updateAnnouncement} />}

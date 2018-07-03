@@ -3,10 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "axios": "^0.18.0",
     "firebase": "^5.0.4",
     "mobx": "^5.0.3",
     "mobx-react": "^5.2.3",
     "prop-types": "^15.6.1",
+    "rc-progress": "^2.2.5",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
     "react-h5-video": "^1.0.4",
@@ -19,7 +21,7 @@
     "video-react": "^0.11.2"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "PORT=3006 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
