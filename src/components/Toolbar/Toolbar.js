@@ -10,6 +10,7 @@ import QuickViewSchedule from '../QuickViewSchedule/QuickViewSchedule';
 import Home from '../Home/Home';
 import UploadVideo from '../UploadVideo/UploadVideo';
 import MyProfile from '../MyProfile/MyProfile';
+import DeleteVideo from '../DeleteVideo/DeleteVideo';
 import firebase from 'firebase';
 
 import { Icon, Button, SideNav, SideNavItem } from 'react-materialize';
@@ -25,6 +26,10 @@ class Toolbar extends Component {
   logout() {
     console.log("Hi Logout!")
     firebase.auth().signOut();
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.state.logout);
   }
 
   render() {
@@ -69,7 +74,11 @@ class Toolbar extends Component {
           </li>
 
           <li>
-              <Link to="/uploadVideo"><Icon className="material-icons left">power_settings_new</Icon> Upload Video </Link>
+              <Link to="/uploadVideo"><Icon className="material-icons left">file_upload</Icon> Upload Video </Link>
+          </li>
+
+          <li>
+              <Link to="/deleteVideos"><Icon className="material-icons left">file_upload</Icon> Delete Videos </Link>
           </li>
         
           <li>
@@ -86,6 +95,9 @@ class Toolbar extends Component {
           />
 
           <Route exact path="/myProfile" render={() => <MyProfile/>}
+            />
+
+          <Route exact path="/deleteVideos" render={() => <DeleteVideo/>}
             />
 
             <Route exact path="/scheduler" render={() => <Scheduler
