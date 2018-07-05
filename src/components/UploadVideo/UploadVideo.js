@@ -97,8 +97,7 @@ class UploadVideo extends Component {
         clearInterval(this.state.videos);
         clearInterval(this.state.screenName);
         clearInterval(this.state.videoList);
-        
-        
+    
     }
 
     deleteVideo = () => {

@@ -47,8 +47,7 @@ class DeleteVideo extends Component {
     }
 
     componentDidMount() {
-        arrayVideos = [];
-        arrayScreens = [];
+        
         storageRef= firebase.storage().ref();
         console.log("initialize!")
 
@@ -68,6 +67,8 @@ class DeleteVideo extends Component {
           .on('value', (data) => {
               let values = data.val();
               this.setState({ videos: values }, () => {
+                arrayVideos = [];
+                arrayScreens = [];
                 Object.keys(this.state.videos).map((key, index) => {
                     initialVideos = this.state.videos[key]
                     videoName2= initialVideos.name;
@@ -140,7 +141,7 @@ class DeleteVideo extends Component {
                     alert("Video not found");
                 });
             
-                clearInterval(this.state.videoList);
+                
         }
 
         //window.location.reload();
@@ -162,6 +163,7 @@ class DeleteVideo extends Component {
 
         firebaseApp.database().ref(`Inventory/${screenName2}/`)
           .on('value', (data) => {
+            arrayVideos = [];
               let values = data.val();
               console.log("values", values);
               this.setState({ videos: values }, () => {
