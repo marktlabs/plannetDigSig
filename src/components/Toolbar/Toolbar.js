@@ -28,10 +28,6 @@ class Toolbar extends Component {
     firebase.auth().signOut();
   }
 
-  componentWillUnmount() {
-    clearInterval(this.state.logout);
-  }
-
   render() {
     return (
       <Router>
@@ -78,7 +74,7 @@ class Toolbar extends Component {
           </li>
 
           <li>
-              <Link to="/deleteVideos"><Icon className="material-icons left">file_upload</Icon> Delete Videos </Link>
+              <Link to="/deleteVideos"><Icon className="material-icons left">delete</Icon> Delete Videos </Link>
           </li>
         
           <li>

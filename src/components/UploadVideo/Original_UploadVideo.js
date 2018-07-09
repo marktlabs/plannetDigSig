@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import DropdownScreen from '../DropdownScreen/DropdownScreen';
 import {Table, Button, Modal, Icon} from 'react-materialize';
-import axios from 'axios';
-import { Line, Circle } from 'rc-progress';
+import { Line } from 'rc-progress';
 
 import firebase from 'firebase';
 import 'firebase/database';
@@ -11,13 +10,9 @@ import firebaseApp from '../../firebase/firebaseApp';
 
 let storageRef;
 let screenIndex;
-let fichero;
 let logFilesRef;
-let imageDownload;
-let screenDownload;
-let imgRef;
 let url_database;
-
+let progress=10;
 let screenName2;
 let initialVideos;
 
@@ -35,7 +30,7 @@ class UploadVideo extends Component {
         selectedVideo: null,
         screenName: "Screen1",
         showResults: false,
-        percent: 30,
+        percent:0 ,
         videos: [],
         deleteVideo: [],
         videoList: [
@@ -52,9 +47,6 @@ class UploadVideo extends Component {
         storageRef= firebase.storage().ref();
         console.log("initialize!")
 
-        //version de youtube, su funciona
-        url_database= "https://firebasestorage.googleapis.com/v0/b/digitalsignage-acb79.appspot.com/o/imagenes%2Fscreen2%2FScreen1_(2018-6-14)?alt=media&token=f16c0515-95ab-4fe3-981d-724dfbc141b8"
-
         storageRef= firebaseApp.storage().ref();
         logFilesRef= firebaseApp.database().ref().child("Inventory");
 
@@ -67,13 +59,12 @@ class UploadVideo extends Component {
           firebaseApp.database().ref(`Inventory/${screenName2}/`)
           .on('value', (data) => {
               let values = data.val();
-              console.log("values", values);
+              //console.log("values", values);
+              
               this.setState({ videos: values }, () => {
                 Object.keys(this.state.videos).map((key, index) => {
                     initialVideos = this.state.videos[key]
                     videoName2= initialVideos.name;
-                    console.log("videoName2", videoName2);
-
                     arrayVideos.push({name: videoName2, key:key});    
                     this.setState({videoList: arrayVideos }) ; 
                     }
@@ -101,6 +92,12 @@ class UploadVideo extends Component {
             }, (err) => {
                 console.log(err);
             });
+    }
+    componentWillUnmount() {
+        clearInterval(this.state.videos);
+        clearInterval(this.state.screenName);
+        clearInterval(this.state.videoList);
+    
     }
 
     deleteVideo = () => {
@@ -170,56 +167,65 @@ class UploadVideo extends Component {
 
     }
 
-    fileUploadHandler = () => {       
+    fileUploadHandler = () => {  
+       progress=10;     
        const fd= new FormData();
        let videoName;
        let videoNameDB;
+        console.log(this.state.selectedVideo);
+       if(this.state.selectedVideo == null){
+           alert("enter a video to upload");
+       }
 
-       fd.append('image', this.state.selectedVideo, this.state.selectedVideo.name);
-       console.log("path",this.state.selectedVideo);
-       console.log("videoName",this.state.selectedVideo.name);
-       
-       //cambiar el nombre para subir a firebase
-       videoName= this.state.selectedVideo.name;
-       videoNameDB= this.state.selectedVideo.name;
-       videoName= videoName.replace(" ",""); 
-
-       let videoSize= this.state.selectedVideo.size;
-       videoSize= videoSize/1000000;
-       videoSize= `${videoSize}MB`;
-       //console.log("the video size is: ", videoSize);
-
-       screenIndex= this.state.screenName;
-       screenIndex= screenIndex.replace(" ",""); 
-       //console.log("screenIndex",screenIndex);
- 
-        let uploadTask= storageRef.child('imagenes/'+ screenIndex +'/'+ videoName).put(this.state.selectedVideo);
-
-        uploadTask.on('state_changed',
-            function(snapshot){
-                //progress bar
-                let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                console.log('Upload is ' + progress + '% done');
-                //this.setState({ percent: progress });
-                //console.log(this.state.percent);
-
-            }, function(error){
-                alert("hubo un error")
-
-            }, function(){
-                //success callback
-                uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
-                    console.log('File available at ', downloadURL);
+       else {
+        fd.append('image', this.state.selectedVideo, this.state.selectedVideo.name);
+        console.log("path",this.state.selectedVideo);
+        console.log("videoName",this.state.selectedVideo.name);
         
-                    //crearNodoEnBDFirebase(this.state.selectedVideo.name,downloadURL,screenName);
-                    logFilesRef.child(screenIndex).push({ name: videoNameDB, 
-                                                         size: videoSize, 
-                                                          url: downloadURL});
-                    
-                });
+        
+        //cambiar el nombre para subir a firebase
+        videoName= this.state.selectedVideo.name;
+        videoNameDB= this.state.selectedVideo.name;
+        //videoName= videoName.replace(" ",""); 
 
-            }
-        )
+        let videoSize= this.state.selectedVideo.size;
+        videoSize= videoSize/1000000;
+        videoSize= `${videoSize}MB`;
+        //console.log("the video size is: ", videoSize);
+
+        screenIndex= this.state.screenName;
+        screenIndex= screenIndex.replace(" ",""); 
+        //console.log("screenIndex",screenIndex);
+    
+            let uploadTask= storageRef.child('imagenes/'+ screenIndex +'/'+ videoName).put(this.state.selectedVideo);
+
+            uploadTask.on('state_changed',
+                function(snapshot){
+                    //progress bar
+                    progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    console.log('Upload is ' + progress + '% done');
+                    //this.setState({ percent: progress });
+                    //console.log(this.state.percent);
+
+                }, function(error){
+                    alert("hubo un error")
+
+                }, function(){
+                    //success callback
+                    uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+                        console.log('File available at ', downloadURL);
+            
+                        //crearNodoEnBDFirebase(this.state.selectedVideo.name,downloadURL,screenName);
+                        logFilesRef.child(screenIndex).push({ name: videoNameDB, 
+                                                            size: videoSize, 
+                                                            url: downloadURL});
+                        
+                    });
+
+                }
+            )
+
+        }
     }
 
     render() {
@@ -271,7 +277,7 @@ class UploadVideo extends Component {
                         </div>
 
                         <div>
-                        <Line percent={this.state.percent} strokeWidth="2" strokeColor="#14a76c" />
+                        <Line percent={progress} strokeWidth="2" strokeColor="#14a76c" />
                         </div>
             
                     </div>
@@ -314,27 +320,7 @@ class UploadVideo extends Component {
                             </div>
                      </div>) : <br/>
                 }
-          
-                <div className=" col s6">                  
-                    <p className="subtitlesHead2"> DELETEEEE </p>
-                        <DropdownScreen 
-                            handleChange={this.handleVideoChange}
-                            name="video"
-                            items={arrayVideos}
-                        />  
-                </div>
-                
-                <div>
-                    <div className="col s6">
-                    <br/>
-                            <Button onClick={() => {
-                                            this.deleteVideo();
-                                            
-                                        }}
-                                    >Delete Video </Button>     
-                    </div>
-                </div>                
-  
+            
             </div>
         )
     }

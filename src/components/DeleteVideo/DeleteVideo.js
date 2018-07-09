@@ -123,9 +123,9 @@ class DeleteVideo extends Component {
             desertRef.delete().then(function() {
                 console.log("deleted!");
                 logFilesRef.child(`${screenName2}`).orderByChild('name').equalTo(video2delete).once('value').then(function(snapshot) {  
-                        console.log("entraaa*********");
                         console.log("the key is ",snapshot.key);
                         console.log("snapshot.val()",snapshot.val());
+                        
                         let key = Object.keys(snapshot.val())[0];
                         console.log("thekey", key);
                         
@@ -167,6 +167,7 @@ class DeleteVideo extends Component {
               let values = data.val();
               console.log("values", values);
               this.setState({ videos: values }, () => {
+               
                 Object.keys(this.state.videos).map((key, index) => {
                     initialVideos = this.state.videos[key]
                     videoName2= initialVideos.name;

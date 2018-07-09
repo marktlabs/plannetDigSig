@@ -11,8 +11,9 @@ import firebaseApp from '../../firebase/firebaseApp';
 let storageRef;
 let screenIndex;
 let logFilesRef;
+let videosRef;
 let url_database;
-let progress=10;
+let progress=0;
 let screenName2;
 let initialVideos;
 
@@ -29,26 +30,17 @@ class UploadVideo extends Component {
     state = {
         selectedVideo: null,
         screenName: "Screen1",
+        size: 0,
         showResults: false,
-        percent:0 ,
+        percent: null ,
         videos: [],
-        deleteVideo: [],
-        videoList: [
-           // { name: "licuado1.png", key: "-LGWzDkUc4sE8ukexn4u"}
-        ]
+        videoList: []
     }
-
-    handleVideoChange = (name, value) => {
-        this.setState({ deleteVideo: value });
-    }
-
 
     componentDidMount() {
         storageRef= firebase.storage().ref();
-        console.log("initialize!")
-
-        storageRef= firebaseApp.storage().ref();
         logFilesRef= firebaseApp.database().ref().child("Inventory");
+        videosRef= firebaseApp.database().ref().child("General_Inventory");
 
         screenName2 = this.state.screenName;
         screenName2= screenName2.replace(" ",""); 
@@ -59,8 +51,7 @@ class UploadVideo extends Component {
           firebaseApp.database().ref(`Inventory/${screenName2}/`)
           .on('value', (data) => {
               let values = data.val();
-              //console.log("values", values);
-              
+             
               this.setState({ videos: values }, () => {
                 Object.keys(this.state.videos).map((key, index) => {
                     initialVideos = this.state.videos[key]
@@ -86,7 +77,6 @@ class UploadVideo extends Component {
         firebaseApp.database().ref(`Inventory/${screenName2}/`)
             .on('value', (data) => {
                 let values = data.val();
-                console.log("values", values);
                 this.setState({ videos: values });
 
             }, (err) => {
@@ -100,51 +90,22 @@ class UploadVideo extends Component {
     
     }
 
-    deleteVideo = () => {
-        // Create a reference to the file to delete
-        //var desertRef = storageRef.child('images/desert.jpg');
-        
-        var desertRef = storageRef.child('imagenes/'+ 'Screen1' +'/'+ 'meme.jpeg')
-        
-        // Delete the file
-        desertRef.delete().then(function() {
-        // File deleted successfully
-            console.log("deleted!");
-            logFilesRef.child('Screen1').orderByChild('name').equalTo('meme.jpeg').once('value').then(function(snapshot) {
-                console.log(snapshot.val());
-                //var key = snapshot.key; 
-               
-                let key = Object.keys(snapshot.val())[0];
-                console.log("the key is ",key)
-    
-                logFilesRef.child('Screen1').child(key).remove();
-            });
-           
-        }).catch(function(error) {
-        // Uh-oh, an error occurred!
-        });
-    }
-
     handleScreenChange = (name, value) => {
         let videoName2 = "";
         arrayVideos = [];
         this.setState({ screenName: value});
-        console.log("value",value);
 
         screenName2 = value;
         screenName2= screenName2.replace(" ",""); 
-        
-        console.log("the screen value is: ",screenName2 );
 
         firebaseApp.database().ref(`Inventory/${screenName2}/`)
           .on('value', (data) => {
               let values = data.val();
-              console.log("values", values);
+              
               this.setState({ videos: values }, () => {
                 Object.keys(this.state.videos).map((key, index) => {
                     initialVideos = this.state.videos[key]
                     videoName2= initialVideos.name;
-                    console.log("videoName2", videoName2);
                     console.log("key",key);
                     arrayVideos.push({name: videoName2, key: key});    
                     this.setState({videoList: arrayVideos }) ; 
@@ -159,6 +120,65 @@ class UploadVideo extends Component {
 
     }
 
+    getAvailableStorage = () => {
+        let itemVal;
+        let returnArr = [];
+
+        /*
+        logFilesRef.once('value', function(snapshot) {
+
+            snapshot.forEach(function(snap){
+                console.log(snap.val());
+                let item = snap.val();
+                item.key = snap.key;
+                console.log("****test",snapshot.key);
+                returnArr.push(item);
+                console.log("returnArr", returnArr[0]["-LGkskA8KbJMVy2pQ8Rs"].size);
+            });
+
+         }, (err) => {
+            console.log(err);
+
+        });
+        */
+
+        firebaseApp.database().ref('Inventory')
+        .on('value', (data) => {
+           
+            arrayVideos = [];
+            
+            let values = data.val();
+            let videoName2;
+
+
+            console.log("values", values);
+                 
+            Object.keys(values).map((key, index) => {
+                  initialVideos = values[key];
+                  console.log("initialVideos",initialVideos);
+                  
+                  videoName2= initialVideos.name;
+                  console.log("videoName2", videoName2);
+                  console.log("key",key);
+                  /*
+                  arrayVideos.push({name: videoName2, key: key});    
+                  this.setState({videoList: arrayVideos }) ;
+                  */ 
+                }
+            );
+        
+            
+          
+          
+        }, (err) => {
+            console.log(err);
+        });
+
+        
+
+    }
+
+
     filesSelectedHandler = (event) => {
       
        this.setState({
@@ -167,64 +187,101 @@ class UploadVideo extends Component {
 
     }
 
+    applyScreen = () => {   
+        
+        if (this.state.selectedVideo === null){
+            alert("Browse a video to upload")
+        }
+
+        else{
+            screenIndex= this.state.screenName;
+            screenIndex= screenIndex.replace(" ",""); 
+            
+            logFilesRef.child(`${screenIndex}`).push({ name: this.state.selectedVideo.name,
+                                                       size: this.state.size
+            });
+        }
+       
+        
+    }
+
+    applyAll = () => {
+        if (this.state.selectedVideo === null){
+            alert("Browse a video to upload")
+        }
+
+        else{
+            let videotest= this.state.selectedVideo.name;
+            let videosize2= this.state.size;
+            let numberOfChildren;
+            
+            logFilesRef.once('value', function(snapshot) {
+               numberOfChildren= snapshot.numChildren(); //get number of immediate children
+               let i=0
+               snapshot.forEach(function(snap){
+                    i=i+1;
+                    logFilesRef.child(`Screen${i}`).push({ name: videotest,size: videosize2}); 
+               });
+            })
+            console.log("done!");
+        }
+        
+    }
+
+
     fileUploadHandler = () => {  
-       progress=10;     
+           
        const fd= new FormData();
        let videoName;
        let videoNameDB;
-        console.log(this.state.selectedVideo);
+       
        if(this.state.selectedVideo == null){
            alert("enter a video to upload");
        }
 
        else {
         fd.append('image', this.state.selectedVideo, this.state.selectedVideo.name);
-        console.log("path",this.state.selectedVideo);
-        console.log("videoName",this.state.selectedVideo.name);
-        
-        
-        //cambiar el nombre para subir a firebase
         videoName= this.state.selectedVideo.name;
         videoNameDB= this.state.selectedVideo.name;
-        //videoName= videoName.replace(" ",""); 
-
+        videoName= videoName.replace(/\s/g,'');
+        
         let videoSize= this.state.selectedVideo.size;
         videoSize= videoSize/1000000;
         videoSize= `${videoSize}MB`;
-        //console.log("the video size is: ", videoSize);
-
+        
+        if (videoSize > 3){
+            alert("The max file size to upload is 3MB")
+        }
         screenIndex= this.state.screenName;
         screenIndex= screenIndex.replace(" ",""); 
-        //console.log("screenIndex",screenIndex);
-    
-            let uploadTask= storageRef.child('imagenes/'+ screenIndex +'/'+ videoName).put(this.state.selectedVideo);
 
-            uploadTask.on('state_changed',
-                function(snapshot){
-                    //progress bar
-                    progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    console.log('Upload is ' + progress + '% done');
-                    //this.setState({ percent: progress });
-                    //console.log(this.state.percent);
+        
+        let uploadTask= storageRef.child(`videosInventory/${videoName}`).put(this.state.selectedVideo);
+        const self = this;
 
-                }, function(error){
-                    alert("hubo un error")
+        uploadTask.on('state_changed',
+            function(snapshot){
+                //progress bar
+                progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                console.log('Upload is ' + progress + '% done');
+                self.setState({percent: progress }) ; 
 
-                }, function(){
-                    //success callback
-                    uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
-                        console.log('File available at ', downloadURL);
-            
-                        //crearNodoEnBDFirebase(this.state.selectedVideo.name,downloadURL,screenName);
-                        logFilesRef.child(screenIndex).push({ name: videoNameDB, 
-                                                            size: videoSize, 
-                                                            url: downloadURL});
-                        
-                    });
+            }, function(error){
+                alert("hubo un error")
 
-                }
-            )
+            }, function(){
+                //success callback
+                uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+                    //console.log('File available at ', downloadURL);
+                    videosRef.push({ name: videoNameDB, 
+                                    size: videoSize, 
+                                    url: downloadURL});
+                    
+                });
 
+            }
+        )
+        
         }
     }
 
@@ -249,6 +306,35 @@ class UploadVideo extends Component {
                 </div>
 
                 <div className="row">
+                    <div className="Scheduler">
+                    <div className= "col s12 Scheduler">   
+                        <div className= "col s6 ">
+                            <label> 
+                                    <input type="file"  
+                                    className="inputName" 
+                                    onChange={this.filesSelectedHandler} 
+                                    id={this.state.videoName}
+                                    />           
+                            </label>
+
+                            
+                            <Line percent={this.state.percent} strokeWidth="2" strokeColor="#14a76c" />
+                         
+                        </div>
+
+                        <div className="col s6">
+                            <br/> 
+                            <Button className="updateBtn" onClick={() => {
+                                  this.fileUploadHandler();}}
+                                >Upload File </Button> 
+
+                               
+                        </div>
+                    </div>
+                 </div>
+                </div>
+
+                <div className="row">
                     <div className=" col s6">
                                 <p className="subtitlesHead2"> Select the screen for scheduling content </p>
                                 <DropdownScreen 
@@ -257,41 +343,49 @@ class UploadVideo extends Component {
                                     items={screenName}
                                 />
                     </div>
+                </div>
 
-                    <div className= "col s6">   
-                        <div className= "col s4">
-                            <label> 
-                                    <input type="file"  
-                                    className="inputName" 
-                                    onChange={this.filesSelectedHandler} 
-                                    id={this.state.videoName}
-                                    />           
-                            </label>
+                <div className="row">
+                
+                        <div className="col s6">
+                            <p> Upload video to selected screen </p>
+                            <br/>
+                                <Button onClick={() => {
+                                    this.applyScreen();}}
+                                    > Send </Button>     
                         </div>
-
-                        <div className="col s8">
-                            <br/> 
-                            <Button className="updateBtn" onClick={() => {
-                                  this.fileUploadHandler();}}
-                                >Upload File </Button>     
+                    
+                    
+                        <div className="col s6">
+                            <p> Upload video to all screens</p>
+                            <br/>
+                                <Button onClick={() => {
+                                    this.applyAll();}}
+                                    > Send All Screens! </Button>     
                         </div>
-
-                        <div>
-                        <Line percent={progress} strokeWidth="2" strokeColor="#14a76c" />
-                        </div>
-            
-                    </div>
+                     
                 </div>
 
                 <div className="row">
                   <div className="col s12">
-                    <p> Click on the following button to see the current videos per each screen</p>
+                    <p > Click on the following button to see the current videos per each screen</p>
                         <br/>
                         <Button onClick={() => {
                             this.showVideos();}}
                             > Show Videos </Button>     
                   </div>
                 </div>      
+                   
+                <div className="row">
+                    <div className="col s12">
+                        <p > STORAGE </p>
+                            <br/>
+                            <Button onClick={() => {
+                                this. getAvailableStorage();}}
+                                > STORAGE </Button>     
+                    </div>
+                </div> 
+
                 
                 { this.state.showResults ? (
                     <div className="row">

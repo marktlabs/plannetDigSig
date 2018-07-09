@@ -1,5 +1,18 @@
 .UploadVideo{
+    background: white;
+    width: 90%;
+    margin: 10px auto;
+   
+    padding: 10px;
+    text-align: center;
+    font-size:18px;
+    font-family: 'Raleway', sans-serif;
+    color: black;
 
+
+    padding-left: 40px;
+    padding-right: 40px;
+    padding-top: 15px;
 }
 
 input[type='file'] {
@@ -15,3 +28,4 @@ input[type='file'] {
 .labelFile{
     margin-top: 10px;
 }
+
