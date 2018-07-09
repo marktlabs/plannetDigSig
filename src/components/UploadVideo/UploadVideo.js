@@ -9,6 +9,7 @@ import './UploadVideo.css';
 import firebaseApp from '../../firebase/firebaseApp';
 
 let storageRef;
+let uploaded_videos;
 let screenIndex;
 let logFilesRef;
 let videosRef;
@@ -16,6 +17,8 @@ let url_database;
 let progress=0;
 let screenName2;
 let initialVideos;
+let videoSize=0;
+let videoName3;
 
 let arrayVideos = [];
 
@@ -38,9 +41,11 @@ class UploadVideo extends Component {
     }
 
     componentDidMount() {
+        
         storageRef= firebase.storage().ref();
         logFilesRef= firebaseApp.database().ref().child("Inventory");
         videosRef= firebaseApp.database().ref().child("General_Inventory");
+        uploaded_videos= firebaseApp.database().ref().child("Uploaded_Videos");
 
         screenName2 = this.state.screenName;
         screenName2= screenName2.replace(" ",""); 
@@ -53,6 +58,7 @@ class UploadVideo extends Component {
               let values = data.val();
              
               this.setState({ videos: values }, () => {
+                console.log("the videooooos!",this.state.videos);
                 Object.keys(this.state.videos).map((key, index) => {
                     initialVideos = this.state.videos[key]
                     videoName2= initialVideos.name;
@@ -83,12 +89,7 @@ class UploadVideo extends Component {
                 console.log(err);
             });
     }
-    componentWillUnmount() {
-        clearInterval(this.state.videos);
-        clearInterval(this.state.screenName);
-        clearInterval(this.state.videoList);
-    
-    }
+   
 
     handleScreenChange = (name, value) => {
         let videoName2 = "";
@@ -197,9 +198,26 @@ class UploadVideo extends Component {
             screenIndex= this.state.screenName;
             screenIndex= screenIndex.replace(" ",""); 
             
-            logFilesRef.child(`${screenIndex}`).push({ name: this.state.selectedVideo.name,
-                                                       size: this.state.size
-            });
+            videoName3= this.state.selectedVideo.name;
+            videoSize=this.state.selectedVideo.size;
+            videoSize= `${videoSize/1000000}MB`;
+            
+            logFilesRef.child(`${screenIndex}`).push({ name: videoName3,
+                                                       size: videoSize
+            }).on('child_added', function(snap) {
+                    //update UploadVideos
+                    videoName3= videoName3.replace(/\s/g,'');
+                    uploaded_videos.child(`${screenIndex}`).update({
+                                                                Trigger: 1,
+                                                                Video_Name: videoName3
+                                                                });
+              });
+
+            
+
+
+            alert('Send to ' + `${screenIndex}`);
+            
         }
        
         
@@ -211,16 +229,21 @@ class UploadVideo extends Component {
         }
 
         else{
-            let videotest= this.state.selectedVideo.name;
-            let videosize2= this.state.size;
+            //let videotest= this.state.selectedVideo.name;
+            //let videosize2= this.state.selectedVideo.size;
             let numberOfChildren;
+            
+            videoName3= this.state.selectedVideo.name;
+            videoSize=this.state.selectedVideo.size;
+            videoSize= `${videoSize/1000000}MB`;
             
             logFilesRef.once('value', function(snapshot) {
                numberOfChildren= snapshot.numChildren(); //get number of immediate children
                let i=0
                snapshot.forEach(function(snap){
                     i=i+1;
-                    logFilesRef.child(`Screen${i}`).push({ name: videotest,size: videosize2}); 
+                    logFilesRef.child(`Screen${i}`).push({  name: videoName3,
+                                                            size: videoSize}); 
                });
             })
             console.log("done!");
@@ -245,13 +268,11 @@ class UploadVideo extends Component {
         videoNameDB= this.state.selectedVideo.name;
         videoName= videoName.replace(/\s/g,'');
         
-        let videoSize= this.state.selectedVideo.size;
+        videoSize= this.state.selectedVideo.size;
         videoSize= videoSize/1000000;
         videoSize= `${videoSize}MB`;
+        console.log(videoSize)
         
-        if (videoSize > 3){
-            alert("The max file size to upload is 3MB")
-        }
         screenIndex= this.state.screenName;
         screenIndex= screenIndex.replace(" ",""); 
 
@@ -261,18 +282,19 @@ class UploadVideo extends Component {
 
         uploadTask.on('state_changed',
             function(snapshot){
-                //progress bar
                 progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                 console.log('Upload is ' + progress + '% done');
                 self.setState({percent: progress }) ; 
+              
 
             }, function(error){
                 alert("hubo un error")
 
-            }, function(){
-                //success callback
+            }, function(){  //success callback
+                console.log("size", videoSize);
                 uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
                     //console.log('File available at ', downloadURL);
+                    console.log("sizeeeeeeeeeee", videoSize);
                     videosRef.push({ name: videoNameDB, 
                                     size: videoSize, 
                                     url: downloadURL});
@@ -281,6 +303,7 @@ class UploadVideo extends Component {
 
             }
         )
+        
         
         }
     }
@@ -316,9 +339,6 @@ class UploadVideo extends Component {
                                     id={this.state.videoName}
                                     />           
                             </label>
-
-                            
-                            <Line percent={this.state.percent} strokeWidth="2" strokeColor="#14a76c" />
                          
                         </div>
 
@@ -327,9 +347,8 @@ class UploadVideo extends Component {
                             <Button className="updateBtn" onClick={() => {
                                   this.fileUploadHandler();}}
                                 >Upload File </Button> 
-
-                               
                         </div>
+                        <Line percent={this.state.percent} strokeWidth="2" strokeColor="#14a76c" />
                     </div>
                  </div>
                 </div>
@@ -375,7 +394,7 @@ class UploadVideo extends Component {
                             > Show Videos </Button>     
                   </div>
                 </div>      
-                   
+                
                 <div className="row">
                     <div className="col s12">
                         <p > STORAGE </p>
