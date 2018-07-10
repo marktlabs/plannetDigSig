@@ -4,46 +4,61 @@ import Icon from 'react-materialize/lib/Icon';
 import './PowerSettings.css';
 import DropdownScreen from '../DropdownScreen/DropdownScreen';
 
+import 'firebase/database';
+import firebaseApp from '../../firebase/firebaseApp';
 
 let response = [];
 let screen2Push;
-
-const screenName = [
-    { name: 'Screen 1', key: 1 },
-    { name: 'Screen 2', key: 2 },
-    { name: 'Screen 3', key: 3 },
-    { name: 'All Screens', key: 4 },
-];  
-
+let arrayScreens= [];
 
 class PowerSettings extends Component {
 
     state = {
-        screenName: 'Screen 1',
         status: '',
+        screens:'Screen1',
+        screenList: []
     }
+
+    componentDidMount(){
+        firebaseApp.database().ref(`Inventory`) //screens
+        .on('value', (data) => {
+            let values = data.val();
+            arrayScreens=[];
+            this.setState({ screens: values }, () => {
+              Object.keys(this.state.screens).map((key, index) => {
+                  arrayScreens.push({name: key, key:index}); 
+                  this.setState({screenList: arrayScreens }); 
+             }
+          );
+          });
+
+        }, (err) => {
+            console.log(err);
+        });
+
+    }
+
 
     handleScreenChange = (name, value) => {
         this.setState({ screenName : value });
+        console.log("value", value);
     }
     
     powerON = () => {
         this.setState({ status : 1 });
+        console.log("value", this.state.status);
     }
 
     powerOFF = () => {
         this.setState({ status : 0 });
+        console.log("value", this.state.status);
     }
 
     sendToDb = () => {
-        console.log("Clicked!")
-        
-        this.setState(prevState => {    
+            this.setState(prevState => {    
             console.log("tv status: ",this.state.status)
             console.log("the screenName is: ",this.state.screenName);
-
             screen2Push= this.state.screenName;
-            
             
             if(this.state.status === ''){
                 alert("Select a status for " + screen2Push);
@@ -56,22 +71,11 @@ class PowerSettings extends Component {
 
                 if(this.state.status === 1){
                     alert(`Turning ${this.state.screenName}: ON` );
-                }
+                }                
 
-                if (screen2Push === 'All Screens' ){
-                    screen2Push="all";
-
-                    response.push(screen2Push,this.state.status);
-                    this.props.updatePowerSettings(response);
-                }
-                    
-                else{
-                    screen2Push= screen2Push.replace(" ",""); 
-                    //console.log(screen2Push);
-                    response.push(screen2Push,this.state.status);
-                    this.props.updatePowerSettings(response);
-                }
-                
+                screen2Push= screen2Push.replace(" ",""); 
+                response.push(screen2Push,this.state.status);
+                this.props.updatePowerSettings(response);
                 window.location.reload();
                 
             }
@@ -83,40 +87,31 @@ class PowerSettings extends Component {
     sendToDbAll = () => {
         
         this.setState(prevState => {  
-
-            console.log("tv status: ",this.state.status)
-            console.log("the screenName is: ",this.state.screenName);
-
             screen2Push= this.state.screenName;
 
             if(this.state.status === ''){
-                alert("Select a status for " + screen2Push);
+                alert("Select a status for ALL SCREENS ");
             }
-            
             else{
                 if(this.state.status === 0){
-                    alert(`Turning ${this.state.screenName}: ON` );
+                    alert(`ALL SCREENS OFF` );
                 }
-
                 if(this.state.status === 1){
-                    alert(`Turning ${this.state.screenName}: ON` );
+                    alert(`ALL SCREENS ON` );
                 }
 
-                window.location.reload();
-                
-                screen2Push= screen2Push.replace(" ",""); 
-                console.log(screen2Push);
-                
+                screen2Push="all";
                 response.push(screen2Push,this.state.status);
-                this.props.updatePowerSettings(response);
-                
-            }
-            
-        });
 
-       
-       
+                
+
+                //this.props.updatePowerSettings(response);
+                
+                window.location.reload();
+            }
+        });      
     }
+
 
   
     render() {
@@ -141,7 +136,7 @@ class PowerSettings extends Component {
                             <DropdownScreen 
                                 handleChange={this.handleScreenChange}
                                 name="video"
-                                items={screenName}
+                                items={this.state.screenList}
                             />
                         </div>
                     </div>
@@ -171,12 +166,21 @@ class PowerSettings extends Component {
                 </div>
 
                 <div className="row fix-row-padding">
-                    <div className="col s12">
+                    <div className="col s6">
                         <Button waves='light'
                             onClick = {() => {
                                 this.sendToDb();
                             }}
                         > Apply
+                        </Button>  
+                    </div>
+
+                    <div className="col s6">
+                        <Button waves='light'
+                            onClick = {() => {
+                                this.sendToDbAll();
+                            }}
+                        > Apply All
                         </Button>  
                     </div>
                     

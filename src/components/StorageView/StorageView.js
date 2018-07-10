@@ -64,12 +64,13 @@ class StorageView extends Component {
 
                     arrayVideos.push({name: videoName, size:videoSize, key:key});  
                     this.setState({videoList: arrayVideos }) ; 
+                    this.setState({available: storageAvailable })
                     
               }
             );
          
             });
-            this.setState({available: storageAvailable })
+           
           }, (err) => {
               console.log(err);
           });     

@@ -22,18 +22,13 @@ let videoName3;
 
 let arrayPerScreen = [];
 let arrayVideos = [];
-
-let screenName = [
-    { name: 'Screen 1', key: 1 },
-    { name: 'Screen 2', key: 2 },
-    { name: 'Screen 3', key: 3 },
-];
-
+let arrayScreens= [];
 
 class UploadVideo extends Component {
     state = {
         selectedVideo: null,
         screenName: "Screen1",
+        screens: "Screen1",
         size: 0,
         showResults: false,
         percent: null ,
@@ -41,7 +36,8 @@ class UploadVideo extends Component {
         videoList: [],
         video2: [],
         videoListPerScreen: [],
-        addContentTo: null
+        addContentTo: null,
+        screenList: []
     }
 
     componentDidMount() {
@@ -54,10 +50,8 @@ class UploadVideo extends Component {
         screenName2 = this.state.screenName;
         screenName2= screenName2.replace(" ",""); 
         let videoName2 = "";
-
-        console.log("the screen value is: ",screenName2 );
-
-          firebaseApp.database().ref(`General_Inventory/`)
+       
+        firebaseApp.database().ref(`General_Inventory/`) //show all videos
           .on('value', (data) => {
               let values = data.val();
               this.setState({ videos: values }, () => {
@@ -72,17 +66,15 @@ class UploadVideo extends Component {
                 });
              }, (err) => {
               console.log(err);
-          });
+        });
 
-
-          firebaseApp.database().ref(`Inventory/${screenName2}/`)
+          firebaseApp.database().ref(`Inventory/${screenName2}/`) //show videos per screen
           .on('value', (data) => {
               let values2 = data.val();
               let videoNamePerScreen;
 
-              arrayPerScreen= [];
               this.setState({ videos2: values2 }, () => {
-                console.log("the videooooos!",this.state.videos);
+                arrayPerScreen= [];
                 Object.keys(this.state.videos).map((key, index) => {
                     initialVideos = this.state.videos[key]
                     videoNamePerScreen= initialVideos.name;
@@ -93,8 +85,24 @@ class UploadVideo extends Component {
                   );
                 });
 
-                console.log("arrayPerScreen", arrayPerScreen);
+                //console.log("arrayPerScreen", arrayPerScreen);
              }, (err) => {
+              console.log(err);
+          });
+
+          firebaseApp.database().ref(`Inventory`) //screens
+          .on('value', (data) => {
+              let values = data.val();
+              arrayScreens=[];
+              this.setState({ screens: values }, () => {
+                Object.keys(this.state.screens).map((key, index) => {
+                    arrayScreens.push({name: key, key:index}); 
+                    this.setState({screenList: arrayScreens }); 
+               }
+            );
+            });
+
+          }, (err) => {
               console.log(err);
           });
          
@@ -205,7 +213,7 @@ class UploadVideo extends Component {
                let i=0
                snapshot.forEach(function(snap){
                     i=i+1;
-                    logFilesRef.child(`Screen${i}`).push({  name: videoName3})
+                    logFilesRef.child(`Screen${i}`).push({ name: videoName3})
                                 .on('child_added', function(snap) {
                                     videoName3= videoName3.replace(/\s/g,'');
                                     uploaded_videos.child(`Screen${i}`)
@@ -221,8 +229,7 @@ class UploadVideo extends Component {
     }
 
 
-    fileUploadHandler = () => {  
-           
+    fileUploadHandler = () => {         
        const fd= new FormData();
        let videoName;
        let videoNameDB;
@@ -236,15 +243,11 @@ class UploadVideo extends Component {
         videoName= this.state.selectedVideo.name;
         videoNameDB= this.state.selectedVideo.name;
         videoName= videoName.replace(/\s/g,'');
-        
         videoSize= this.state.selectedVideo.size;
         videoSize= videoSize/1000000;
-        videoSize= `${videoSize}MB`;
-        console.log(videoSize)
-        
+        videoSize= `${videoSize}MB`; 
         screenIndex= this.state.screenName;
         screenIndex= screenIndex.replace(" ",""); 
-
         
         let uploadTask= storageRef.child(`videosInventory/${videoName}`).put(this.state.selectedVideo);
         const self = this;
@@ -252,7 +255,7 @@ class UploadVideo extends Component {
         uploadTask.on('state_changed',
             function(snapshot){
                 progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                console.log('Upload is ' + progress + '% done');
+                //console.log('Upload is ' + progress + '% done');
                 self.setState({percent: progress }) ; 
               
 
@@ -260,27 +263,19 @@ class UploadVideo extends Component {
                 alert("hubo un error")
 
             }, function(){  //success callback
-                console.log("size", videoSize);
                 uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
                     //console.log('File available at ', downloadURL);
-                    console.log("sizeeeeeeeeeee", videoSize);
                     videosRef.push({ name: videoNameDB, 
                                     size: videoSize, 
                                     url: downloadURL});
                     
                 });
-
             }
-        )
-        
-        
-        }
+        )}
     }
 
     render() {
-
         return (
-
             <div className="PromoLoop" >
                
                 <div>
@@ -325,10 +320,7 @@ class UploadVideo extends Component {
                         </div>
                     </div>
                 </div>
-               
-               
-                
-               
+   
                <div className="row">
                     <div className="col s12">                   
                                      
@@ -352,7 +344,7 @@ class UploadVideo extends Component {
                                 <DropdownScreen 
                                     handleChange={this.handleScreenChange}
                                     name="video"
-                                    items={screenName}
+                                    items={this.state.screenList}
                                 />
                     </div>
                 </div>
