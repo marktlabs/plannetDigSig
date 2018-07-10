@@ -128,9 +128,7 @@ class Toolbar extends Component {
               updateLoopPromo={this.props.updateLoopPromo} />}
             />
 
-            <Route exact path="/powerSettings" render={() => <PowerSettings
-              updatePowerSettings={this.props.updatePowerSettings} />}
-            />
+            <Route exact path="/powerSettings" render={() => <PowerSettings/>}/>
           </Switch>       
         </span>
       </Router>

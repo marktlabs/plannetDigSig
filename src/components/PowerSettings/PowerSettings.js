@@ -10,16 +10,21 @@ import firebaseApp from '../../firebase/firebaseApp';
 let response = [];
 let screen2Push;
 let arrayScreens= [];
+let powerSetingsRef;
 
 class PowerSettings extends Component {
 
     state = {
         status: '',
         screens:'Screen1',
-        screenList: []
+        screenList: [],
+        screenName:'Screen1'
     }
 
     componentDidMount(){
+
+        powerSetingsRef= firebaseApp.database().ref().child("PowerSettings");
+
         firebaseApp.database().ref(`Inventory`) //screens
         .on('value', (data) => {
             let values = data.val();
@@ -73,15 +78,18 @@ class PowerSettings extends Component {
                     alert(`Turning ${this.state.screenName}: ON` );
                 }                
 
-                screen2Push= screen2Push.replace(" ",""); 
-                response.push(screen2Push,this.state.status);
-                this.props.updatePowerSettings(response);
-                window.location.reload();
+                let screenStatus;
+                screenStatus= this.state.status;
                 
+                powerSetingsRef.once('value', function(snapshot) {
+                    powerSetingsRef.child(`${screen2Push}`).update({ "Trigger": 1,
+                                                                  "value": screenStatus}
+                    );
+                    alert(`Send to ${screen2Push}`);
+                    window.location.reload();
+                })               
             }
-            
         });
-       
     }
 
     sendToDbAll = () => {
@@ -93,21 +101,31 @@ class PowerSettings extends Component {
                 alert("Select a status for ALL SCREENS ");
             }
             else{
-                if(this.state.status === 0){
+                let screenStatus;
+                screenStatus= this.state.status;
+
+                if(screenStatus === 0){
                     alert(`ALL SCREENS OFF` );
                 }
-                if(this.state.status === 1){
+                if(screenStatus === 1){
                     alert(`ALL SCREENS ON` );
                 }
-
-                screen2Push="all";
-                response.push(screen2Push,this.state.status);
-
                 
+                let numberOfChildren;
+                let i=0;
 
-                //this.props.updatePowerSettings(response);
+                powerSetingsRef.once('value', function(snapshot) {
+                    numberOfChildren= snapshot.numChildren(); //get number of immediate children
+                    snapshot.forEach(function(snap){
+                        i=i+1;
+                        powerSetingsRef.child(`Screen${i}`).update({ "Trigger": 1,
+                                                                      "value": screenStatus})
+                                   
+                    });
+                    alert('Send to all screens');
+                    window.location.reload();
+                 })
                 
-                window.location.reload();
             }
         });      
     }

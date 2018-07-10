@@ -18,18 +18,15 @@ class App extends Component {
     this.app = firebaseApp;
     this.db = this.app.database().ref().child('BirthdaySection');
     this.db2 = this.app.database().ref().child('LoopPromo');
-    this.db3 = this.app.database().ref().child('PowerSettings');
     this.db4 = this.app.database().ref().child('Scheduler');
 
   }
-  
-  
+    
   componentDidMount() {
     this.authListener();
     //this.showSchedules();
      
   }
-
 
   authListener = () => {
     this.app.auth().onAuthStateChanged((user) => {
@@ -41,7 +38,6 @@ class App extends Component {
       }
     });
   }
-
 
   updateLoopPromo = (promoArray) => {
 
@@ -64,20 +60,6 @@ class App extends Component {
       });
     }
 
-  }
-
-  updatePowerSettings = (powerArray) => {
-      console.log("the powerArray is:", powerArray);
-
-      if (powerArray[0] === 'all') {
-        for(let j=1; j<= 3; j++){
-          this.db3.child("Screen"+ j + '/').update({ "value": powerArray[1], "Trigger": 1 });
-        }
-      }
-  
-      else {
-        this.db3.child(powerArray[0]).update({ "value": powerArray[1], "Trigger": 1 });
-      }
   }
 
   updateScheduler = (schedulerArray) => {

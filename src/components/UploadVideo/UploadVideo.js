@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import DropdownScreen from '../DropdownScreen/DropdownScreen';
 import {Table, Button, Modal, Icon, ProgressBar} from 'react-materialize';
-import { Line } from 'rc-progress';
+import './UploadVideo.css';
 
 import firebase from 'firebase';
 import 'firebase/database';
-import './UploadVideo.css';
 import firebaseApp from '../../firebase/firebaseApp';
 
 let storageRef;
