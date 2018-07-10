@@ -116,12 +116,12 @@ class DeleteVideo extends Component {
             screenName2 = this.state.screenName;
             screenName2= screenName2.replace(" ",""); 
             let video2delete=  this.state.deleteVideo;
-
-           // var desertRef = storageRef.child('imagenes/'+`${screenName2}/${this.state.deleteVideo}`);
+            var desertRef = storageRef.child('imagenes/'+`${screenName2}/${this.state.deleteVideo}`);
             console.log('imagenes/'+`${screenName2}/${this.state.deleteVideo}`);
             console.log("video2delete*********", video2delete);
 
-            
+            desertRef.delete().then(function() {
+                console.log("deleted!");
                 logFilesRef.child(`${screenName2}`).orderByChild('name').equalTo(video2delete).once('value').then(function(snapshot) {  
                         console.log("the key is ",snapshot.key);
                         console.log("snapshot.val()",snapshot.val());
@@ -130,18 +130,21 @@ class DeleteVideo extends Component {
                         console.log("thekey", key);
                         
                         logFilesRef.child(`${screenName2}`).child(key).remove();
-                        alert(`Deleted: ${video2delete} from ${screenName2}` );
+
 
                     }).catch(function(error) {
                         // Uh-oh, an error occurred!
                             console.log(error);
                     });;
-           
+            }).catch(function(error) {
+                // Uh-oh, an error occurred!
+                    alert("Video not found");
+                });
             
                 
         }
 
-        window.location.reload();
+        //window.location.reload();
 
     }
 

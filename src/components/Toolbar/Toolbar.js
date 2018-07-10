@@ -11,6 +11,7 @@ import Home from '../Home/Home';
 import UploadVideo from '../UploadVideo/UploadVideo';
 import MyProfile from '../MyProfile/MyProfile';
 import DeleteVideo from '../DeleteVideo/DeleteVideo';
+import StorageView from '../StorageView/StorageView';
 import firebase from 'firebase';
 
 import { Icon, Button, SideNav, SideNavItem } from 'react-materialize';
@@ -74,6 +75,10 @@ class Toolbar extends Component {
           </li>
 
           <li>
+              <Link to="/spaceAvailable"><Icon className="material-icons left">sd_storage</Icon> Storage Available </Link>
+          </li>
+
+          <li>
               <Link to="/deleteVideos"><Icon className="material-icons left">delete</Icon> Delete Videos </Link>
           </li>
         
@@ -95,8 +100,12 @@ class Toolbar extends Component {
 
           <Route exact path="/deleteVideos" render={() => <DeleteVideo/>}
             />
-
-            <Route exact path="/scheduler" render={() => <Scheduler
+          
+          <Route path="/uploadVideo" component={UploadVideo} />
+          
+          <Route path="/spaceAvailable" component={StorageView} />
+                  
+          <Route exact path="/scheduler" render={() => <Scheduler
               verifyDayOfWeek={this.props.verifyDayOfWeek}
               submitSchedules={this.props.submitSchedules}
               updateScheduler={this.props.updateScheduler}
@@ -110,8 +119,7 @@ class Toolbar extends Component {
 
             <Route path="/proofPlaying" component={ProofPlaying} />
             
-            <Route path="/uploadVideo" component={UploadVideo} />
-
+           
             <Route exact path="/announcements" render={() => <HBDPromo
               updateAnnouncement={this.props.updateAnnouncement} />}
             />

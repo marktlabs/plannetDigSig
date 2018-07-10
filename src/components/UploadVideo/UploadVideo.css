@@ -29,3 +29,14 @@ input[type='file'] {
     margin-top: 10px;
 }
 
+.fixPaddingBar{
+    margin-left: 60px;
+    margin-top: 20px;
+}
+.hidden { display:none; }
+
+.modalScheduler{
+    font-family: 'Raleway', sans-serif;
+    color: black;
+
+}

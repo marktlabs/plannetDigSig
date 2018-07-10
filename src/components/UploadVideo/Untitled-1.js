@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import DropdownScreen from '../DropdownScreen/DropdownScreen';
-import {Table, Button, Modal, Icon, ProgressBar} from 'react-materialize';
+import {Table, Button, Modal, Icon} from 'react-materialize';
 import { Line } from 'rc-progress';
 
 import firebase from 'firebase';
@@ -20,7 +20,6 @@ let initialVideos;
 let videoSize=0;
 let videoName3;
 
-let arrayPerScreen = [];
 let arrayVideos = [];
 
 let screenName = [
@@ -38,10 +37,7 @@ class UploadVideo extends Component {
         showResults: false,
         percent: null ,
         videos: [],
-        videoList: [],
-        video2: [],
-        videoListPerScreen: [],
-        addContentTo: null
+        videoList: []
     }
 
     componentDidMount() {
@@ -57,15 +53,16 @@ class UploadVideo extends Component {
 
         console.log("the screen value is: ",screenName2 );
 
-          firebaseApp.database().ref(`General_Inventory/`)
+          firebaseApp.database().ref(`Inventory/${screenName2}/`)
           .on('value', (data) => {
               let values = data.val();
+             
               this.setState({ videos: values }, () => {
+                console.log("the videooooos!",this.state.videos);
                 Object.keys(this.state.videos).map((key, index) => {
-                    initialVideos = this.state.videos[key];
+                    initialVideos = this.state.videos[key]
                     videoName2= initialVideos.name;
                     arrayVideos.push({name: videoName2, key:key});    
-                    
                     this.setState({videoList: arrayVideos }) ; 
                     }
                   );
@@ -73,34 +70,11 @@ class UploadVideo extends Component {
              }, (err) => {
               console.log(err);
           });
-
-
-          firebaseApp.database().ref(`Inventory/${screenName2}/`)
-          .on('value', (data) => {
-              let values2 = data.val();
-              let videoNamePerScreen;
-
-              arrayPerScreen= [];
-              this.setState({ videos2: values2 }, () => {
-                console.log("the videooooos!",this.state.videos);
-                Object.keys(this.state.videos).map((key, index) => {
-                    initialVideos = this.state.videos[key]
-                    videoNamePerScreen= initialVideos.name;
-                    arrayPerScreen.push({name: videoNamePerScreen, key:key}); 
-                       
-                    this.setState({videoListPerScreen: arrayPerScreen }) ; 
-                    }
-                  );
-                });
-
-                console.log("arrayPerScreen", arrayPerScreen);
-             }, (err) => {
-              console.log(err);
-          });
          
     }
 
     showVideos = () => {
+       
         this.setState({ showResults: true});
 
         screenName2 = this.state.screenName;
@@ -147,10 +121,62 @@ class UploadVideo extends Component {
 
     }
 
-    handleVideoChange = (name, value) => {
-        console.log("CHANGE VIDEO SCREEEEEEEEEEN");
-        this.setState({ addContentTo: value});
-        console.log("addContentTo",value);
+    getAvailableStorage = () => {
+        let itemVal;
+        let returnArr = [];
+
+        /*
+        logFilesRef.once('value', function(snapshot) {
+
+            snapshot.forEach(function(snap){
+                console.log(snap.val());
+                let item = snap.val();
+                item.key = snap.key;
+                console.log("****test",snapshot.key);
+                returnArr.push(item);
+                console.log("returnArr", returnArr[0]["-LGkskA8KbJMVy2pQ8Rs"].size);
+            });
+
+         }, (err) => {
+            console.log(err);
+
+        });
+        */
+
+        firebaseApp.database().ref('Inventory')
+        .on('value', (data) => {
+           
+            arrayVideos = [];
+            
+            let values = data.val();
+            let videoName2;
+
+
+            console.log("values", values);
+                 
+            Object.keys(values).map((key, index) => {
+                  initialVideos = values[key];
+                  console.log("initialVideos",initialVideos);
+                  
+                  videoName2= initialVideos.name;
+                  console.log("videoName2", videoName2);
+                  console.log("key",key);
+                  /*
+                  arrayVideos.push({name: videoName2, key: key});    
+                  this.setState({videoList: arrayVideos }) ;
+                  */ 
+                }
+            );
+        
+            
+          
+          
+        }, (err) => {
+            console.log(err);
+        });
+
+        
+
     }
 
 
@@ -164,16 +190,20 @@ class UploadVideo extends Component {
 
     applyScreen = () => {   
         
-        if (this.state.addContentTo === null){
+        if (this.state.selectedVideo === null){
             alert("Browse a video to upload")
         }
 
         else{
             screenIndex= this.state.screenName;
-            screenIndex= screenIndex.replace(" ","");             
-            videoName3= this.state.addContentTo;
-         
-            logFilesRef.child(`${screenIndex}`).push({ name: videoName3
+            screenIndex= screenIndex.replace(" ",""); 
+            
+            videoName3= this.state.selectedVideo.name;
+            videoSize=this.state.selectedVideo.size;
+            videoSize= `${videoSize/1000000}MB`;
+            
+            logFilesRef.child(`${screenIndex}`).push({ name: videoName3,
+                                                       size: videoSize
             }).on('child_added', function(snap) {
                     videoName3= videoName3.replace(/\s/g,'');
                     uploaded_videos.child(`${screenIndex}`).update({
@@ -181,6 +211,9 @@ class UploadVideo extends Component {
                                                                 Video_Name: videoName3
                                                                 });
               });
+
+            
+
 
             alert('Send to ' + `${screenIndex}`);
             
@@ -192,20 +225,23 @@ class UploadVideo extends Component {
     applyAll = () => {
         let numberOfChildren;
 
-        if (this.state.addContentTo === null){
+        if (this.state.selectedVideo === null){
             alert("Browse a video to upload")
         }
 
         else{
             
-            videoName3= this.state.addContentTo;
+            videoName3= this.state.selectedVideo.name;
+            videoSize=this.state.selectedVideo.size;
+            videoSize= `${videoSize/1000000}MB`;
             
             logFilesRef.once('value', function(snapshot) {
                numberOfChildren= snapshot.numChildren(); //get number of immediate children
                let i=0
                snapshot.forEach(function(snap){
                     i=i+1;
-                    logFilesRef.child(`Screen${i}`).push({  name: videoName3})
+                    logFilesRef.child(`Screen${i}`).push({  name: videoName3,
+                                                            size: videoSize})
                                 .on('child_added', function(snap) {
                                     videoName3= videoName3.replace(/\s/g,'');
                                     uploaded_videos.child(`Screen${i}`)
@@ -284,7 +320,7 @@ class UploadVideo extends Component {
             <div className="PromoLoop" >
                
                 <div>
-                    <h2 className="headerScheduler"> Upload Content </h2> 
+                    <h2 className="headerScheduler"> Upload New Content </h2> 
 
                     <span className="modalScheduler">
                             <Modal 
@@ -298,53 +334,47 @@ class UploadVideo extends Component {
                 </div>
 
                 <div className="row">
+                     <div className="col s6">
+                        <br/> 
+                        <Button className="updateBtn" onClick={() => {
+                                this.showUploadNewContent();}}
+                            > Upload New Content </Button> 
+                    </div>
+
+                    <div className="col s6">
+                        <br/> 
+                        <Button className="updateBtn" onClick={() => {
+                                this.showAddContent();}}
+                            > Add content to screen </Button> 
+                    </div>
+                </div>
+
+
+                <div className="row">
                     <div className="Scheduler">
-                        <div className= "col s12 Scheduler">  
-                            <p className="titleHead"> Upload new content to central directory </p>
-                                <div className= "col s6 ">
-                                    <label> 
-                                            <input type="file"  
-                                            className="inputName" 
-                                            onChange={this.filesSelectedHandler} 
-                                            id={this.state.videoName}
-                                            />           
-                                    </label>
-                                
-                                </div>
-
-                                <div className="col s6">
-                                    <br/> 
-                                    <Button className="fixPaddingBar" onClick={() => {
-                                        this.fileUploadHandler();}}
-                                        >Upload File </Button> 
-                                        <br/>
-                                </div>
+                    <div className= "col s12 Scheduler">  
+                        <p> Upload new content to central directory </p>
+                        <div className= "col s6 ">
+                            <label> 
+                                    <input type="file"  
+                                    className="inputName" 
+                                    onChange={this.filesSelectedHandler} 
+                                    id={this.state.videoName}
+                                    />           
+                            </label>
+                         
                         </div>
-                        <div className="col s12">
-                                <ProgressBar progress={this.state.percent}/>
-                        </div>
-                    </div>
-                </div>
-               
-               
-                
-               
-               <div className="row">
-                    <div className="col s12">                   
-                                     
-                            <p className="subtitlesHead2"> All available videos  </p>
-                            <p> Please select a video to sync in screen(s) </p>
-                            
-                                <DropdownScreen 
-                                    handleChange={this.handleVideoChange}
-                                    name="video"
-                                    items={this.state.videoListPerScreen}
-                                />  
-                       
-                    </div>
-                </div>
-              
 
+                        <div className="col s6">
+                            <br/> 
+                            <Button className="updateBtn" onClick={() => {
+                                  this.fileUploadHandler();}}
+                                >Upload File </Button> 
+                        </div>
+                        <Line percent={this.state.percent} strokeWidth="2" strokeColor="#14a76c" />
+                    </div>
+                 </div>
+                </div>
 
                 <div className="row">
                     <div className=" col s6">
@@ -381,14 +411,25 @@ class UploadVideo extends Component {
 
                 <div className="row">
                   <div className="col s12">
-                    <br/>
-                    <p > Click on the following button to see the current videos per each screen</p> 
+                    <p > Click on the following button to see the current videos per each screen</p>
+                        <br/>
                         <Button onClick={() => {
                             this.showVideos();}}
                             > Show Videos </Button>     
                   </div>
                 </div>      
-                                
+                
+                <div className="row">
+                    <div className="col s12">
+                        <p > STORAGE </p>
+                            <br/>
+                            <Button onClick={() => {
+                                this. getAvailableStorage();}}
+                                > STORAGE </Button>     
+                    </div>
+                </div> 
+
+                
                 { this.state.showResults ? (
                     <div className="row">
                             <div className="pageCenter">
@@ -396,7 +437,7 @@ class UploadVideo extends Component {
                                     <thead>
                                         <tr>
                                             <th> Video Name</th>
-                                          
+                                            <th> Size </th>
                                         </tr>
                                     </thead>
 
@@ -405,7 +446,7 @@ class UploadVideo extends Component {
                                             Object.entries(this.state.videos).map(([key, videos]) => (
                                                 <tr key={key} >
                                                     <td> {videos.name}</td>
-                                                   
+                                                    <td> {videos.size} </td>
                                                 </tr>
 
                                             ))
