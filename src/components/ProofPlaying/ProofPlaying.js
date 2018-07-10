@@ -5,14 +5,10 @@ import {Button, Modal, Icon} from 'react-materialize';
 
 import firebase from 'firebase';
 import 'firebase/database';
+import firebaseApp from '../../firebase/firebaseApp';
 
 let storageRef;
-
-const screenName = [
-    { name: 'Screen 1', key: 1 },
-    { name: 'Screen 2', key: 2 },
-    { name: 'Screen 3', key: 3 },
-];
+let arrayScreens= [];
 
 const month = [
     { name: 'January', key: 1 },
@@ -38,14 +34,32 @@ for(let i = 1 ; i <= 31 ; i++ ) {
 
 class ProofPlaying extends Component {
     state = {
-        screenName: 'Screen 1',
+        screenName: 'Screen1',
         day: '1',
         month: 'January',
+        screenList: [],
+        screens: []
     }
 
     componentDidMount() {
         storageRef= firebase.storage().ref();
-        //console.log("initialize!")
+        
+        firebaseApp.database().ref(`Inventory`) //screens
+        .on('value', (data) => {
+            let values = data.val();
+            arrayScreens=[];
+            this.setState({ screens: values }, () => {
+              Object.keys(this.state.screens).map((key, index) => {
+                  arrayScreens.push({name: key, key:index}); 
+                  this.setState({screenList: arrayScreens }); 
+             }
+          );
+          });
+
+        }, (err) => {
+            console.log(err);
+        });
+
     }
 
     handleScreenChange = (name, value) => {
@@ -63,11 +77,9 @@ class ProofPlaying extends Component {
 
     dowloadLogFile(screen2download, file2download){
         console.log("Click!");
-        //let layer1 = 'imagenes';
         let layer1= 'LogFiles';
         let layer2= screen2download;
         let layer3= file2download;
-        //let image= 'logo.png';
     
         storageRef.child(layer1+ '/'+ layer2 +'/'+ layer3).getDownloadURL().then(function(url){    
             
@@ -106,11 +118,8 @@ class ProofPlaying extends Component {
                 let foundMonth= month.find(isMonth);
                 months= foundMonth.key;
                
-                
                 logFileName= `${screen}_(${currentYear}-${months}-${day}).txt`;
-                //console.log(logFileName);
-               
-                 this.dowloadLogFile(screen, logFileName);   
+                this.dowloadLogFile(screen, logFileName);   
             }
         });
 
@@ -144,7 +153,7 @@ class ProofPlaying extends Component {
                                 <DropdownScreen 
                                     handleChange={this.handleScreenChange}
                                     name="video"
-                                    items={screenName}
+                                    items={this.state.screenList}
                                 />
                             </div>
                         </div>

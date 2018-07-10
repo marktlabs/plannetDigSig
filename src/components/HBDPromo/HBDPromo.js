@@ -6,6 +6,7 @@ import Dropdown from '../Dropdown/Dropdown';
 
 import ReactPlayer from 'react-player';
 
+import 'firebase/database';
 import firebaseApp from '../../firebase/firebaseApp';
 
 let screen2Push;
@@ -21,20 +22,13 @@ let IntEndtHr;
 let IntEndMin;
 let name2render;
 let videoRender;
-
+let arrayScreens= [];
 
 const videoName = [
     { name: 'promo 1', key: 1 },
     { name: 'promo 2', key: 2 },
     { name: 'promo 3', key: 3 },
     { name:'default_video', key:4},
-];
-
-const screenName = [
-    { name: 'Screen 1', key: 1 },
-    { name: 'Screen 2', key: 2 },
-    { name: 'Screen 3', key: 3 },
-    { name: 'All Screens', key: 4 },
 ];
 
 const timeNumber = [];
@@ -75,8 +69,29 @@ class HBDPromo extends Component {
         schedulesShow: [],
         showResults: false,
         showResults2: false,
+        screenList: [],
+        screens: []
     }
 
+    componentDidMount() {
+
+        firebaseApp.database().ref(`Inventory`) //screens
+        .on('value', (data) => {
+            let values = data.val();
+            arrayScreens=[];
+            this.setState({ screens: values }, () => {
+              Object.keys(this.state.screens).map((key, index) => {
+                  arrayScreens.push({name: key, key:index}); 
+                  this.setState({screenList: arrayScreens }); 
+             }
+          );
+          });
+
+        }, (err) => {
+            console.log(err);
+        });
+    }
+    
     handleScreenChange = (name, value) => {
         this.setState({ screenName : value });
     }
@@ -167,21 +182,6 @@ class HBDPromo extends Component {
             this.setState({ showResults: false});
             this.setState({ showResults2: false});
             console.log(this.state.screenName);
-
-
-            //console.log(`Scheduler/${screenName2}/${daySelected}`);
-            /*
-            firebaseApp.database().ref(`Announcements/${screenName2}`)
-                .on('value', (data) => {
-                    let values = data.val();
-                    console.log("values", values);
-                    this.setState({ schedulesShow: values });
-                    this.setState({ showResults: true});
-
-                }, (err) => {
-                    console.log(err);
-                });   
-            */   
 
             if(screenName2 === "All Screens"){
                 alert("Select a different opction. i.e: Screen1, Screen2 ....");
@@ -321,13 +321,6 @@ class HBDPromo extends Component {
        window.location.reload();
     }
     
-   /*
-    componentDidMount() {
-        this.requestDB();
-        //this.showSchedules();
-         
-      }
-    */ 
 
     render() {
         return (
@@ -345,7 +338,7 @@ class HBDPromo extends Component {
                                 <div className="col s12" >
                                     <p>Lorem ipsum dolor sit gmet, consectetur adipiscing elit, sed do eiusmod tempor
                                         incididunt ut labore et dolore magna aliqua.</p>
-                                    
+                                        {/*
                                         <div className="videoModal">
                                             <ReactPlayer
                                             url='https://www.youtube.com/watch?v=JnFW32XA7pk' 
@@ -353,6 +346,7 @@ class HBDPromo extends Component {
                                             
                                             />
                                         </div>
+                                        */}
 
                                 </div>
                                                                 
@@ -368,7 +362,7 @@ class HBDPromo extends Component {
                         <DropdownScreen 
                             handleChange={this.handleScreenChange}
                             name="video"
-                            items={screenName}
+                            items={this.state.screenList}
                         />
                         
                        

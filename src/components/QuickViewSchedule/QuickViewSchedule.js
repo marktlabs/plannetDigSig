@@ -15,11 +15,7 @@ const daysName = [
     { name: 'Sunday', key: 6 },
 ];
 
-const screenName = [
-    { name: 'Screen 1', key: 1 },
-    { name: 'Screen 2', key: 2 },
-    { name: 'Screen 3', key: 3 },
-];
+let arrayScreens= [];
 
 class PromoLoop extends Component {
 
@@ -28,6 +24,27 @@ class PromoLoop extends Component {
         daySelected: 'Monday',
         schedules: [],
         showResults: false,
+        screenList: [],
+        screens: []
+    }
+
+    componentDidMount() {
+
+        firebaseApp.database().ref(`Inventory`) //screens
+        .on('value', (data) => {
+            let values = data.val();
+            arrayScreens=[];
+            this.setState({ screens: values }, () => {
+              Object.keys(this.state.screens).map((key, index) => {
+                  arrayScreens.push({name: key, key:index}); 
+                  this.setState({screenList: arrayScreens }); 
+             }
+          );
+          });
+
+        }, (err) => {
+            console.log(err);
+        });
     }
 
     showSchedules = () => {
@@ -35,16 +52,12 @@ class PromoLoop extends Component {
         const daySelected= this.state.daySelected;
         let screenName2 = this.state.screenName;
 
-        //const { screenName, daySelected } = this.state;
         const dayIndex = daysName.find(day => day.name === daySelected).key;
         screenName2= screenName2.replace(" ",""); 
-
-        console.log(`Scheduler/${screenName2}/${dayIndex}`);
-
+        //console.log(`Scheduler/${screenName2}/${dayIndex}`);
         firebaseApp.database().ref(`Scheduler/${screenName2}/${dayIndex}`)
             .on('value', (data) => {
                 let values = data.val();
-                console.log("values", values);
                 this.setState({ schedules: values });
 
             }, (err) => {
@@ -54,12 +67,6 @@ class PromoLoop extends Component {
 
     handleDayChange = (name, value) => {
         this.setState({ daySelected: value });
-
-        /*
-        this.setState(prevState => {
-            console.log("selectedDay;",this.state.daySelected);
-        });
-        */
     }
 
     handleScreenChange = (name, value) => {
@@ -105,7 +112,7 @@ class PromoLoop extends Component {
                             <DropdownScreen
                                 handleChange={this.handleScreenChange}
                                 name="video"
-                                items={screenName}
+                                items={this.state.screenList}
                             />
                         </div>
                     </div>
