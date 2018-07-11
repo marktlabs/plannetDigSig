@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import DropdownScreen from '../DropdownScreen/DropdownScreen';
 import {Table, Button, Modal, Icon} from 'react-materialize';
-
+import './DeleteVideo.css';
 
 import firebase from 'firebase';
 import 'firebase/database';
-import './DeleteVideo.css';
 import firebaseApp from '../../firebase/firebaseApp';
 
 let storageRef;

@@ -5,6 +5,10 @@ import DropdownScreen from '../DropdownScreen/DropdownScreen';
 
 import './PromoLoop.css';
 
+import firebase from 'firebase';
+import 'firebase/database';
+import firebaseApp from '../../firebase/firebaseApp';
+
 let response = [];
 let screen2Push;
 let video2Push;
@@ -20,19 +24,16 @@ let IntStartMin;
 let IntEndtHr;
 let IntEndMin;
 
-const videoName = [
-    { name: 'promo 1', key: 1 },
-    { name: 'promo 2', key: 2 },
-    { name: 'promo 3', key: 3 },
-    { name:'default_video', key:4},
-];
+let arrayScreens= [];
+let arrayVideos= [];
+let initialVideos;
+let videoName2;
+let screenName2;
 
-const screenName = [
-    { name: 'Screen 1', key: 1 },
-    { name: 'Screen 2', key: 2 },
-    { name: 'Screen 3', key: 3 },
-    { name: 'All Screens', key: 4 },
-];
+let promoLoopRef;
+let startDB;
+let endDB;
+
 
 const timeNumberMin = [];
 
@@ -47,7 +48,6 @@ for(let i = 0 ; i <= 59 ; i++ ) {
 for(let i = 0 ; i <= 23 ; i++ ) {
     timeNumberHour.push({name: `${i}`, key: i})
 }
-
 
 for (let i=0; i <= 23 ; i++){
 
@@ -76,19 +76,70 @@ for (let i=0; i <= 23 ; i++){
 class PromoLoop extends Component {
 
     state = {
-        screenName: 'Screen 1',
+        screenName: 'Screen1',
+        selectedVideo: 'test',
+        screenList: [],
+        videoList: [],
+        screens: [],
+        videos: [],
         schedules: [
             {
-                video: 'promo 1',
+                video: 'promo',
                 start: '00:00',
                 end: '00:00',
             },
         ]
     }
+    componentDidMount() {
+        
+        promoLoopRef= firebaseApp.database().ref().child("LoopPromo");
 
+        firebaseApp.database().ref(`Inventory`) //screens
+        .on('value', (data) => {
+            let values = data.val();
+            arrayScreens=[];
+            this.setState({ screens: values }, () => {
+              Object.keys(this.state.screens).map((key, index) => {
+                  arrayScreens.push({name: key, key:index}); 
+                  this.setState({screenList: arrayScreens }); 
+             }
+          );
+          });
+
+        }, (err) => {
+            console.log(err);
+        });
+        
+        screenName2 = this.state.screenName;
+
+        firebaseApp.database().ref(`Inventory/${screenName2}/`) // videos per screen
+        .on('value', (data) => {
+              let values = data.val();
+              this.setState({ videos: values }, () => {
+                arrayVideos = [];
+                arrayScreens = [];
+                Object.keys(this.state.videos).map((key, index) => {
+                    initialVideos = this.state.videos[key]
+                    videoName2= initialVideos.name;
+                    arrayVideos.push({name: videoName2, key:key});  
+                    this.setState({videoList: arrayVideos }) ; 
+              }
+            );
+            });
+          }, (err) => {
+              console.log(err);
+          });
+
+    }
+
+    handleVideoChange = (name, value) => {
+        this.setState({ selectedVideo: value});
+     
+        console.log("entraaa video change", value);
+        
+    }
 
     handleScheduleChange = (index, name, value) => {
-        console.log(index);
         const schedules = this.state.schedules;
         const scheduleToModify = schedules[index];
 
@@ -102,17 +153,96 @@ class PromoLoop extends Component {
 
 
     handleScreenChange = (name, value) => {
-        this.setState({ screenName: value});
+        this.setState({ screenName: value}, () => {
+        screenName2= this.state.screenName;
+            
+            firebaseApp.database().ref(`Inventory/${screenName2}/`) // videos per screen
+            .on('value', (data) => {
+                  let values = data.val();
+                  this.setState({ videos: values }, () => {
+                    arrayVideos = [];
+                    arrayScreens = [];
+                    Object.keys(this.state.videos).map((key, index) => {
+                        initialVideos = this.state.videos[key]
+                        videoName2= initialVideos.name;
+                        arrayVideos.push({name: videoName2, key:key});  
+                        this.setState({videoList: arrayVideos }) ; 
+                  }
+                );
+                });
+              }, (err) => {
+                  console.log(err);
+              });
+
+        });
     }
 
-    handleChangeToAll = () => {
-        this.setState({ screenName : "all" });
-    }
 
+    sendToDbAll = () => {
+        this.setState(prevState => {  
+            //pull states
+            startTime= this.state.schedules[0].start;
+            endTime= this.state.schedules[0].end;
+
+            //negative indexes
+            startHr = startTime.slice(0,-3);
+            startMin = startTime.slice(-2);
+
+            IntStartHr = parseInt(startHr,10);
+            IntStartMin = parseInt(startMin,10);
+
+            endHr = endTime.slice(0,-3);
+            endMin = endTime.slice(-2);
+
+            IntEndtHr = parseInt(endHr,10);
+            IntEndMin = parseInt(endMin,10);
+            
+            if (IntStartHr > IntEndtHr){
+                alert('Invalid Schedule');
+            }
+
+            if (IntStartHr === IntEndtHr && IntStartMin > IntEndMin){
+                alert('Invalid Schedule');
+            }
+
+            if (IntStartHr === IntEndtHr && IntStartMin === IntEndMin){
+                alert('Invalid Schedule');
+            }
+
+    
+            else{
+                let numberOfChildren;
+                let i=0;
+                
+                startDB= this.state.schedules[0].start;
+                endDB= this.state.schedules[0].end;
+                video2Push= this.state.selectedVideo;
+
+                console.log(startDB);
+                console.log(endDB);
+
+                promoLoopRef.once('value', function(snapshot) {
+                    numberOfChildren= snapshot.numChildren(); //get number of immediate children
+                    snapshot.forEach(function(snap){
+                        i=i+1;
+                        promoLoopRef.child(`Screen${i}`).update({
+                            "videoName": video2Push,
+                            "startTime": startDB,
+                            "endTime": endDB,
+                            "Trigger": 1
+                        });                
+                    });
+
+                    alert('Send to all screens');
+                    window.location.reload();
+                })
+             }   
+            
+
+       });      
+    }
 
     sendToDb = () => {
-        console.log("Clicked!")
-    
         this.setState(prevState => {
             //pull states
             startTime= this.state.schedules[0].start;
@@ -144,31 +274,28 @@ class PromoLoop extends Component {
             }
 
             
-            else{
-                //console.log("video ",`${this.state.schedules[0].video}.mp4`);
-                video2Push= this.state.schedules[0].video + '.mp4';
+            else{  
+                video2Push= this.state.selectedVideo;
                 screen2Push= this.state.screenName;
 
-                if (screen2Push === 'All Screens' ){
-                    screen2Push="all";
+                startDB= this.state.schedules[0].start;
+                endDB= this.state.schedules[0].end;
 
-                    response.push(screen2Push,video2Push,this.state.schedules[0].start,this.state.schedules[0].end);
-                    console.log(response);
-                    this.props.updateLoopPromo(response);
-                }
+                screen2Push= screen2Push.replace(" ",""); 
+                
+                promoLoopRef.once('value', function(snapshot) {
+                    promoLoopRef.child(`${screen2Push}`).update({
+                        "videoName": video2Push,
+                        "startTime": startDB,
+                        "endTime": endDB,
+                        "Trigger": 1
+                        });                
 
-                else{
-                    screen2Push= screen2Push.replace(" ",""); 
-                    response.push(screen2Push,video2Push,this.state.schedules[0].start,this.state.schedules[0].end);
-                    console.log(response);
-                    this.props.updateLoopPromo(response);
-                }
-
-            }
-            
+                    alert(`Send to ${screen2Push}`);
+                    window.location.reload();
+                })
+            } 
         });
-
-        window.location.reload();
     }
 
  
@@ -182,48 +309,60 @@ class PromoLoop extends Component {
                             <Modal 
                             header='Modal Header'
                             trigger={<Button waves='light'>Help!<Icon right> help </Icon></Button>}>
-                            <p>Lorem ipsum dolor sit agffgfgfgdgfgfgfgfgmet, consectetur adipiscing elit, sed do eiusmod tempor
+                            <p>Lorem ipsum dolor sit agmet, consectetur adipiscing elit, sed do eiusmod tempor
                                 incididunt ut labore et dolore magna aliqua.</p>
                             </Modal>
                         </span>
                 </div>
 
-                <div className="row">
-                    <div className= "selectScreenQS">
-                        <div className="col s12">
-                            <p className="subtitlesHead2"> Select the screen for scheduling content </p>
-                            <DropdownScreen 
-                                handleChange={this.handleScreenChange}
-                                name="video"
-                                items={screenName}
-                            />
+              
+                    <div className="row">
+                        <div className= "selectScreenLP">
+                            <div className="addBorder1">
+                                <div className="row">
+                                <div className="col s12">
+                                    <p className="subtitlesHead2"> Select the screen </p>
+                                    <DropdownScreen 
+                                        handleChange={this.handleScreenChange}
+                                        name="video"
+                                        items={this.state.screenList}
+                                    />
+                                </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>    
 
                 <div className="row">
                     <div className="col s12">
                         <p className="subtitlesHead2" > Set time for video promo looping </p>
+
+                        
                     {
                         this.state.schedules.map((value, index, key) => (
                             <Fragment key={index}>
                                 <div className="row">
-
                                     <div className="col s4">
-                                        <Dropdown 
-                                            handleChange={this.handleScheduleChange}
-                                            name="video"
-                                            index={index} 
-                                            items={videoName} />
-                                        
+                                        <p> Select video  </p>
+                                        <DropdownScreen 
+                                                handleChange={this.handleVideoChange}
+                                                name="video"
+                                                items={this.state.videoList}
+                                            />  
                                     </div>
 
                                     <div className="col s4">
-                                        <Dropdown handleChange={this.handleScheduleChange} name="start" index={index} items={timeNumber} />                                       
+                                        <p> Start Time </p>
+                                        <Dropdown handleChange={this.handleScheduleChange} 
+                                                name="start" index={index} 
+                                                items={timeNumber} />                                       
                                     </div>
 
                                     <div className="col s4">
-                                        <Dropdown handleChange={this.handleScheduleChange} name="end" index={index} items={timeNumber} />
+                                        <p> End Time </p>
+                                        <Dropdown handleChange={this.handleScheduleChange} 
+                                                name="end" index={index} 
+                                                items={timeNumber} />
                                     </div>
                                 </div>
                             </Fragment>
@@ -233,12 +372,21 @@ class PromoLoop extends Component {
                     
 
                 <div className="row">
-                    <div className="col12">
+                    <div className="col s6">
                         <Button 
                             onClick={() => {
                                 this.sendToDb();
                             }}
                         type="submit" value="Submit" > Apply! </Button>
+                      
+                    </div>
+
+                    <div className="col s6">
+                        <Button 
+                            onClick={() => {
+                                this.sendToDbAll();
+                            }}
+                        type="submit" value="Submit" > Apply All! </Button>
                       
                     </div>
                 </div>

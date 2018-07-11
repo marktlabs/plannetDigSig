@@ -16,9 +16,7 @@ class App extends Component {
     super();
 
     this.app = firebaseApp;
-    this.db = this.app.database().ref().child('BirthdaySection');
-    this.db2 = this.app.database().ref().child('LoopPromo');
-    this.db4 = this.app.database().ref().child('Scheduler');
+    this.db = this.app.database().ref().child('Scheduler');
 
   }
     
@@ -39,41 +37,15 @@ class App extends Component {
     });
   }
 
-  updateLoopPromo = (promoArray) => {
-
-    if (promoArray[0] === 'all') {    
-      for(let j=1; j<= 3; j++){
-          this.db2.child("Screen"+ j + '/').update({   "videoName": promoArray[1],
-                                                      "startTime": promoArray[2],
-                                                      "endTime": promoArray[3],
-                                                      "Trigger": 1
-                                                              });
-      }
-    }
-
-    else {
-      this.db2.child(promoArray[0]).update({
-        "videoName": promoArray[1],
-        "startTime": promoArray[2],
-        "endTime": promoArray[3],
-        "Trigger": 1
-      });
-    }
-
-  }
-
   updateScheduler = (schedulerArray) => {
-    console.log("entraa a responseee");
 
     for(let i=0 ; i < schedulerArray.length; i ++ ){
         console.log("schedulerArray.length", schedulerArray.length);
         console.log("i", i);
 
-        if(schedulerArray[i].screen === "all"){
-          console.log("entra a foooor");
-        
+        if(schedulerArray[i].screen === "all"){  
           for(let j=1; j<= 3; j++){
-              this.db4.child("Screen"+ j + '/').child(schedulerArray[i].dayIndex + '/' )
+              this.db.child("Screen"+ j + '/').child(schedulerArray[i].dayIndex + '/' )
                 .child(schedulerArray[i].scheduleIndex+'/').update({    "VideoName": schedulerArray[i].video,
                                                                       "startTime": schedulerArray[i].start,
                                                                       "endTime": schedulerArray[i].end,
@@ -82,7 +54,7 @@ class App extends Component {
         }
 
         else{
-        this.db4.child(schedulerArray[i].screen + '/').child(schedulerArray[i].dayIndex + '/' )
+        this.db.child(schedulerArray[i].screen + '/').child(schedulerArray[i].dayIndex + '/' )
           .child(schedulerArray[i].scheduleIndex+'/').update({    "VideoName": schedulerArray[i].video,
                                                                 "startTime": schedulerArray[i].start,
                                                                 "endTime": schedulerArray[i].end,
