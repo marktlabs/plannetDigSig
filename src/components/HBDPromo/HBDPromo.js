@@ -23,13 +23,8 @@ let IntEndMin;
 let name2render;
 let videoRender;
 let arrayScreens= [];
-
-const videoName = [
-    { name: 'promo 1', key: 1 },
-    { name: 'promo 2', key: 2 },
-    { name: 'promo 3', key: 3 },
-    { name:'default_video', key:4},
-];
+let arrayAnnoun =[];
+let values2;
 
 const timeNumber = [];
 
@@ -53,7 +48,6 @@ for (let i = 0; i <= 23; i++) {
 
 }
 
-
 class HBDPromo extends Component {
     
     state = {
@@ -70,10 +64,32 @@ class HBDPromo extends Component {
         showResults: false,
         showResults2: false,
         screenList: [],
-        screens: []
+        screens: [],
+        annoucements: [],
+        videosDropDown: []
     }
 
     componentDidMount() {
+        let announcementsRef= firebaseApp.database().ref().child("Inventory_Announcements/");
+        let numberOfChildren;
+        let i;
+
+        firebaseApp.database().ref(`Inventory_Announcements/`) //ANNOUNCEMENTS
+        .on('value', (data) => {
+            let values2 = data.val();
+            arrayAnnoun=[];
+            this.setState({ annoucements: values2 }, () => {
+              Object.keys(this.state.annoucements).map((key, index) => {
+                  arrayAnnoun.push({name: key, key:index}); 
+                  console.log("arrayAnnoun",arrayAnnoun);
+                  this.setState({videosDropDown: arrayAnnoun }); 
+             }
+          );
+          });
+
+        }, (err) => {
+            console.log(err);
+        });
 
         firebaseApp.database().ref(`Inventory`) //screens
         .on('value', (data) => {
@@ -450,7 +466,7 @@ class HBDPromo extends Component {
                                                     handleChange={this.handleScheduleChange}
                                                     name="video"
                                                     index={index} 
-                                                    items={videoName} />
+                                                    items={this.state.videosDropDown} />
                                                 
                                             </div>
 
