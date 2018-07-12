@@ -367,6 +367,10 @@ class HBDPromo extends Component {
         screen2Push= this.state.screenName;
         name2render= this.state.name;
         let inputText1= this.state.name;
+        video2Push= this.state.schedules[0].video;
+        startDB= this.state.schedules[0].start;
+        endDB= this.state.schedules[0].end;
+        
         
         console.log("screen2Push***",screen2Push);
         
@@ -416,8 +420,29 @@ class HBDPromo extends Component {
                     }
     
                     else{
-                        console.log("juat");
                         /*
+                        console.log(`Send to screen ${screen2Push}`);
+                        console.log(`VideoName1 ${video2Push}`);
+                        console.log(`Text1 ${inputText1}`);
+                        console.log(`startDB ${startDB}`);
+                        console.log(`endTime ${endTime}`);
+                        console.log(`Trigger1 ${1}`);
+                        */
+
+                        /*
+                        updateAnnounRef.child(`${screen2Push}`)
+                        .update({
+                            "Text1": inputText1,
+                            "VideoName1": video2Push,
+                            "startTime": startDB,
+                            "endTime": endDB,
+                            "Trigger1": 1    
+                         });
+                         */
+                         
+                        console.log(`Send to screen ${screen2Push}`)
+
+                         
                         updateAnnounRef.once('value', function(snapshot){
                         numberOfChildren=snapshot.numChildren();
                             
@@ -427,14 +452,15 @@ class HBDPromo extends Component {
                                     "VideoName1": video2Push,
                                     "startTime": startDB,
                                     "endTime": endDB,
-                                    "Trigger": 1
+                                    "Trigger1": 1
                                            
                             });
 
-                            alert('Send to screen ');
-                           // window.location.reload();
+                            alert(`Send to screen ${screen2Push}`);
+                           window.location.reload();
                         })
-                        */
+                        
+                        
                     }
                 }
              
