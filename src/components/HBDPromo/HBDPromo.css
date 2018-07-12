@@ -21,22 +21,14 @@
 
 .inputName {
     padding-top: 25px;
-    
-
 }
 
 input[type="text"] {
     width: 400px;
     border: 1px solid #ccc;
+    margin-bottom: 0px;
 }
 
-
-
-.subtitlesHead3{
-    color:#08b219;
-    padding-top: 20px;
-    padding-bottom: 5px;
-}
 
 .subtitlesHead4{
     color:#08b219;
@@ -61,4 +53,19 @@ input[type="text"] {
     box-shadow: 0 2px 3px #ccc;
     padding: 10px;
     text-align: center;
+}
+
+.subtitlesHeadAnn1{
+    color: #C2185B;
+    font-size:18px;
+}
+
+.subtitlesHeadAnn2{
+    color: black;
+    font-size:18px;
+}
+
+.addBorderAnnoun{
+    border:double #cb2d6f;
+   
 }

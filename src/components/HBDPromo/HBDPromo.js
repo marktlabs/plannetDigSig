@@ -25,6 +25,11 @@ let videoRender;
 let arrayScreens= [];
 let arrayAnnoun =[];
 let values2;
+let startDB;
+let endDB;
+let video2Push;
+let updateAnnounRef;
+let announcementsRef;
 
 const timeNumber = [];
 
@@ -56,8 +61,8 @@ class HBDPromo extends Component {
         schedules: [
             {
                 video: 'video 1',
-                start: 0,
-                end: 0,
+                start: '00:00',
+                end: '00:00',
             },
         ],
         schedulesShow: [],
@@ -66,11 +71,15 @@ class HBDPromo extends Component {
         screenList: [],
         screens: [],
         annoucements: [],
-        videosDropDown: []
+        videosDropDown: [],
+        quantityInput: 0,
+        warning: false
     }
 
     componentDidMount() {
-        let announcementsRef= firebaseApp.database().ref().child("Inventory_Announcements/");
+        announcementsRef= firebaseApp.database().ref().child("Inventory_Announcements/");
+        updateAnnounRef= firebaseApp.database().ref().child("Announcements");
+
         let numberOfChildren;
         let i;
 
@@ -78,9 +87,14 @@ class HBDPromo extends Component {
         .on('value', (data) => {
             let values2 = data.val();
             arrayAnnoun=[];
+            console.log("values2", values2);
+            
             this.setState({ annoucements: values2 }, () => {
               Object.keys(this.state.annoucements).map((key, index) => {
-                  arrayAnnoun.push({name: key, key:index}); 
+                  arrayAnnoun.push({name: values2[key].name, key:index}); 
+                  
+                  //se lee todo el objeto con values2[key]
+                  //console.log("values2[key]",values2[key].name);
                   console.log("arrayAnnoun",arrayAnnoun);
                   this.setState({videosDropDown: arrayAnnoun }); 
              }
@@ -126,7 +140,23 @@ class HBDPromo extends Component {
 
 
     handleChange = (event) => {
-        this.setState({ name: event.target.value});
+        let variable= event.target.value;
+        let n = variable.length;
+
+        if (n > 50){
+            n= n - 50;
+            n= n*(-1);
+            this.setState({quantityInput: n});
+            this.setState({warning: true});
+        }
+        
+        else{
+            n= 50 - n;
+            this.setState({quantityInput: n});
+            this.setState({warning: false});
+            this.setState({ name: event.target.value});
+        }
+       
     }
 
     changeTrigger2 = () =>{
@@ -168,7 +198,7 @@ class HBDPromo extends Component {
                     for (let i=1; i<=3 ; i++){
                         firebaseApp.database().ref().child(`Announcements/Screen${i}`)
                         .update({ "Text2": name2render,
-                                "VideoName2": videoRender + '.mp4',
+                                "VideoName2": videoRender,
                                 "Trigger2": 1 });  
                         
                     }
@@ -179,7 +209,7 @@ class HBDPromo extends Component {
 
                     firebaseApp.database().ref().child(`Announcements/${screen2Push}`)
                     .update({ "Text2": name2render,
-                            "VideoName2": videoRender + '.mp4',
+                            "VideoName2": videoRender,
                             "Trigger2": 1 });                      
                 }
             
@@ -253,12 +283,93 @@ class HBDPromo extends Component {
         });
     }
 
+    sendAllToDb = () => {
+        let numberOfChildren;
+        let i=0;
+        let inputText1= this.state.name;
+        startDB= this.state.schedules[0].start;
+        endDB= this.state.schedules[0].end;
+        video2Push= this.state.schedules[0].video;
+
+        if (inputText1 === ""){
+            alert("Fill all the inputs!")
+        }  
+
+        else{
+            
+            if (this.state.schedules[0].start === "" ||
+                    this.state.schedules[0].end === "" ||
+                    this.state.screenName === "" ||
+                    this.state.schedules[0].video === "") {
+                    alert("Not valid entry!, fill all the inputs")
+            }
+
+            if (this.state.schedules[0].start !== "" && this.state.schedules[0].end !== "" &&
+                this.state.screenName !== "" && this.state.schedules[0].video !== "") {
+                    //pull states
+                    startTime = this.state.schedules[0].start;
+                    endTime = this.state.schedules[0].end;
+                    console.log('StartTime',startTime);
+    
+                    //negative indexes
+                    startHr = startTime.slice(0, -3);
+                    startMin = startTime.slice(-2);
+    
+                    IntStartHr = parseInt(startHr,10);
+                    IntStartMin = parseInt(startMin,10);
+    
+                    endHr = endTime.slice(0, -3);
+                    endMin = endTime.slice(-2);
+    
+                    IntEndtHr = parseInt(endHr,10);
+                    IntEndMin = parseInt(endMin,10);
+    
+                    if (IntStartHr > IntEndtHr) {
+                        alert('Invalid Schedule');
+                    }
+    
+                    if (IntStartHr === IntEndtHr && IntStartMin > IntEndMin) {
+                        alert('Invalid Schedule');
+                    }
+    
+                    if (IntStartHr === IntEndtHr && IntStartMin === IntEndMin) {
+                        alert('Invalid Schedule');
+                    }
+    
+                    else{
+                        updateAnnounRef.once('value', function(snapshot){
+                        numberOfChildren=snapshot.numChildren();
+                            snapshot.forEach(function(snap){
+                                i=i+1;
+                                updateAnnounRef.child(`Screen${i}`).update({
+                                    "Text1": inputText1,
+                                    "VideoName1": video2Push,
+                                    "startTime": startDB,
+                                    "endTime": endDB,
+                                    "Trigger": 1
+                                });                
+                            });
+
+                            alert('Send to all screens');
+                            window.location.reload();
+                        })
+                    }
+            }
+        }
+    }
+
     sendToDb = () => {
-        console.log("Clicked!")
+        let numberOfChildren;
+        let i=0;
+
         this.setState(prevState => {
         
+        screen2Push= this.state.screenName;
         name2render= this.state.name;
-
+        let inputText1= this.state.name;
+        
+        console.log("screen2Push***",screen2Push);
+        
         if (name2render === ""){
             alert("Fill all the inputs!")
         }  
@@ -304,37 +415,32 @@ class HBDPromo extends Component {
                         alert('Invalid Schedule');
                     }
     
-                    else {
-                        screen2Push= this.state.screenName;
-    
-                        if (screen2Push === 'All Screens' ){
-                            for (let i=1; i<=3 ; i++){
-                                firebaseApp.database().ref().child(`Announcements/Screen${i}`)
-                                .update({ "Text1": name2render,
-                                        "VideoName1": this.state.schedules[0].video +'.mp4',
-                                        "startTime": this.state.schedules[0].start,
-                                        "endTime": this.state.schedules[0].end,
-                                        "Trigger1": 1 });  
-                            }
-                        }   
-    
-                        else{
-                            screen2Push= screen2Push.replace(" ",""); 
-                                                        
-                            firebaseApp.database().ref().child(`Announcements/${screen2Push}`)
-                            .update({ "Text1": name2render,
-                                       "VideoName1": this.state.schedules[0].video +'.mp4',
-                                       "startTime": this.state.schedules[0].start,
-                                       "endTime": this.state.schedules[0].end,
-                                      "Trigger1": 1 });   
+                    else{
+                        console.log("juat");
+                        /*
+                        updateAnnounRef.once('value', function(snapshot){
+                        numberOfChildren=snapshot.numChildren();
                             
-                        }
+                                i=i+1;
+                                updateAnnounRef.child(`${screen2Push}`).update({
+                                    "Text1": inputText1,
+                                    "VideoName1": video2Push,
+                                    "startTime": startDB,
+                                    "endTime": endDB,
+                                    "Trigger": 1
+                                           
+                            });
+
+                            alert('Send to screen ');
+                           // window.location.reload();
+                        })
+                        */
                     }
                 }
              
             }
         });
-       window.location.reload();
+      
     }
     
 
@@ -494,10 +600,17 @@ class HBDPromo extends Component {
                                 placeholder="Enter input for announcement ..."
                                 onChange={this.handleChange} 
                         />
+                        <h6> The max input lenght: 50 characters  </h6>
+                        { this.state.warning  ? (
+                            <p className="subtitlesHeadAnn1"> Please enter input with less content 
+                                (Input content: {this.state.quantityInput})</p>
+                            ): <p className="subtitlesHeadAnn2"> Input content: {this.state.quantityInput}</p>
+
+                        }
                     </div>
                 </div>
                 
-
+               <div className="addBorderAnnoun"> 
                 <div className = "row">    
                     <div className="col s6">
                         <p> Trigger with scheduled configure </p>
@@ -509,32 +622,45 @@ class HBDPromo extends Component {
                                 
                     <div className="col s6">
                     <br/>
+                        <div className="col s6">
                             <Button  
                                 onClick={() => {
                                     this.sendToDb();
                             }}
-                            type="submit" value="Apply"> Apply! </Button>
-                    </div>
+                            type="submit" value="Apply"> Screen </Button>
+                        </div>
 
-                    <div className="col s6">
-                    <br/>
+                            <div className="col s6">
+                                <Button  
+                                    onClick={() => {
+                                        this.sendAllToDb();
+                                }}
+                                type="submit" value="Apply"> All </Button>
+                             </div>
+                    </div>
+                    
+                   
                         <div className="col s6">
-                            <Button  
-                                onClick={() => {
-                                    this.sendApplyNow();
-                            }}
-                            type="submit" value="Apply"> Enable! </Button>
-                        </div>
-                       
-                        <div className="col s6">
-                            {''}
-                            <Button  
-                                onClick={() => {
-                                    this.changeTrigger2();
-                            }}
-                            type="submit" value="Apply"> Disable! </Button>
-                        </div>
-                    </div>        
+                        <br/>
+                            <div className="col s6">
+                                <Button  
+                                    onClick={() => {
+                                        this.sendApplyNow();
+                                }}
+                                type="submit" value="Apply"> Enable! </Button>
+                            </div>
+                        
+                            <div className="col s6">
+                                {''}
+                                <Button  
+                                    onClick={() => {
+                                        this.changeTrigger2();
+                                }}
+                                type="submit" value="Apply"> Disable! </Button>
+                            </div>
+                        </div>  
+                   
+                  </div>
                 </div>
 
             </div>
