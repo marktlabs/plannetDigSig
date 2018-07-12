@@ -25,22 +25,9 @@ let arrayScreens= [];
 let screenName2;
 let videoName2;
 let initialVideos;
+let schedulerRef;
 
 let response= [];
-
-const videoName = [
-    { name: 'video 1', key: 1 },
-    { name: 'video 2', key: 2 },
-    { name: 'video 3', key: 3 },
-];
-
-const screenName = [
-    { name: 'Screen 1', key: 1 },
-    { name: 'Screen 2', key: 2 },
-    { name: 'Screen 3', key: 3 },
-    { name: 'All Screens', key: 4 },
-];
-
 const timeNumber = [];
 
 
@@ -87,6 +74,7 @@ class SchedulerContent extends Component {
     }
 
     componentDidMount() {
+        schedulerRef= firebaseApp.database().ref().child("Scheduler");
         screenName2 = this.state.screenName;
         videoName2 = "";
         initialVideos;
@@ -196,18 +184,11 @@ class SchedulerContent extends Component {
         this.props.handleSubmit(this.state.schedules, this.props.dayIndex);
     }
     
-    sendToDb = () => {
-
-        console.log("screenName", this.state.screenName);
-        console.log("this.state.schedules[0].start", this.state.schedules[0].start);
-        console.log("this.state.schedules[0].end", this.state.schedules[0].end);
-        console.log("this.state.schedules[0].video", this.state.schedules[0].video);
-        console.log("this.props.dayIndex", this.props.dayIndex);
-        
-        
+    sendToDb = () => {        
         this.setState(prevState => {
-        
-        for (let i=0; i < this.state.schedules.length; i++ ){
+            let daySelected= this.props.dayIndex;
+
+             for (let i=0; i < this.state.schedules.length; i++ ){
                 if (this.state.schedules[0].start === "" ||
                     this.state.schedules[0].end === "" ||
                     this.state.screenName === "" ||
@@ -247,50 +228,47 @@ class SchedulerContent extends Component {
 
                     else {
                         screen2Push= this.state.screenName;
+                        const self = this;
 
-                        if (screen2Push === 'All Screens' ){
-                            
-                            screen2Push="all";
-                            
-                            response.push({
-                                scheduleIndex: 'schedule'+ (i+1),
-                                dayIndex:this.props.dayIndex,
-                                screen: screen2Push,
-                                video: this.state.schedules[i].video +'.mp4',
-                                start:this.state.schedules[i].start,
-                                end: this.state.schedules[i].end,
-                                scheduleSelected: this.state.scheduleSelected,
-                            });
-                                
-                          
-                            this.props.updateScheduler(response);
+                        if (screen2Push === 'all' ){
+                            let numberOfChildren;
+                            schedulerRef.once('value', function(snapshot){
+                                numberOfChildren=snapshot.numChildren();
+                                let j=0;
+                                snapshot.forEach(function(snap){
+                                    j=j+1;
+                                    schedulerRef.child(`Screen${j}/${daySelected}/schedule${i+1}`).update({
+                                        "VideoName":self.state.schedules[i].video,
+                                        "startTime": self.state.schedules[i].start,
+                                        "endTime":  self.state.schedules[i].end, 
+                                    });            
+                                });
+        
+                                alert('Send to all screens');
+                                window.location.reload();
 
+                                })
                         }   
 
                         else{
-                            console.log("entra else")
                             screen2Push= screen2Push.replace(" ",""); 
                             
-                            response.push({
-                                scheduleIndex: 'schedule'+ (i+1),
-                                dayIndex:this.props.dayIndex,
-                                screen: screen2Push,
-                                video: this.state.schedules[i].video +'.mp4',
-                                start:this.state.schedules[i].start,
-                                end: this.state.schedules[i].end,
-                            });
-                                
-                            this.props.updateScheduler(response);
+                            schedulerRef.once('value', function(snapshot){
+                                schedulerRef.child(`${self.state.screenName}/${daySelected}/schedule${i+1}`).update({
+                                    "VideoName":self.state.schedules[i].video,
+                                    "startTime": self.state.schedules[i].start,
+                                    "endTime":  self.state.schedules[i].end,
+                                });            
+                        
+                                alert(`Send to ${self.state.screenName}`);
+                                window.location.reload();
+
+                            })
                         }
-
-
                     }
-
                 }
              }
         });
-        
-      
     }
 
     render() {
