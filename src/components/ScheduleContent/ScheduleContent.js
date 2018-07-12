@@ -4,6 +4,10 @@ import { Row, Button } from 'react-materialize';
 import Dropdown from '../Dropdown/Dropdown';
 import DropdownScreen from '../DropdownScreen/DropdownScreen'
 
+import firebase from 'firebase';
+import 'firebase/database';
+import firebaseApp from '../../firebase/firebaseApp';
+
 //concat mp4 format
 let startTime;
 let endTime;
@@ -16,6 +20,11 @@ let IntStartMin;
 let IntEndtHr;
 let IntEndMin;
 let screen2Push;
+let arrayVideos= [];
+let arrayScreens= [];
+let screenName2;
+let videoName2;
+let initialVideos;
 
 let response= [];
 
@@ -33,6 +42,7 @@ const screenName = [
 ];
 
 const timeNumber = [];
+
 
 for (let i = 0; i <= 23; i++) {
 
@@ -59,10 +69,14 @@ class SchedulerContent extends Component {
     state = {
         scheduleValue: '',
         dayOfWeek: '',
+        videos: '',
         indexState: '',
         value: 'coconut',
-        screenName: 'Screen 1',
+        screenName: 'Screen1',
         listOfSchedule: [],
+        screens: [],
+        screenList: [],
+        videoList: [],
         schedules: [
             {
                 video: 'video 1',
@@ -71,6 +85,53 @@ class SchedulerContent extends Component {
             },
         ]
     }
+
+    componentDidMount() {
+        screenName2 = this.state.screenName;
+        videoName2 = "";
+        initialVideos;
+
+        firebaseApp.database().ref(`Inventory/${screenName2}/`) // videos per screen
+        .on('value', (data) => {
+              let values = data.val();
+              this.setState({ videos: values }, () => {
+                arrayVideos = [];
+                arrayScreens = [];
+                Object.keys(this.state.videos).map((key, index) => {
+                    initialVideos = this.state.videos[key]
+                    videoName2= initialVideos.name;
+                    arrayVideos.push({name: videoName2, key:key});  
+                    this.setState({videoList: arrayVideos }) ; 
+              }
+            );
+            });
+          }, (err) => {
+              console.log(err);
+          });
+
+        firebaseApp.database().ref(`Inventory`) //screens
+        .on('value', (data) => {
+            let values = data.val();
+            this.setState({ screens: values }, () => {
+              arrayScreens=[];
+              Object.keys(this.state.screens).map((key, index) => {
+                  arrayScreens.push({name: key, key:index}); 
+                  this.setState({screenList: arrayScreens }); 
+             }
+          );
+          });
+
+        }, (err) => {
+            console.log(err);
+        });
+    }
+
+    selectAll = () => { //Select all screens!
+        console.log("Select all screens!");
+        alert("Selected all screens")
+        this.setState({screenName: "all"});
+    }
+
 
     addSchedule = () => {
         const schedules = this.state.schedules;
@@ -96,7 +157,27 @@ class SchedulerContent extends Component {
     }
 
     handleScreenChange = (name, value) => {
-        this.setState({ screenName: value });
+        this.setState({ screenName: value }, () => { //change videos to show in dropdown
+            firebaseApp.database().ref(`Inventory/${value}/`) // videos per screen
+            .on('value', (data) => {
+                arrayVideos = [];
+                arrayScreens = [];
+                
+                let values = data.val();
+                this.setState({ videos: values }, () => {
+                    console.log
+                    Object.keys(this.state.videos).map((key, index) => {
+                        initialVideos = this.state.videos[key]
+                        videoName2= initialVideos.name;
+                        arrayVideos.push({name: videoName2, key:key});  
+                        this.setState({videoList: arrayVideos }) ; 
+                        }
+                    );
+                });
+            }, (err) => {
+                console.log(err);
+            });
+        });
     }
 
     removeSchedule = (index) => {
@@ -116,6 +197,14 @@ class SchedulerContent extends Component {
     }
     
     sendToDb = () => {
+
+        console.log("screenName", this.state.screenName);
+        console.log("this.state.schedules[0].start", this.state.schedules[0].start);
+        console.log("this.state.schedules[0].end", this.state.schedules[0].end);
+        console.log("this.state.schedules[0].video", this.state.schedules[0].video);
+        console.log("this.props.dayIndex", this.props.dayIndex);
+        
+        
         this.setState(prevState => {
         
         for (let i=0; i < this.state.schedules.length; i++ ){
@@ -129,12 +218,9 @@ class SchedulerContent extends Component {
                 if (this.state.schedules[0].start !== "" && this.state.schedules[0].end !== "" &&
                     this.state.screenName !== "" && this.state.schedules[0].video !== "") {
 
-                    //pull states
                     startTime = this.state.schedules[0].start;
                     endTime = this.state.schedules[0].end;
-                    //console.log('StartTime',startTime);
-
-                    //negative indexes
+                    
                     startHr = startTime.slice(0, -3);
                     startMin = startTime.slice(-2);
 
@@ -176,7 +262,7 @@ class SchedulerContent extends Component {
                                 scheduleSelected: this.state.scheduleSelected,
                             });
                                 
-                            //console.log("send response", response);
+                          
                             this.props.updateScheduler(response);
 
                         }   
@@ -194,8 +280,6 @@ class SchedulerContent extends Component {
                                 end: this.state.schedules[i].end,
                             });
                                 
-                            //console.log("send response", response);
-                            
                             this.props.updateScheduler(response);
                         }
 
@@ -205,6 +289,7 @@ class SchedulerContent extends Component {
                 }
              }
         });
+        
       
     }
 
@@ -219,15 +304,27 @@ class SchedulerContent extends Component {
                     <br />
                     <br />
 
-                    <div className="col s12 ">
-
-                        <p className="subtitlesHead2 "> Select the screen for scheduling content </p>
-
-                        <DropdownScreen
-                            handleChange={this.handleScreenChange}
-                            name="video"
-                            items={screenName}
-                        />
+                    <div className="row ">
+                        <div className="col s12">
+                            <div className="col s6">
+                                <p className="subtitlesHeadSchedule "> Select a screen  </p>
+                                <DropdownScreen
+                                    handleChange={this.handleScreenChange}
+                                    name="video"
+                                    items={this.state.screenList}
+                                />
+                            </div>
+                            <div className="col s6">
+                                <div className="btnMargin">
+                                    <Button  
+                                        onClick={() => {
+                                            this.selectAll();
+                                        }}
+                                        type="submit" value="Apply"> All Screen 
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     {
@@ -248,7 +345,7 @@ class SchedulerContent extends Component {
                                                 handleChange={this.handleScheduleChange}
                                                 name="video"
                                                 index={index}
-                                                items={videoName} />
+                                                items={this.state.videoList} />
                                         </Row >
                                     </div>
 

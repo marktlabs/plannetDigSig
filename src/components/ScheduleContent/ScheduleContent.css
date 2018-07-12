@@ -16,10 +16,13 @@
     color: #cb2d6f;
 }
 
-.subtitlesHead2{
+.btnMargin{
+    margin-top: 30px;
+}
+
+.subtitlesHeadSchedule{
     color: #C2185B;
-    padding-top: 25px;
-    padding-bottom: 5px;
+    
 }
 
 .fixPaddingTitles{

@@ -171,9 +171,6 @@ class DeleteVideo extends Component {
             screenName2 = this.state.screenName;
             screenName2= screenName2.replace(" ",""); 
             let video2delete=  this.state.deleteVideo;
-
-            console.log('imagenes/'+`${screenName2}/${this.state.deleteVideo}`);
-            console.log("video2delete*********", video2delete);
             
                 logFilesRef.child(`${screenName2}`).orderByChild('name').equalTo(video2delete).once('value').then(function(snapshot) {  
                         console.log("the key is ",snapshot.key);
