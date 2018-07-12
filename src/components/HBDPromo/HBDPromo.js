@@ -179,32 +179,35 @@ class HBDPromo extends Component {
             }
         });
 
-        window.location.reload();
+        //window.location.reload();
     }
 
     sendApplyNow = () => {
         let numberOfChildren;
         let inputText2;
-        let i;
+       
 
         this.setState(prevState => {
+            
             inputText2= this.state.name;
             video2Push= this.state.schedules[0].video;
             startDB= this.state.schedules[0].start;
             endDB= this.state.schedules[0].end;
             screen2Push= this.state.screenName;
+            console.log(screen2Push);
     
             if (name2render === ""){
                 alert("Fill all the inputs!");
             }  
 
             else {
-                if (screen2Push === "All Screens" ){
-
+                if (screen2Push === "all" ){
+                    let i=0;
                     updateAnnounRef.once('value', function(snapshot){
                         numberOfChildren=snapshot.numChildren();
                             snapshot.forEach(function(snap){
                                 i=i+1;
+                                console.log(`Screen${i}`);
                                 updateAnnounRef.child(`Screen${i}`).update({
                                     "Text2": inputText2,
                                     "VideoName2": video2Push,
@@ -217,6 +220,7 @@ class HBDPromo extends Component {
                             alert('Send to all screens');
                             window.location.reload();
                         })
+                      
                 }
         
                else{
@@ -237,7 +241,6 @@ class HBDPromo extends Component {
             }
         });
 
-        window.location.reload();
     }
 
 
@@ -387,7 +390,7 @@ class HBDPromo extends Component {
         video2Push= this.state.schedules[0].video;
         startDB= this.state.schedules[0].start;
         endDB= this.state.schedules[0].end;
-        
+       
         if (name2render === ""){
             alert("Fill all the inputs!")
         }  
@@ -452,6 +455,12 @@ class HBDPromo extends Component {
         });
       
     }
+
+    selectAll = () => {
+        console.log("Select all screens!");
+        alert("Selected all screens")
+        this.setState({screenName: "all"});
+    }
     
 
     render() {
@@ -487,8 +496,8 @@ class HBDPromo extends Component {
                     
                     </div>
 
-
-                    <div className="col s12">
+                <div className="row"> 
+                    <div className="col s6">
                            <p className="subtitlesHead2"> Select a screen for trigger </p>
                         
                         <DropdownScreen 
@@ -496,9 +505,17 @@ class HBDPromo extends Component {
                             name="video"
                             items={this.state.screenList}
                         />
-                        
-                       
                     </div>
+                    <div className="col s6">
+                           <p className="subtitlesHead2"> Click to select all screens </p>
+                             <Button  
+                                    onClick={() => {
+                                        this.selectAll();
+                                        
+                                }}
+                            type="submit" value="Apply"> All Screen </Button>
+                    </div>
+                </div>
 
 
                     <div className="col s12">
