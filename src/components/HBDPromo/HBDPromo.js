@@ -159,7 +159,7 @@ class HBDPromo extends Component {
        
     }
 
-    changeTrigger2 = () =>{
+    changeTrigger2 = () =>{  //turns off the "enable aler"
         let numberOfChildren;
         this.setState(prevState => {
             screen2Push= this.state.screenName;
@@ -253,8 +253,7 @@ class HBDPromo extends Component {
 
     }
 
-
-    requestDB = () => {  // shows current schedules per screen: annoucements and alerts
+    requestDB = () => {  // shows current schedules per screen
         let screenName2;
         this.setState(prevState => {
             screenName2= this.state.screenName;
@@ -312,81 +311,6 @@ class HBDPromo extends Component {
         });
     }
 
-    sendAllToDb = () => {
-        let numberOfChildren;
-        let i=0;
-        let inputText1= this.state.name;
-        startDB= this.state.schedules[0].start;
-        endDB= this.state.schedules[0].end;
-        video2Push= this.state.schedules[0].video;
-
-        if (inputText1 === ""){
-            alert("Fill all the inputs!")
-        }  
-
-        else{
-            
-            if (this.state.schedules[0].start === "" ||
-                    this.state.schedules[0].end === "" ||
-                    this.state.screenName === "" ||
-                    this.state.schedules[0].video === "") {
-                    alert("Not valid entry!, fill all the inputs")
-            }
-
-            if (this.state.schedules[0].start !== "" && this.state.schedules[0].end !== "" &&
-                this.state.screenName !== "" && this.state.schedules[0].video !== "") {
-                    //pull states
-                    startTime = this.state.schedules[0].start;
-                    endTime = this.state.schedules[0].end;
-                    console.log('StartTime',startTime);
-    
-                    //negative indexes
-                    startHr = startTime.slice(0, -3);
-                    startMin = startTime.slice(-2);
-    
-                    IntStartHr = parseInt(startHr,10);
-                    IntStartMin = parseInt(startMin,10);
-    
-                    endHr = endTime.slice(0, -3);
-                    endMin = endTime.slice(-2);
-    
-                    IntEndtHr = parseInt(endHr,10);
-                    IntEndMin = parseInt(endMin,10);
-    
-                    if (IntStartHr > IntEndtHr) {
-                        alert('Invalid Schedule');
-                    }
-    
-                    if (IntStartHr === IntEndtHr && IntStartMin > IntEndMin) {
-                        alert('Invalid Schedule');
-                    }
-    
-                    if (IntStartHr === IntEndtHr && IntStartMin === IntEndMin) {
-                        alert('Invalid Schedule');
-                    }
-    
-                    else{
-                        updateAnnounRef.once('value', function(snapshot){
-                        numberOfChildren=snapshot.numChildren();
-                            snapshot.forEach(function(snap){
-                                i=i+1;
-                                updateAnnounRef.child(`Screen${i}`).update({
-                                    "Text1": inputText1,
-                                    "VideoName1": video2Push,
-                                    "startTime": startDB,
-                                    "endTime": endDB,
-                                    "Trigger1": 1
-                                });                
-                            });
-
-                            alert('Send to all screens');
-                            window.location.reload();
-                        })
-                    }
-            }
-        }
-    }
-
     sendToDb = () => {
         let numberOfChildren;
         let i=0;
@@ -400,6 +324,8 @@ class HBDPromo extends Component {
         video2Push= this.state.schedules[0].video;
         startDB= this.state.schedules[0].start;
         endDB= this.state.schedules[0].end;
+
+        console.log("screen2push",screen2Push);
        
         if (name2render === ""){
             alert("Fill all the inputs!")
@@ -443,21 +369,41 @@ class HBDPromo extends Component {
                     }
     
                     else{ 
-                        updateAnnounRef.once('value', function(snapshot){
-                        numberOfChildren=snapshot.numChildren();
-                            
-                                i=i+1;
-                                updateAnnounRef.child(`${screen2Push}`).update({
-                                    "Text1": inputText1,
-                                    "VideoName1": video2Push,
-                                    "startTime": startDB,
-                                    "endTime": endDB,
-                                    "Trigger1": 1                  
-                            });
 
-                           alert(`Send to screen ${screen2Push}`);
-                           window.location.reload();
-                        })  
+                        if(screen2Push == "all"){
+                            updateAnnounRef.once('value', function(snapshot){
+                                numberOfChildren=snapshot.numChildren();
+                                    snapshot.forEach(function(snap){
+                                        i=i+1;
+                                        updateAnnounRef.child(`Screen${i}`).update({
+                                            "Text1": inputText1,
+                                            "VideoName1": video2Push,
+                                            "startTime": startDB,
+                                            "endTime": endDB,
+                                            "Trigger1": 1
+                                        });                
+                                    });
+        
+                                    alert('Send to all screens');
+                                    window.location.reload();
+                                })
+                        }
+
+                        else{
+                            updateAnnounRef.once('value', function(snapshot){
+                                updateAnnounRef.child(`${screen2Push}`).update({
+                                        "Text1": inputText1,
+                                        "VideoName1": video2Push,
+                                        "startTime": startDB,
+                                        "endTime": endDB,
+                                        "Trigger1": 1                  
+                                });
+    
+                               alert(`Send to screen ${screen2Push}`);
+                               window.location.reload();
+                            })  
+                        }
+                        
                     }
                 }
              
@@ -654,26 +600,19 @@ class HBDPromo extends Component {
                     </div>
                     
                     <div> 
-                        <p> No schedule and for "All Screens" </p>
+                        <p> No schedule (Disable by user) </p>
                     </div>
                                 
                     <div className="col s6">
                     <br/>
-                        <div className="col s6">
+                        
                             <Button  
                                 onClick={() => {
                                     this.sendToDb();
                             }}
-                            type="submit" value="Apply"> Screen </Button>
-                        </div>
+                            type="submit" value="Apply"> Apply </Button>
+                       
 
-                            <div className="col s6">
-                                <Button  
-                                    onClick={() => {
-                                        this.sendAllToDb();
-                                }}
-                                type="submit" value="Apply"> All </Button>
-                             </div>
                     </div>
                     
                    
