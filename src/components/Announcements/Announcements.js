@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import './HBDPromo.css';
+import './Announcements.css';
 import { Button, Modal, Icon, Table } from 'react-materialize';
 import DropdownScreen from '../DropdownScreen/DropdownScreen';
 import Dropdown from '../Dropdown/Dropdown';
@@ -53,7 +53,7 @@ for (let i = 0; i <= 23; i++) {
 
 }
 
-class HBDPromo extends Component {
+class Announcements extends Component {
     
     state = {
         screenName: 'Screen 1',
@@ -421,7 +421,7 @@ class HBDPromo extends Component {
 
     render() {
         return (
-            <div className="HBDPromo" >
+            <div className="Announcements" >
                 <div className="row"> 
 
                     <div>
@@ -644,4 +644,4 @@ class HBDPromo extends Component {
     }
 }
 
-export default HBDPromo;
+export default Announcements;

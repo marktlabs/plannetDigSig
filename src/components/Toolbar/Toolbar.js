@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
 import './Toolbar.css';
 import Scheduler from '../Scheduler/Scheduler';
-import HBDPromo from '../HBDPromo/HBDPromo';
+import Announcements from '../Announcements/Announcements';
 import PromoLoop from '../PromoLoop/PromoLoop';
 import PowerSettings from '../PowerSettings/PowerSettings';
 import ProofPlaying from '../ProofPlaying/ProofPlaying';
@@ -112,20 +112,16 @@ class Toolbar extends Component {
               schedulerSection={this.props.schedulerSection} />}
             />
             
-            <Route exact path="/quickViewSchedule" render={() => <QuickViewSchedule
-              showSchedules={this.props.showSchedules}
-              />}
+            <Route exact path="/quickViewSchedule" render={() => <QuickViewSchedule/>}
             />
 
             <Route path="/proofPlaying" component={ProofPlaying} />
             
            
-            <Route exact path="/announcements" render={() => <HBDPromo
-              updateAnnouncement={this.props.updateAnnouncement} />}
+            <Route exact path="/announcements" render={() => <Announcements />}
             />
 
-            <Route exact path="/loopPromo" render={() => <PromoLoop
-              updateLoopPromo={this.props.updateLoopPromo} />}
+            <Route exact path="/loopPromo" render={() => <PromoLoop />}
             />
 
             <Route exact path="/powerSettings" render={() => <PowerSettings/>}/>
