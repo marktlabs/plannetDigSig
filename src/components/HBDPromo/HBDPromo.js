@@ -160,22 +160,33 @@ class HBDPromo extends Component {
     }
 
     changeTrigger2 = () =>{
+        let numberOfChildren;
         this.setState(prevState => {
             screen2Push= this.state.screenName;
             
-            if (screen2Push === "All Screens" ){
-                    for (let i=1; i<=3 ; i++){
-                        firebaseApp.database().ref().child(`Announcements/Screen${i}`)
-                        .update({"Trigger2": 0 });  
-                        
-                    }
+            if (screen2Push === "all" ){
+                let i=0;
+                updateAnnounRef.once('value', function(snapshot){
+                    numberOfChildren=snapshot.numChildren();
+                        snapshot.forEach(function(snap){
+                            i=i+1;
+                            console.log(`Screen${i}`);
+                            updateAnnounRef.child(`Screen${i}`).update({"Trigger2": 0 });  
+                        });
+
+                        alert('Disable to all screens');
+                        window.location.reload();
+                })
+                   
             }
         
             else{
-                screen2Push= screen2Push.replace(" ",""); 
+                updateAnnounRef.once('value', function(snapshot){
+                    updateAnnounRef.child(`${screen2Push}`).update({"Trigger2": 0 });  
 
-                firebaseApp.database().ref().child(`Announcements/${screen2Push}`)
-                    .update({"Trigger2": 0 });                      
+                    alert(`Disable screen ${screen2Push}`);
+                    window.location.reload();
+                })                      
             }
         });
 
@@ -219,8 +230,7 @@ class HBDPromo extends Component {
 
                             alert('Send to all screens');
                             window.location.reload();
-                        })
-                      
+                    }) 
                 }
         
                else{
@@ -235,7 +245,7 @@ class HBDPromo extends Component {
 
                             alert(`Send to screen ${screen2Push}`);
                             window.location.reload();
-                        })                     
+                    })                     
                 }
             
             }
