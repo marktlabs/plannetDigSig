@@ -22,7 +22,6 @@ let videoName3;
 let arrayPerScreen = [];
 let arrayVideos = [];
 let arrayScreens= [];
-let gralInventory;
 
 class UploadVideo extends Component {
     state = {
@@ -41,7 +40,7 @@ class UploadVideo extends Component {
     }
 
     componentDidMount() {
-        gralInventory= firebaseApp.database().ref().child("General_Inventory");
+        
         storageRef= firebase.storage().ref();
         logFilesRef= firebaseApp.database().ref().child("Inventory");
         videosRef= firebaseApp.database().ref().child("General_Inventory");
@@ -250,45 +249,31 @@ class UploadVideo extends Component {
         screenIndex= this.state.screenName;
         screenIndex= screenIndex.replace(" ",""); 
         
-        let existInDatabase= false;
-       
-        //query de buscar archivo
-        gralInventory.orderByChild('name').equalTo(`${videoNameDB}`).on("child_added", function(data) {
-            console.log(data.val().name);   
-            existInDatabase= true;
-        });
+        
+        let uploadTask= storageRef.child(`videosInventory/${videoName}`).put(this.state.selectedVideo);
+        const self = this;
 
-        if (existInDatabase == false){
-            let uploadTask= storageRef.child(`videosInventory/${videoName}`).put(this.state.selectedVideo);
-            const self = this;
+        uploadTask.on('state_changed',
+            function(snapshot){
+                progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                //console.log('Upload is ' + progress + '% done');
+                self.setState({percent: progress }) ; 
+               
 
-            uploadTask.on('state_changed',
-                function(snapshot){
-                    progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    //console.log('Upload is ' + progress + '% done');
-                    self.setState({percent: progress }) ; 
-                
+            }, function(error){
+                alert("hubo un error")
 
-                }, function(error){
-                    alert("hubo un error")
-
-                }, function(){  //success callback
-                    uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
-                        //console.log('File available at ', downloadURL);
-                        videosRef.push({ name: videoNameDB, 
-                                        size: videoSize, 
-                                        url: downloadURL});
-                        
-                        window.location.reload();
-                    });
-                }
-                )
-        }
-        else{
-            alert("Cannot be added, File already exists in database")
-        }
-            
-        }
+            }, function(){  //success callback
+                uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+                    //console.log('File available at ', downloadURL);
+                    videosRef.push({ name: videoNameDB, 
+                                    size: videoSize, 
+                                    url: downloadURL});
+                    
+                    window.location.reload();
+                });
+            }
+        )}
     }
 
     render() {
@@ -308,18 +293,11 @@ class UploadVideo extends Component {
                     </span>
                 
                 </div>
-                
-                <div className="row">
-                    <div className="col s12">
-                    </div>
-                </div>
 
-                <div className="addBorderUpload">
-                    <div className="row">
-                        
-                            <h5> Upload new content to central directory </h5>
-                            
-                            <div className="row">
+                <div className="row">
+                    <div className="Scheduler">
+                        <div className= "col s12 Scheduler">  
+                            <p className="titleHead"> Upload new content to central directory </p>
                                 <div className= "col s6 ">
                                     <label> 
                                             <input type="file"  
@@ -332,17 +310,14 @@ class UploadVideo extends Component {
                                 </div>
 
                                 <div className="col s6">
-                                    <Button  className="uploadBtn" onClick={() => {
+                                    <br/> 
+                                    <Button className="fixPaddingBar" onClick={() => {
                                         this.fileUploadHandler();}}
                                         >Upload File </Button> 
-                                    <br/>
+                                        <br/>
                                 </div>
-                            </div>
-                       
-                    </div>
-                    <div className="row">
+                        </div>
                         <div className="col s12">
-                                
                                 <ProgressBar progress={this.state.percent}/>
                         </div>
                     </div>
@@ -350,8 +325,8 @@ class UploadVideo extends Component {
    
                <div className="row">
                     <div className="col s12">                   
-                            <br/>
-                            <p className="titleHead"> All available videos  </p>
+                                     
+                            <p className="subtitlesHead2"> All available videos  </p>
                             <p> Please select a video to sync in screen(s) </p>
                             
                                 <DropdownScreen 
@@ -367,13 +342,12 @@ class UploadVideo extends Component {
 
                 <div className="row">
                     <div className=" col s6">
-                        <br/>   
-                        <p className="titleHead"> Select a screen </p>
-                        <DropdownScreen 
-                            handleChange={this.handleScreenChange}
-                            name="video"
-                            items={this.state.screenList}
-                        />
+                                <p className="subtitlesHead2"> Select a screen </p>
+                                <DropdownScreen 
+                                    handleChange={this.handleScreenChange}
+                                    name="video"
+                                    items={this.state.screenList}
+                                />
                     </div>
                 </div>
             
@@ -382,6 +356,7 @@ class UploadVideo extends Component {
                 
                         <div className="col s6">
                             <p> Upload video to selected screen </p>
+                            <br/>
                                 <Button onClick={() => {
                                     this.applyScreen();}}
                                     > Send </Button>     
@@ -390,6 +365,7 @@ class UploadVideo extends Component {
                     
                         <div className="col s6">
                             <p> Upload video to all screens</p>
+                            <br/>
                                 <Button onClick={() => {
                                     this.applyAll();}}
                                     > Send All Screens! </Button>     

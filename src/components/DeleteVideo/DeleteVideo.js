@@ -137,8 +137,9 @@ class DeleteVideo extends Component {
         else {
             let videoStorage;
             let video2delete=  this.state.deleteVideoRoot;
-            videoStorage= video2delete.replace(/\s/g,'');
-            var desertRef = storageRef.child('videosInventory/'+`${video2delete}`);
+            videoStorage= video2delete.replace(/\s/g,''); //deletes all blanks in string
+
+            var desertRef = storageRef.child('videosInventory/'+`${videoStorage}`);
 
             //eliminar el archivo y borrarlo destorage a db
             desertRef.delete().then(function() {
@@ -149,6 +150,7 @@ class DeleteVideo extends Component {
                     //console.log("snapshot.val()",snapshot.val());
                     let key = Object.keys(snapshot.val())[0]; //timestamp fb_key
                     gralInventory.child(key).remove();
+                   
     
                 }).catch(function(error) {
                     // Uh-oh, an error occurred!
@@ -158,7 +160,8 @@ class DeleteVideo extends Component {
             }).catch(function(error) {
                 // Uh-oh, an error occurred!
                     alert("Video not found");
-                });             
+            });
+            alert(`${videoStorage} deleted!`);             
         }
     }
 
