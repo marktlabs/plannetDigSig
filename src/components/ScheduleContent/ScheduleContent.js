@@ -27,6 +27,7 @@ let videoName2;
 let initialVideos;
 let schedulerRef;
 let inventoryRef;
+let numberOfChildren;
 
 let response= [];
 const timeNumber = [];
@@ -84,7 +85,7 @@ class SchedulerContent extends Component {
         screenName2 = this.state.screenName;
         videoName2 = "";
         initialVideos;
-        let numberOfChildren;
+        numberOfChildren;
 
         let arrayVideos2;
         let arrayScreens2;
@@ -93,7 +94,7 @@ class SchedulerContent extends Component {
 
         inventoryRef.on('value', (data) => {
             numberOfChildren=data.numChildren();
-            let values2 = data.val(); // aquí ya esta toda la tabla 
+            let values2 = data.val(); //all records in inventory
             arrayVideos2 = [];
             arrayScreens2 = [];
             
@@ -101,37 +102,22 @@ class SchedulerContent extends Component {
                 firebaseApp.database().ref(`Inventory/Screen${i}/`) // videos per screen
                 .on('value', (data) => {
                 let values2 = data.val();
-                console.log("values2", values2.key);
                 
                 this.setState({ videos2: values2 }, () => {
                 
-
                 Object.keys(this.state.videos2).map((key, index) => {
-                    
-                    initialVideos2 = this.state.videos2[key]
-                    /*
-                    console.log("initialVideos2", initialVideos2.name);
-                    console.log("key", key);
-                    console.log("Screen",i);
-                    */
-                    
-                    //arrayVideos2.push({name: initialVideos2.name, key:key, Screen: i});  this is an object
-                    arrayVideos2.push(initialVideos2.name);
-                    
-                    //this.setState({videoList2: arrayVideos }) ; 
-                    }
+                        initialVideos2 = this.state.videos2[key]
+                        //arrayVideos2.push({name: initialVideos2.name, key:key, Screen: i});  this is an object
+                        arrayVideos2.push(initialVideos2.name);
+                        }
                     );
                 });
                 }, (err) => {
                         console.log(err);
                         });
             }
-            console.log("The content is: ", arrayVideos2);
-            let arrayLength=  arrayVideos2.length;
-
-            
-            let biggestCount=0;
-            let mostRepeated=0;
+           
+            let arrayLength=  arrayVideos2.length;  
             let commonVideos= [];
             let k=0;
             var  count = {};
@@ -139,13 +125,11 @@ class SchedulerContent extends Component {
                 k=k+1;
                 count[i] = (count[i]||0) + 1;
                 //console.log("i",i); //i es el contenido del array
-                
                 if(count[i] >= numberOfChildren){
                     commonVideos.push({name: i, key:k});
                 }
             });
-            console.log("the count",count);
-            console.log("Common videos", commonVideos);
+            //console.log("the count",count); // all videos
             this.setState({commonDropDown:commonVideos});
 
         }, (err) => {
@@ -313,7 +297,7 @@ class SchedulerContent extends Component {
                         const self = this;
 
                         if (screen2Push === 'all' ){
-                            let numberOfChildren;
+                            numberOfChildren;
                             schedulerRef.once('value', function(snapshot){
                                 numberOfChildren=snapshot.numChildren();
                                 let j=0;
@@ -399,7 +383,7 @@ class SchedulerContent extends Component {
                                     { this.state.showCommonDrop ? (
                                         <div className="row">
                                         <div className="col s12">
-                                            <p className="subtitlesHeadSchedule "> Common videos  </p>
+                                            <p className="subtitlesHeadSchedule "> Common videos, schedule in all screens  </p>
                                                 <Dropdown
                                                     handleChange={this.handleScheduleChange}
                                                     name="video"
@@ -411,7 +395,7 @@ class SchedulerContent extends Component {
                                             
                                             <div className="col s12">
                                             <Row >
-                                                <p className="subtitlesHeadSchedule"> Video name for {this.state.screenName} </p>
+                                                <p className="subtitlesHeadSchedule"> Select a video in {this.state.screenName} to schedule </p>
                                                 <Dropdown
                                                     handleChange={this.handleScheduleChange}
                                                     name="video"
