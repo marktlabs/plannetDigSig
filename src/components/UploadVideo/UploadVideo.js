@@ -92,8 +92,9 @@ class UploadVideo extends Component {
           firebaseApp.database().ref(`Inventory`) //screens
           .on('value', (data) => {
               let values = data.val();
-              arrayScreens=[];
+             
               this.setState({ screens: values }, () => {
+                arrayScreens=[];
                 Object.keys(this.state.screens).map((key, index) => {
                     arrayScreens.push({name: key, key:index}); 
                     this.setState({screenList: arrayScreens }); 

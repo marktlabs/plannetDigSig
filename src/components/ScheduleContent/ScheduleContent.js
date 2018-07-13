@@ -26,6 +26,7 @@ let screenName2;
 let videoName2;
 let initialVideos;
 let schedulerRef;
+let inventoryRef;
 
 let response= [];
 const timeNumber = [];
@@ -64,6 +65,10 @@ class SchedulerContent extends Component {
         screens: [],
         screenList: [],
         videoList: [],
+        videos2: [],
+        commonDropDown: [],
+        showCommonDrop: false,
+        videoList2: [],
         schedules: [
             {
                 video: 'video 1',
@@ -75,9 +80,78 @@ class SchedulerContent extends Component {
 
     componentDidMount() {
         schedulerRef= firebaseApp.database().ref().child("Scheduler");
+        inventoryRef= firebaseApp.database().ref().child("Inventory");
         screenName2 = this.state.screenName;
         videoName2 = "";
         initialVideos;
+        let numberOfChildren;
+
+        let arrayVideos2;
+        let arrayScreens2;
+        let initialVideos2;
+        let videoName3;
+
+        inventoryRef.on('value', (data) => {
+            numberOfChildren=data.numChildren();
+            let values2 = data.val(); // aquí ya esta toda la tabla 
+            arrayVideos2 = [];
+            arrayScreens2 = [];
+            
+            for (let i=1; i<= numberOfChildren; i++){
+                firebaseApp.database().ref(`Inventory/Screen${i}/`) // videos per screen
+                .on('value', (data) => {
+                let values2 = data.val();
+                console.log("values2", values2.key);
+                
+                this.setState({ videos2: values2 }, () => {
+                
+
+                Object.keys(this.state.videos2).map((key, index) => {
+                    
+                    initialVideos2 = this.state.videos2[key]
+                    /*
+                    console.log("initialVideos2", initialVideos2.name);
+                    console.log("key", key);
+                    console.log("Screen",i);
+                    */
+                    
+                    //arrayVideos2.push({name: initialVideos2.name, key:key, Screen: i});  this is an object
+                    arrayVideos2.push(initialVideos2.name);
+                    
+                    //this.setState({videoList2: arrayVideos }) ; 
+                    }
+                    );
+                });
+                }, (err) => {
+                        console.log(err);
+                        });
+            }
+            console.log("The content is: ", arrayVideos2);
+            let arrayLength=  arrayVideos2.length;
+
+            
+            let biggestCount=0;
+            let mostRepeated=0;
+            let commonVideos= [];
+            let k=0;
+            var  count = {};
+            arrayVideos2.forEach(function(i) { 
+                k=k+1;
+                count[i] = (count[i]||0) + 1;
+                //console.log("i",i); //i es el contenido del array
+                
+                if(count[i] >= numberOfChildren){
+                    commonVideos.push({name: i, key:k});
+                }
+            });
+            console.log("the count",count);
+            console.log("Common videos", commonVideos);
+            this.setState({commonDropDown:commonVideos});
+
+        }, (err) => {
+                console.log(err);
+            });
+
 
         firebaseApp.database().ref(`Inventory/${screenName2}/`) // videos per screen
         .on('value', (data) => {
@@ -118,6 +192,7 @@ class SchedulerContent extends Component {
         console.log("Select all screens!");
         alert("Selected all screens")
         this.setState({screenName: "all"});
+        this.setState({showCommonDrop:true});
     }
 
 
@@ -145,6 +220,7 @@ class SchedulerContent extends Component {
     }
 
     handleScreenChange = (name, value) => {
+        
         this.setState({ screenName: value }, () => { //change videos to show in dropdown
             firebaseApp.database().ref(`Inventory/${value}/`) // videos per screen
             .on('value', (data) => {
@@ -165,7 +241,13 @@ class SchedulerContent extends Component {
             }, (err) => {
                 console.log(err);
             });
+
+            this.setState({showCommonDrop:false});
         });
+    }
+
+    handleVideoChange = (name, value) => {
+        this.setState({ screenName: value });
     }
 
     removeSchedule = (index) => {
@@ -247,7 +329,7 @@ class SchedulerContent extends Component {
                                 alert('Send to all screens');
                                 window.location.reload();
 
-                                })
+                            })
                         }   
 
                         else{
@@ -278,10 +360,8 @@ class SchedulerContent extends Component {
                     <div className="col s12">
                         <h6 className="headerSContent"> Only four schedules per day can be added </h6>
                     </div>
-
                     <br />
                     <br />
-
                     <div className="row ">
                         <div className="col s12">
                             <div className="col s6">
@@ -304,7 +384,7 @@ class SchedulerContent extends Component {
                             </div>
                         </div>
                     </div>
-
+                
                     {
                         this.state.schedules.map((value, index) => (
                             <Fragment key={index}>
@@ -316,25 +396,42 @@ class SchedulerContent extends Component {
 
                                 <div className="row" >
 
-                                    <div className="col s4">
-                                        <Row >
-                                            <p className="subtitlesHead2"> Video name </p>
-                                            <Dropdown
-                                                handleChange={this.handleScheduleChange}
-                                                name="video"
-                                                index={index}
-                                                items={this.state.videoList} />
-                                        </Row >
-                                    </div>
+                                    { this.state.showCommonDrop ? (
+                                        <div className="row">
+                                        <div className="col s12">
+                                            <p className="subtitlesHeadSchedule "> Common videos  </p>
+                                                <Dropdown
+                                                    handleChange={this.handleScheduleChange}
+                                                    name="video"
+                                                    index={index}
+                                                    items={this.state.commonDropDown}
+                                                />            
+                                        </div>
+                                        </div>): ( 
+                                            
+                                            <div className="col s12">
+                                            <Row >
+                                                <p className="subtitlesHeadSchedule"> Video name for {this.state.screenName} </p>
+                                                <Dropdown
+                                                    handleChange={this.handleScheduleChange}
+                                                    name="video"
+                                                    index={index}
+                                                    items={this.state.videoList} />
+                                            </Row >
+                                        </div>
 
-                                    <div className="col s4">
+                                        )
+                                    }
+                                </div>
+                                <div className="row">
+                                    <div className="col s6">
                                         <Row >
                                             <p className="subtitlesHead2" > Start time </p>
                                             <Dropdown handleChange={this.handleScheduleChange} name="start" index={index} items={timeNumber} />
                                         </Row >
                                     </div>
 
-                                    <div className="col s4">
+                                    <div className="col s6">
                                         <Row >
                                             <p className="subtitlesHead2"> End time </p>
                                             <Dropdown handleChange={this.handleScheduleChange} name="end" index={index} items={timeNumber} />
