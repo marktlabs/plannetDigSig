@@ -48,9 +48,8 @@ input[type="text"] {
 
 .borderSchedule {
     width: 90%;
-    margin: 10px auto;
-    border: 1px solid #eee;
-    box-shadow: 0 2px 3px #ccc;
+    margin: 15px auto;
+    border: 1px solid #C2185B;
     padding: 10px;
     text-align: center;
 }
@@ -68,4 +67,14 @@ input[type="text"] {
 .addBorderAnnoun{
     border:double #cb2d6f;
    
+}
+
+
+.btnMargin2{
+    margin-top: 15px;
+}
+
+
+.fixTop{
+    margin-top: 15px;
 }

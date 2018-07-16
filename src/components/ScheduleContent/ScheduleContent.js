@@ -383,7 +383,7 @@ class SchedulerContent extends Component {
                                         onClick={() => {
                                             this.selectAll();
                                         }}
-                                        type="submit" value="Apply"> All Screen 
+                                        type="submit" value="Apply"> All Screens
                                     </Button>
                                 </div>
                             </div>

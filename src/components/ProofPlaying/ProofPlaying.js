@@ -147,38 +147,42 @@ class ProofPlaying extends Component {
 
 
                 <div className="row">
-                        <div className="col s4">
-                            <div >
-                                <p className="subtitlesHead2 "> Select a screen </p>
+                    <div className="col s12">
+                        <div className="fixTop">
+                            <div className="col s4">
+                                <div >
+                                <p className="titleHead "> Select a screen </p>
                                 <DropdownScreen 
                                     handleChange={this.handleScreenChange}
                                     name="video"
                                     items={this.state.screenList}
                                 />
+                                </div>
                             </div>
-                        </div>
 
-                         <div className="col s4">
-                            <div >
-                                <p className="subtitlesHead2 "> Select a day</p>
+                            <div className="col s4">
+                                <div >
+                                <p className="titleHead "> Select a day</p>
                                 <DropdownScreen 
                                     handleChange={this.handleDayChange}
                                     name="days"
                                     items={days}
                                 />
+                                </div>
                             </div>
-                        </div>
 
-                         <div className="col s4">
-                            <div >
-                                <p className="subtitlesHead2 "> Select a month </p>
+                            <div className="col s4">
+                                <div >
+                                <p className="titleHead "> Select a month </p>
                                 <DropdownScreen 
                                     handleChange={this.handleMonthChange}
                                     name="month"
                                     items={month}
                                 />
+                                </div>
                             </div>
                         </div>
+                    </div>
                 </div>    
                
 

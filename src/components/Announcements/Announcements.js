@@ -453,23 +453,27 @@ class Announcements extends Component {
                     </div>
 
                 <div className="row"> 
-                    <div className="col s6">
-                           <p className="subtitlesHead2"> Select a screen for trigger </p>
-                        
-                        <DropdownScreen 
-                            handleChange={this.handleScreenChange}
-                            name="video"
-                            items={this.state.screenList}
-                        />
-                    </div>
-                    <div className="col s6">
-                           <p className="subtitlesHead2"> Click to select all screens </p>
-                             <Button  
-                                    onClick={() => {
-                                        this.selectAll();
-                                        
-                                }}
-                            type="submit" value="Apply"> All Screen </Button>
+                    <div className="col s12"> 
+                        <div  className="fixTop">
+                            <div className="col s6">
+                                <p className="titleHead"> Select a screen for trigger </p>
+                                
+                                <DropdownScreen 
+                                    handleChange={this.handleScreenChange}
+                                    name="video"
+                                    items={this.state.screenList}
+                                />
+                            </div>
+                            <div className="col s6">
+                                <p className="titleHead"> Click to select all screens </p>
+                                    <Button  
+                                            onClick={() => {
+                                                this.selectAll();
+                                                
+                                        }}
+                                    type="submit" value="Apply"> All Screen </Button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -490,53 +494,59 @@ class Announcements extends Component {
                          
                         { this.state.showResults ? (
                             <div className="row">
-                             <br/>
-                              <p> Current ANNOUNCEMENT playing </p>
-                                <div className="pageCenter">
-                                    <Table className="quickTable">
-                                        <thead>
-                                            <tr>
-                                                <th>Video Name</th>
-                                                <th>Start Time</th>
-                                                <th>End Time</th>
-                                                <th>Text1</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr >
-                                                <td> {this.state.schedulesShow.VideoName1} </td>
-                                                <td> {this.state.schedulesShow.startTime} </td>
-                                                <td> {this.state.schedulesShow.endTime} </td>
-                                                <td> {this.state.schedulesShow.Text1} </td>
-                                            </tr>
-                                        </tbody>
-                                    </Table>
+                              <div className="col s12">
+                                <div className="fixTop">
+                                    <p className="titleHead"> Current ANNOUNCEMENT playing </p>
+                                    <div className="pageCenter">
+                                        <Table className="quickTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>Video Name</th>
+                                                    <th>Start Time</th>
+                                                    <th>End Time</th>
+                                                    <th>Text1</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr >
+                                                    <td> {this.state.schedulesShow.VideoName1} </td>
+                                                    <td> {this.state.schedulesShow.startTime} </td>
+                                                    <td> {this.state.schedulesShow.endTime} </td>
+                                                    <td> {this.state.schedulesShow.Text1} </td>
+                                                </tr>
+                                            </tbody>
+                                        </Table>
+                                    </div>
                                 </div>
-                            </div>)  : 
-                            <p>  <br/> No announcement playing </p>
+                              </div>
+                            </div>)  : <p> No announcement playing </p>
                         }
 
                         { this.state.showResults2 ? (
                             <div className="row">
-                            <br/>
-                             <p> Current ALERT playing </p>
-                                <div className="pageCenter">
-                                    <Table className="quickTable">
-                                        <thead>
-                                            <tr>
-                                                <th>Video Name</th>
-                                                <th>Alert</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr >
-                                                <td> {this.state.schedulesShow.VideoName2} </td>
-                                                <td> {this.state.schedulesShow.Text2} </td>
-                                            </tr>
-                                        </tbody>
-                                    </Table>
+                                <div className="col s12">
+                                    <div className="fixTop">
+                                        <p className="titleHead"> Current ALERT playing </p>
+                                        <div className="pageCenter">
+                                            <Table className="quickTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Video Name</th>
+                                                        <th>Alert</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr >
+                                                        <td> {this.state.schedulesShow.VideoName2} </td>
+                                                        <td> {this.state.schedulesShow.Text2} </td>
+                                                    </tr>
+                                                </tbody>
+                                            </Table>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>)  : <p> No alert playing </p>
+                            </div>
+                            )  : <p> No alert playing </p>
                         }
                     </div>
 
@@ -544,7 +554,7 @@ class Announcements extends Component {
                     <div className="col s12">
                       <div className="col s12">
                       <div className="borderSchedule">
-                            <p className="subtitlesHead2" > Set time for video promo looping </p>
+                            <p className="titleHead" > Set time for video promo looping </p>
                             {
                                 this.state.schedules.map((value, index, key) => (
                                     <Fragment key={index}>
@@ -593,50 +603,58 @@ class Announcements extends Component {
                     </div>
                 </div>
                 
-               <div className="addBorderAnnoun"> 
-                <div className = "row">    
-                    <div className="col s6">
-                        <p> Trigger with scheduled configure </p>
-                    </div>
-                    
-                    <div> 
-                        <p> No schedule (Disable by user) </p>
-                    </div>
-                                
-                    <div className="col s6">
-                    <br/>
-                        
-                            <Button  
-                                onClick={() => {
-                                    this.sendToDb();
-                            }}
-                            type="submit" value="Apply"> Apply </Button>
-                       
-
-                    </div>
-                    
-                   
-                        <div className="col s6">
-                        <br/>
+                <div className="addBorderAnnoun"> 
+                    <div className = "row">    
+                        <div className="col s12">
                             <div className="col s6">
-                                <Button  
-                                    onClick={() => {
-                                        this.sendApplyNow();
-                                }}
-                                type="submit" value="Apply"> Enable! </Button>
+                                <div className="fixTop">
+                                    <p> Trigger with scheduled configure </p>
+                                </div>
+                            </div>
+                            
+                            <div className="col s6"> 
+                                <div className="fixTop">
+                                    <p> No schedule (Disable by user) </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div className="col s12">
+                            <div className="col s6">
+                                <div className="btnMargin2"> 
+                                    <Button  
+                                        onClick={() => {
+                                            this.sendToDb();
+                                    }}
+                                    type="submit" value="Apply"> Apply </Button>
+                                </div>
                             </div>
                         
+                    
                             <div className="col s6">
-                                {''}
-                                <Button  
-                                    onClick={() => {
-                                        this.changeTrigger2();
-                                }}
-                                type="submit" value="Apply"> Disable! </Button>
-                            </div>
-                        </div>  
-                   
-                  </div>
+                                <div className="col s6">
+                                    <div className="btnMargin2">
+                                        <Button  
+                                            onClick={() => {
+                                                this.sendApplyNow();
+                                        }}
+                                        type="submit" value="Apply"> Enable! </Button>
+                                    </div>
+                                </div>
+                            
+                                <div className="col s6">
+                                    <div className="btnMargin2">
+                                        {''}
+                                        <Button  
+                                            onClick={() => {
+                                                this.changeTrigger2();
+                                        }}
+                                        type="submit" value="Apply"> Disable! </Button>
+                                    </div>
+                                </div>
+                            </div>  
+                        </div>
+                    </div>
                 </div>
 
             </div>

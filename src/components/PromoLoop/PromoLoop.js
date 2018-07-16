@@ -320,16 +320,28 @@ class PromoLoop extends Component {
                         <div className= "selectScreenLP">
                             <div className="addBorder1">
                                 <div className="row">
-                                <div className="col s12">
-                                    <br/>
-                                    <p className="titleHead"> Select a screen </p>
-                                    <DropdownScreen 
-                                        handleChange={this.handleScreenChange}
-                                        name="video"
-                                        items={this.state.screenList}
-                                    />
-                                    <br/>
-                                </div>
+                                    <div className="col s12">
+                                        <div className="col s6">
+                                            <br/>
+                                            <p className="titleHead"> Select a screen </p>
+                                            <DropdownScreen 
+                                                handleChange={this.handleScreenChange}
+                                                name="video"
+                                                items={this.state.screenList}
+                                            />
+                                            <br/>
+                                        </div>
+
+                                        <div className="col s6">
+                                        <div  className="thBtn">
+                                            <Button 
+                                                onClick={() => {
+                                                    this.sendToDbAll();
+                                                }}
+                                            type="submit" value="Submit" > Apply All! </Button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -337,34 +349,41 @@ class PromoLoop extends Component {
 
                 <div className="row">
                     <div className="col s12">
-                        <p className="subtitlesHead2" > Set time for video promo looping </p>
-
-                        
+                        <p className="titleHead" > Set time for video promo looping </p>
+                        <br/>
                     {
                         this.state.schedules.map((value, index, key) => (
                             <Fragment key={index}>
                                 <div className="row">
-                                    <div className="col s4">
-                                        <p> Select video  </p>
-                                        <DropdownScreen 
-                                                handleChange={this.handleVideoChange}
-                                                name="video"
-                                                items={this.state.videoList}
-                                            />  
+                                    <div className="col s12">
+                                        <div className="col s12">
+                                            <p className="titleHead"> Select video  </p>
+                                            <div className="fixSelectMargin">
+                                            <DropdownScreen 
+                                                    handleChange={this.handleVideoChange}
+                                                    name="video"
+                                                    items={this.state.videoList}
+                                                /> 
+                                            </div> 
+                                        </div>
                                     </div>
+                                   
+                                    <div className="col s12"> 
+                                        <br/>
+                                        <p className="titleHead"> Set time</p>
+                                        <div className="col s6">
+                                            <p> Start Time </p>
+                                            <Dropdown handleChange={this.handleScheduleChange} 
+                                                    name="start" index={index} 
+                                                    items={timeNumber} />                                       
+                                        </div>
 
-                                    <div className="col s4">
-                                        <p> Start Time </p>
-                                        <Dropdown handleChange={this.handleScheduleChange} 
-                                                name="start" index={index} 
-                                                items={timeNumber} />                                       
-                                    </div>
-
-                                    <div className="col s4">
-                                        <p> End Time </p>
-                                        <Dropdown handleChange={this.handleScheduleChange} 
-                                                name="end" index={index} 
-                                                items={timeNumber} />
+                                        <div className="col s6">
+                                            <p> End Time </p>
+                                            <Dropdown handleChange={this.handleScheduleChange} 
+                                                    name="end" index={index} 
+                                                    items={timeNumber} />
+                                        </div>
                                     </div>
                                 </div>
                             </Fragment>
@@ -374,21 +393,12 @@ class PromoLoop extends Component {
                     
 
                 <div className="row">
-                    <div className="col s6">
+                    <div className="col s12">
                         <Button 
                             onClick={() => {
                                 this.sendToDb();
                             }}
                         type="submit" value="Submit" > Apply! </Button>
-                      
-                    </div>
-
-                    <div className="col s6">
-                        <Button 
-                            onClick={() => {
-                                this.sendToDbAll();
-                            }}
-                        type="submit" value="Submit" > Apply All! </Button>
                       
                     </div>
                 </div>

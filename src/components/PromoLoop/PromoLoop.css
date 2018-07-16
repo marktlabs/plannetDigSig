@@ -43,3 +43,7 @@ select {
     padding: 10px;
     text-align: center;
 }
+
+.thBtn {
+    margin-top: 60px;
+}
