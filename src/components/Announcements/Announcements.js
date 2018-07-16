@@ -56,7 +56,7 @@ for (let i = 0; i <= 23; i++) {
 class Announcements extends Component {
     
     state = {
-        screenName: 'Screen 1',
+        screenName: 'Screen1',
         name: '',
         schedules: [
             {

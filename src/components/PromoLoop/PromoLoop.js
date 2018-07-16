@@ -321,12 +321,14 @@ class PromoLoop extends Component {
                             <div className="addBorder1">
                                 <div className="row">
                                 <div className="col s12">
-                                    <p className="subtitlesHead2"> Select the screen </p>
+                                    <br/>
+                                    <p className="titleHead"> Select a screen </p>
                                     <DropdownScreen 
                                         handleChange={this.handleScreenChange}
                                         name="video"
                                         items={this.state.screenList}
                                     />
+                                    <br/>
                                 </div>
                                 </div>
                             </div>

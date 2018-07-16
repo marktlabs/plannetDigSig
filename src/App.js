@@ -37,36 +37,6 @@ class App extends Component {
     });
   }
 
-  updateScheduler = (schedulerArray) => {
-
-    for(let i=0 ; i < schedulerArray.length; i ++ ){
-        console.log("schedulerArray.length", schedulerArray.length);
-        console.log("i", i);
-
-        if(schedulerArray[i].screen === "all"){  
-          for(let j=1; j<= 3; j++){
-              this.db.child("Screen"+ j + '/').child(schedulerArray[i].dayIndex + '/' )
-                .child(schedulerArray[i].scheduleIndex+'/').update({    "VideoName": schedulerArray[i].video,
-                                                                      "startTime": schedulerArray[i].start,
-                                                                      "endTime": schedulerArray[i].end,
-                                                                  });
-              }
-        }
-
-        else{
-        this.db.child(schedulerArray[i].screen + '/').child(schedulerArray[i].dayIndex + '/' )
-          .child(schedulerArray[i].scheduleIndex+'/').update({    "VideoName": schedulerArray[i].video,
-                                                                "startTime": schedulerArray[i].start,
-                                                                "endTime": schedulerArray[i].end,
-                                                            });
-        }
-        
-    }
-
-    window.location.reload();
-
-  }
-
 
   render() {
     return (
@@ -76,7 +46,7 @@ class App extends Component {
           <h1>
             Digital Signage Management
           </h1>
-          <h5>Change your screen's content from a web</h5>
+          <h5>Change your screen's content from a web application</h5>
         </div>
 
         {this.state.user ? (<Toolbar 

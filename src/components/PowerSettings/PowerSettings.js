@@ -150,7 +150,7 @@ class PowerSettings extends Component {
                 <div className="row">
                     <div className= "selectScreenQS">
                         <div className="col s12">
-                            <p className="subtitlesHead2"> Select screen name</p>
+                            <p className="titleHead"> Select a screen</p>
                             <DropdownScreen 
                                 handleChange={this.handleScreenChange}
                                 name="video"

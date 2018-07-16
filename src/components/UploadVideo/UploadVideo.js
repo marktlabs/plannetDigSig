@@ -50,6 +50,8 @@ class UploadVideo extends Component {
         screenName2 = this.state.screenName;
         screenName2= screenName2.replace(" ",""); 
         let videoName2 = "";
+
+        
        
         firebaseApp.database().ref(`General_Inventory/`) //show all videos
           .on('value', (data) => {
@@ -60,14 +62,15 @@ class UploadVideo extends Component {
                     videoName2= initialVideos.name;
                     arrayVideos.push({name: videoName2, key:key});    
                     
-                    this.setState({videoList: arrayVideos }) ; 
+                    this.setState({videoList: arrayVideos }) ;
+                    console.log("videoList", this.state.videoList); 
                     }
                   );
                 });
              }, (err) => {
               console.log(err);
         });
-
+        
           firebaseApp.database().ref(`Inventory/${screenName2}/`) //show videos per screen
           .on('value', (data) => {
               let values2 = data.val();
@@ -192,6 +195,7 @@ class UploadVideo extends Component {
               });
 
             alert('Send to ' + `${screenIndex}`);
+            window.location.reload();
             
         }
        
@@ -225,6 +229,7 @@ class UploadVideo extends Component {
                });
             })
             alert('Send to all screens');
+            window.location.reload();
         }
         
     }

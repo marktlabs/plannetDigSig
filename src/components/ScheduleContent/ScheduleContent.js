@@ -28,6 +28,7 @@ let initialVideos;
 let schedulerRef;
 let inventoryRef;
 let numberOfChildren;
+let videoNameDB;
 
 let response= [];
 const timeNumber = [];
@@ -109,14 +110,18 @@ class SchedulerContent extends Component {
                         initialVideos2 = this.state.videos2[key]
                         //arrayVideos2.push({name: initialVideos2.name, key:key, Screen: i});  this is an object
                         arrayVideos2.push(initialVideos2.name);
+                        
                         }
                     );
                 });
+                 
                 }, (err) => {
                         console.log(err);
                         });
+                       
             }
            
+
             let arrayLength=  arrayVideos2.length;  
             let commonVideos= [];
             let k=0;
@@ -222,6 +227,7 @@ class SchedulerContent extends Component {
                         }
                     );
                 });
+                
             }, (err) => {
                 console.log(err);
             });
@@ -255,6 +261,7 @@ class SchedulerContent extends Component {
             let daySelected= this.props.dayIndex;
 
              for (let i=0; i < this.state.schedules.length; i++ ){
+                 
                 if (this.state.schedules[0].start === "" ||
                     this.state.schedules[0].end === "" ||
                     this.state.screenName === "" ||
@@ -279,32 +286,37 @@ class SchedulerContent extends Component {
 
                     IntEndtHr = parseInt(endHr,10);
                     IntEndMin = parseInt(endMin,10);
-
-                    if (IntStartHr > IntEndtHr) {
-                        alert('Invalid Schedule');
-                    }
-
-                    if (IntStartHr === IntEndtHr && IntStartMin > IntEndMin) {
-                        alert('Invalid Schedule');
-                    }
-
-                    if (IntStartHr === IntEndtHr && IntStartMin === IntEndMin) {
+                    
+                    console.log("IntStartHr",IntStartHr);
+                    console.log("IntEndtHr",IntEndtHr);
+                    
+                    if ((IntStartHr > IntEndtHr) || (IntStartHr === IntEndtHr && IntStartMin > IntEndMin) ||
+                        (IntStartHr === IntEndtHr && IntStartMin === IntEndMin))
+                    {
                         alert('Invalid Schedule');
                     }
 
                     else {
+                        //console.log("default",this.state.schedules[i].video);
                         screen2Push= this.state.screenName;
                         const self = this;
-
+                        let videoName;
                         if (screen2Push === 'all' ){
-                            numberOfChildren;
-                            schedulerRef.once('value', function(snapshot){
+
+                            if(self.state.schedules[i].video === "video 1"){
+                                alert('No video selected, please select a video');
+                            }
+
+                            else{
+                                videoNameDB=self.state.schedules[i].video;
+                                schedulerRef.once('value', function(snapshot){
                                 numberOfChildren=snapshot.numChildren();
                                 let j=0;
+                                videoNameDB= videoNameDB.replace(/\s/g,'');
                                 snapshot.forEach(function(snap){
                                     j=j+1;
                                     schedulerRef.child(`Screen${j}/${daySelected}/schedule${i+1}`).update({
-                                        "VideoName":self.state.schedules[i].video,
+                                        "VideoName": videoNameDB,
                                         "startTime": self.state.schedules[i].start,
                                         "endTime":  self.state.schedules[i].end, 
                                     });            
@@ -314,22 +326,31 @@ class SchedulerContent extends Component {
                                 window.location.reload();
 
                             })
+                            }
                         }   
 
                         else{
                             screen2Push= screen2Push.replace(" ",""); 
                             
-                            schedulerRef.once('value', function(snapshot){
-                                schedulerRef.child(`${self.state.screenName}/${daySelected}/schedule${i+1}`).update({
-                                    "VideoName":self.state.schedules[i].video,
-                                    "startTime": self.state.schedules[i].start,
-                                    "endTime":  self.state.schedules[i].end,
-                                });            
-                        
-                                alert(`Send to ${self.state.screenName}`);
-                                window.location.reload();
+                            if(self.state.schedules[i].video === "video 1"){
+                                alert('No video selected, please select a video');
+                            }
 
-                            })
+                            else{
+                                videoNameDB=self.state.schedules[i].video;
+                                videoNameDB= videoNameDB.replace(/\s/g,'');
+                                schedulerRef.once('value', function(snapshot){
+                                    schedulerRef.child(`${self.state.screenName}/${daySelected}/schedule${i+1}`).update({
+                                        "VideoName":videoNameDB,
+                                        "startTime": self.state.schedules[i].start,
+                                        "endTime":  self.state.schedules[i].end,
+                                    });            
+                            
+                                    alert(`Send to ${self.state.screenName}`);
+                                    window.location.reload();
+
+                                })
+                            }
                         }
                     }
                 }

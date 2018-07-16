@@ -271,7 +271,7 @@ class DeleteVideo extends Component {
                             <h5> Select video to delete from root directory </h5>
                         </div>
                         <div className=" col s6">                  
-                            <p className="subtitlesHead2"> Select video to delete </p>
+                            <p className="titleHead"> Select video to delete </p>
                                 <DropdownScreen 
                                     handleChange={this.handleVideoRootChange}
                                     name="video"
@@ -301,7 +301,7 @@ class DeleteVideo extends Component {
                         <div className="col s12">
                             <h5> Select video to delete from a screen </h5>
                             <div className=" col s6">
-                                <p className="subtitlesHead2"> Select the screen </p>
+                                <p className="titleHead"> Select a screen </p>
                                 <DropdownScreen 
                                     handleChange={this.handleScreenChange}
                                     name="video"
@@ -310,7 +310,7 @@ class DeleteVideo extends Component {
                             </div>
 
                             <div className=" col s6">                  
-                            <p className="subtitlesHead2"> Select video to delete </p>
+                            <p className="titleHead"> Select video to delete </p>
                                 <DropdownScreen 
                                     handleChange={this.handleVideoChange}
                                     name="video"
