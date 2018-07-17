@@ -17,6 +17,7 @@ let screenName2;
 let initialVideos;
 let videoSize=0;
 let videoName3;
+let initialVideos2='video1';
 
 let arrayPerScreen = [];
 let arrayVideos = [];
@@ -35,7 +36,7 @@ class UploadVideo extends Component {
         videoList: [],
         video2: [],
         videoListPerScreen: [],
-        addContentTo: null,
+        sendVideo: null,
         screenList: []
     }
 
@@ -50,9 +51,7 @@ class UploadVideo extends Component {
         screenName2= screenName2.replace(" ",""); 
         let videoName2 = "";
 
-        
-       
-        firebaseApp.database().ref(`General_Inventory/`) //show all videos
+        firebaseApp.database().ref(`General_Inventory/`) //show all videos in General Inventory in dropdown
           .on('value', (data) => {
               let values = data.val();
               this.setState({ videos: values }, () => {
@@ -60,11 +59,7 @@ class UploadVideo extends Component {
                     initialVideos = this.state.videos[key];
                     videoName2= initialVideos.name;
                     arrayVideos.push({name: videoName2, key:key});    
-                    
                     this.setState({videoList: arrayVideos }) ;
-                    //console.log("videoList", this.state.videoList); 
-                
-                    
                     }
                   );
                 });
@@ -72,39 +67,26 @@ class UploadVideo extends Component {
               console.log(err);
         });
         
+
+        /*
         
-        firebaseApp.database().ref(`Inventory/${screenName2}/`)
+        firebaseApp.database().ref(`Inventory/${screenName2}/`) //first value for dropdowns, screen1
         .orderByKey().limitToFirst(1).once('value', function(snap) {
             let newVal= snap.val();
-            console.log("just one value!",  newVal[0]);
-            
-          });
+            Object.keys(newVal).map((key, index) => {
+               
+                console.log("snap.val()",snap.val());
+                initialVideos2 =newVal[key];
+                console.log("initial2UP", initialVideos2);  
+                this.setState({sendVideo: initialVideos2});
+                console.log("screen to update", screenName2);
+                console.log("video to send", initialVideos2 );
+            })    
+        });
+        */
+        
 
-          firebaseApp.database().ref(`Inventory/${screenName2}/`) //show videos per screen
-          .on('value', (data) => {
-              let values2 = data.val();
-              let videoNamePerScreen;
-
-              this.setState({ videos2: values2 }, () => {
-                arrayPerScreen= [];
-                Object.keys(this.state.videos).map((key, index) => {
-                    initialVideos = this.state.videos[key]
-                    console.log("index", index);
-                    videoNamePerScreen= initialVideos.name;
-                    arrayPerScreen.push({name: videoNamePerScreen, key:key}); 
-                       
-                    this.setState({videoListPerScreen: arrayPerScreen }) ; 
-                    //return arrayPerScreen;
-                    }
-                  );
-                });
-
-                //console.log("arrayPerScreen", arrayPerScreen);
-             }, (err) => {
-              console.log(err);
-          });
-
-          firebaseApp.database().ref(`Inventory`) //screens
+          firebaseApp.database().ref(`Inventory`) //Dropdown screens from database
           .on('value', (data) => {
               let values = data.val();
              
@@ -113,16 +95,14 @@ class UploadVideo extends Component {
                 Object.keys(this.state.screens).map((key, index) => {
                     arrayScreens.push({name: key, key:index}); 
                     this.setState({screenList: arrayScreens }); 
-                    //return arrayScreens;
-                    console.log("arrayScreens",arrayScreens);
-               }
-            );
+                    }
+                );
             });
 
           }, (err) => {
               console.log(err);
-          });
-         
+          });  
+
     }
 
     showVideos = () => {
@@ -175,9 +155,8 @@ class UploadVideo extends Component {
     }
 
     handleVideoChange = (name, value) => {
-        console.log("CHANGE VIDEO SCREEEEEEEEEEN");
-        this.setState({ addContentTo: value});
-        console.log("addContentTo",value);
+        this.setState({ sendVideo: value});
+        console.log("sendVideo",value);
     }
 
 
@@ -191,14 +170,14 @@ class UploadVideo extends Component {
 
     applyScreen = () => {   
         
-        if (this.state.addContentTo === null){
+        if (this.state.sendVideo === null){
             alert("Browse a video to upload")
         }
 
         else{
             screenIndex= this.state.screenName;
             screenIndex= screenIndex.replace(" ","");             
-            videoName3= this.state.addContentTo;
+            videoName3= this.state.sendVideo;
 
             console.log("videoName3",videoName3);
          
@@ -221,15 +200,12 @@ class UploadVideo extends Component {
 
     applyAll = () => {
         //let numberOfChildren;
-
-        if (this.state.addContentTo === null){
+        if (this.state.sendVideo === null){
             alert("Browse a video to upload")
         }
 
         else{
-            
-            videoName3= this.state.addContentTo;
-            
+            videoName3= this.state.sendVideo;
             logFilesRef.once('value', function(snapshot) {
                //numberOfChildren= snapshot.numChildren(); //get number of immediate children
                let i=0
@@ -287,9 +263,7 @@ class UploadVideo extends Component {
             uploadTask.on('state_changed',
                 function(snapshot){
                     progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    //console.log('Upload is ' + progress + '% done');
                     self.setState({percent: progress }) ; 
-                
 
                 }, function(error){
                     alert("hubo un error")
@@ -324,7 +298,7 @@ class UploadVideo extends Component {
                             <Modal 
                             header='Modal Header'
                             trigger={<Button waves='light'>Help!<Icon right> help </Icon></Button>}>
-                            <p>Lorem ipsum dolor sit agffgfgfgdgfgfgfgfgmet, consectetur adipiscing elit, sed do eiusmod tempor
+                            <p>Lorem ipsum dolor sit met, consectetur adipiscing elit, sed do eiusmod tempor
                                 incididunt ut labore et dolore magna aliqua.</p>
                             </Modal>
                     </span>
@@ -379,15 +353,13 @@ class UploadVideo extends Component {
                                 <DropdownScreen 
                                     handleChange={this.handleVideoChange}
                                     name="video"
-                                    //items={this.state.videoListPerScreen}
-                                    items={arrayPerScreen}
+                                    items={this.state.videoList}
+                                    
                                 />  
                        
                     </div>
                 </div>
               
-
-
                 <div className="row">
                     <div className=" col s6">
                         <br/>   
@@ -395,8 +367,8 @@ class UploadVideo extends Component {
                         <DropdownScreen 
                             handleChange={this.handleScreenChange}
                             name="video"
-                            //items={this.state.screenList}
-                            items={arrayScreens}
+                            items={this.state.screenList}
+                            
                         />
                     </div>
                 </div>

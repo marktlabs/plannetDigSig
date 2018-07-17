@@ -91,15 +91,13 @@ class SchedulerContent extends Component {
         numberOfChildren;
 
         let arrayVideos2;
-        let arrayScreens2;
         let initialVideos2;
-        let videoName3;
+       
 
         inventoryRef.on('value', (data) => {
             numberOfChildren=data.numChildren();
             let values2 = data.val(); //all records in inventory
             arrayVideos2 = [];
-            arrayScreens2 = [];
             
             for (let i=1; i<= numberOfChildren; i++){
                 firebaseApp.database().ref(`Inventory/Screen${i}/`) // videos per screen
