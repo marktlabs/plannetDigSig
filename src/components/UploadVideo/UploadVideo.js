@@ -362,37 +362,31 @@ class UploadVideo extends Component {
                        
                     </div>
                 </div>
-              
+                        
                 <div className="row">
-                    <div className=" col s6">
-                        <br/>   
-                        <p className="titleHead"> Select a screen </p>
-                        <DropdownScreen 
-                            handleChange={this.handleScreenChange}
-                            name="video"
-                            items={this.state.screenList}
-                            
-                        />
+                    <div className="selectScreenQS">
+                        <div className=" col s12">
+                            <br/>   
+                            <p className="titleHead"> Select a screen </p>
+                            <DropdownScreen 
+                                handleChange={this.handleScreenChange}
+                                name="video"
+                                items={this.state.screenList}
+                                
+                            />
+                        </div>
                     </div>
                 </div>
             
             
                 <div className="row">
                 
-                        <div className="col s6">
-                            <p> Upload video to selected screen </p>
-                                <Button onClick={() => {
-                                    this.applyScreen();}}
-                                    > Send </Button>     
-                        </div>
-                    
-                    
-                        <div className="col s6">
-                            <p> Upload video to all screens</p>
-                                <Button onClick={() => {
-                                    this.applyAll();}}
-                                    > Send All Screens! </Button>     
-                        </div>
+                    <div className="col s12">
+                        <p> Upload video to selected screen </p>
+                            <Button onClick={() => {
+                                this.applyScreen();}}
+                                > Send </Button>     
+                    </div>
                      
                 </div>
 

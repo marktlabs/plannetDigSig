@@ -90,7 +90,7 @@ class Announcements extends Component {
                   
                   //se lee todo el objeto con values2[key]
                   //console.log("values2[key]",values2[key].name);
-                  console.log("arrayAnnoun",arrayAnnoun);
+                 
                   this.setState({videosDropDown: arrayAnnoun }); 
 
                   return arrayAnnoun;

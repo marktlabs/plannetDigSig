@@ -93,7 +93,7 @@ class SchedulerContent extends Component {
         let arrayVideos2;
         let initialVideos2;
        
-
+        //get common dropdown
         inventoryRef.on('value', (data) => {
             numberOfChildren=data.numChildren();
             let values2 = data.val(); //all records in inventory
@@ -130,9 +130,7 @@ class SchedulerContent extends Component {
                     console.log(`the count is ${k}`,commonVideos);
                 }
             });
-            //console.log("the count",count); // all videos
             this.setState({commonDropDown:commonVideos});
-            //console.log("commonVideos",commonVideos);
 
         }, (err) => {
                 console.log(err);
@@ -197,6 +195,8 @@ class SchedulerContent extends Component {
         alert("Selected all screens")
         this.setState({screenName: "all"});
         this.setState({showCommonDrop:true});
+
+        
     }
 
 
