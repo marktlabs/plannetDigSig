@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import DropdownScreen from '../DropdownScreen/DropdownScreen';
-import {Table, Button, Modal, Icon} from 'react-materialize';
+import {Button, Modal, Icon} from 'react-materialize';
 import './DeleteVideo.css';
 
 import firebase from 'firebase';
@@ -11,7 +11,7 @@ let storageRef;
 
 let logFilesRef;
 let gralInventory;
-let url_database;
+//let url_database;
 let screenName2;
 let initialVideos;
 let arrayScreens= [];
@@ -56,7 +56,7 @@ class DeleteVideo extends Component {
         storageRef= firebase.storage().ref();
         console.log("initialize!")
         //version de youtube, su funciona
-        url_database= "https://firebasestorage.googleapis.com/v0/b/digitalsignage-acb79.appspot.com/o/imagenes%2Fscreen2%2FScreen1_(2018-6-14)?alt=media&token=f16c0515-95ab-4fe3-981d-724dfbc141b8"
+        //url_database= "https://firebasestorage.googleapis.com/v0/b/digitalsignage-acb79.appspot.com/o/imagenes%2Fscreen2%2FScreen1_(2018-6-14)?alt=media&token=f16c0515-95ab-4fe3-981d-724dfbc141b8"
 
         storageRef= firebaseApp.storage().ref();
         logFilesRef= firebaseApp.database().ref().child("Inventory");
@@ -76,6 +76,7 @@ class DeleteVideo extends Component {
                     videoName2= initialVideos.name;
                     arrayVideos.push({name: videoName2, key:key});  
                     this.setState({videoList: arrayVideos }) ; 
+                   console.log("arrayVideos",arrayVideos)
               }
             );
             });
@@ -91,6 +92,8 @@ class DeleteVideo extends Component {
                 Object.keys(this.state.screens).map((key, index) => {
                     arrayScreens.push({name: key, key:index});    
                     this.setState({screenList: arrayScreens }); 
+                    console.log("arrayScreens",arrayScreens);
+                  
               }
             );
          
@@ -115,7 +118,7 @@ class DeleteVideo extends Component {
                     
                     arrayRootDirectory.push({name: videoName3, key:key});  
                     this.setState({videoRootDir: arrayRootDirectory }) ; 
-                    
+                   
               }
             );
          
@@ -139,13 +142,12 @@ class DeleteVideo extends Component {
             let video2delete=  this.state.deleteVideoRoot;
             videoStorage= video2delete.replace(/\s/g,''); //deletes all blanks in string
 
-            var desertRef = storageRef.child('videosInventory/'+`${videoStorage}`);
+            var desertRef = storageRef.child(`videosInventory/${videoStorage}`);
 
             //eliminar el archivo y borrarlo destorage a db
             desertRef.delete().then(function() {
                 console.log("deleted!");
-                gralInventory.orderByChild('name').
-                equalTo(video2delete).once('value').then(function(snapshot) { 
+                gralInventory.orderByChild('name').equalTo(video2delete).once('value').then(function(snapshot) { 
                     //console.log("the key is ",snapshot.key);
                     //console.log("snapshot.val()",snapshot.val());
                     let key = Object.keys(snapshot.val())[0]; //timestamp fb_key
@@ -222,6 +224,8 @@ class DeleteVideo extends Component {
                     console.log("key",key);
                     arrayVideos.push({name: videoName2, key: key});    
                     this.setState({videoList: arrayVideos }) ; 
+
+                   
               }
             );
          

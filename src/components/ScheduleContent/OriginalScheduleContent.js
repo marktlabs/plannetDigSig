@@ -85,7 +85,6 @@ class SchedulerContent extends Component {
         schedulerRef= firebaseApp.database().ref().child("Scheduler");
         inventoryRef= firebaseApp.database().ref().child("Inventory");
         screenName2 = this.state.screenName;
-        console.log("screenName2",screenName2);
         videoName2 = "";
         initialVideos;
         numberOfChildren;
@@ -126,7 +125,6 @@ class SchedulerContent extends Component {
            
             let k=0;
             var  count = {};
-            commonVideos= [];
             arrayVideos2.forEach(function(i) { 
                 k=k+1;
                 count[i] = (count[i]||0) + 1;
@@ -147,46 +145,39 @@ class SchedulerContent extends Component {
         firebaseApp.database().ref(`Inventory/${screenName2}/`) // videos per screen
         .on('value', (data) => {
               let values = data.val();
-
-             // this.setState({ videos: values }, () => {
+              this.setState({ videos: values }, () => {
                 arrayVideos = [];
                 arrayScreens = [];
-                
-                Object.keys(values).map((key, index) => {
-
-                    initialVideos =values[key];
+                Object.keys(this.state.videos).map((key, index) => {
+                    initialVideos = this.state.videos[key]
                     videoName2= initialVideos.name;
-                    console.log("initialVideos",initialVideos);
-                    console.log("videoName2", videoName2);
-                    arrayVideos.push({name: videoName2, key:index});
+                    arrayVideos.push({name: videoName2, key:key});  
                     this.setState({videoList: arrayVideos }) ; 
-                    //arrayVideos.push({name: videoName2});  
-                    console.log("SCHarrayVideos",arrayVideos);
-                    
+                    console.log("arrayVideos",arrayVideos);
               }
             );
-            //});
+            });
           }, (err) => {
               console.log(err);
           });
 
-          firebaseApp.database().ref(`Inventory`) //screens
-          .on('value', (data) => {
-              let values = data.val();
-              this.setState({ screens: values }, () => {
-                arrayScreens=[];
-                Object.keys(this.state.screens).map((key, index) => {
-                    arrayScreens.push({name: key, key:index}); 
-                    this.setState({screenList: arrayScreens }); 
-                    console.log("screenList",arrayScreens);
-               }
-            );
-            });
-  
-          }, (err) => {
-              console.log(err);
+        firebaseApp.database().ref(`Inventory`) //screens
+        .on('value', (data) => {
+            let values = data.val();
+            this.setState({ screens: values }, () => {
+              arrayScreens=[];
+              Object.keys(this.state.screens).map((key, index) => {
+                  arrayScreens.push({name: key, key:index}); 
+                  this.setState({screenList: arrayScreens }); 
+                  console.log("screenList",arrayScreens);
+             }
+          );
           });
-        }
+
+        }, (err) => {
+            console.log(err);
+        });
+    }
 
     selectAll = () => { //Select all screens!
         console.log("Select all screens!");
@@ -385,7 +376,7 @@ class SchedulerContent extends Component {
                                 <DropdownScreen
                                     handleChange={this.handleScreenChange}
                                     name="video"
-                                    items={this.state.screenList}
+                                    items={arrayScreens}
                                 />
                             </div>
                             <div className="col s6">
@@ -420,7 +411,7 @@ class SchedulerContent extends Component {
                                                     handleChange={this.handleScheduleChange}
                                                     name="video"
                                                     index={index}
-                                                    items={this.state.commonDropDown}
+                                                    items={commonVideos}
                                                 />            
                                         </div>
                                         </div>): ( 
@@ -432,7 +423,7 @@ class SchedulerContent extends Component {
                                                     handleChange={this.handleScheduleChange}
                                                     name="video"
                                                     index={index}
-                                                    items={this.state.videoList} 
+                                                    items={arrayVideos} 
                                                     />
                                            
                                         </div>

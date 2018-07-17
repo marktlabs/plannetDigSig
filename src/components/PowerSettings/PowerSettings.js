@@ -7,7 +7,6 @@ import DropdownScreen from '../DropdownScreen/DropdownScreen';
 import 'firebase/database';
 import firebaseApp from '../../firebase/firebaseApp';
 
-let response = [];
 let screen2Push;
 let arrayScreens= [];
 let powerSetingsRef;
@@ -33,6 +32,7 @@ class PowerSettings extends Component {
               Object.keys(this.state.screens).map((key, index) => {
                   arrayScreens.push({name: key, key:index}); 
                   this.setState({screenList: arrayScreens }); 
+                  return arrayScreens;
              }
           );
           });
@@ -111,11 +111,11 @@ class PowerSettings extends Component {
                     alert(`ALL SCREENS ON` );
                 }
                 
-                let numberOfChildren;
+                //let numberOfChildren;
                 let i=0;
 
                 powerSetingsRef.once('value', function(snapshot) {
-                    numberOfChildren= snapshot.numChildren(); //get number of immediate children
+                    //numberOfChildren= snapshot.numChildren(); //get number of immediate children
                     snapshot.forEach(function(snap){
                         i=i+1;
                         powerSetingsRef.child(`Screen${i}`).update({ "Trigger": 1,
@@ -149,7 +149,7 @@ class PowerSettings extends Component {
 
                 <div className="row">
                     <div className= "selectScreenQS">
-                        <div className="col s12">
+                        <div className="col s6">
                             <p className="titleHead"> Select a screen</p>
                             <DropdownScreen 
                                 handleChange={this.handleScreenChange}
@@ -157,12 +157,25 @@ class PowerSettings extends Component {
                                 items={this.state.screenList}
                             />
                         </div>
-                    </div>
 
-                    
+                        <div className="col s6">
+                            <div className="thBtn2">
+                                <Button waves='light'
+                                    onClick = {() => {
+                                        this.sendToDbAll();
+                                    }}
+                                > Apply All
+                                </Button>  
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
                 <div className="row">
                     <div className="col s12">
+                        <br/>
+                        <p className="titleHead"> Select a status for screen(s)</p>
+                        <br/>
                         <Button 
                             
                             waves='light'
@@ -184,24 +197,14 @@ class PowerSettings extends Component {
                 </div>
 
                 <div className="row fix-row-padding">
-                    <div className="col s6">
+                    <div className="col s12">
                         <Button waves='light'
                             onClick = {() => {
                                 this.sendToDb();
                             }}
                         > Apply
                         </Button>  
-                    </div>
-
-                    <div className="col s6">
-                        <Button waves='light'
-                            onClick = {() => {
-                                this.sendToDbAll();
-                            }}
-                        > Apply All
-                        </Button>  
-                    </div>
-                    
+                    </div>                    
                 </div>
 
             </div>

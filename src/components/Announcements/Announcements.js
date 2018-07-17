@@ -4,7 +4,7 @@ import { Button, Modal, Icon, Table } from 'react-materialize';
 import DropdownScreen from '../DropdownScreen/DropdownScreen';
 import Dropdown from '../Dropdown/Dropdown';
 
-import ReactPlayer from 'react-player';
+//import ReactPlayer from 'react-player';  este es para el video de youtube
 
 import 'firebase/database';
 import firebaseApp from '../../firebase/firebaseApp';
@@ -21,7 +21,7 @@ let IntStartMin;
 let IntEndtHr;
 let IntEndMin;
 let name2render;
-let videoRender;
+//let videoRender;
 let arrayScreens= [];
 let arrayAnnoun =[];
 let values2;
@@ -29,7 +29,6 @@ let startDB;
 let endDB;
 let video2Push;
 let updateAnnounRef;
-let announcementsRef;
 
 const timeNumber = [];
 
@@ -77,15 +76,11 @@ class Announcements extends Component {
     }
 
     componentDidMount() {
-        announcementsRef= firebaseApp.database().ref().child("Inventory_Announcements/");
         updateAnnounRef= firebaseApp.database().ref().child("Announcements");
-
-        let numberOfChildren;
-        let i;
 
         firebaseApp.database().ref(`Inventory_Announcements/`) //ANNOUNCEMENTS
         .on('value', (data) => {
-            let values2 = data.val();
+            values2 = data.val();
             arrayAnnoun=[];
             console.log("values2", values2);
             
@@ -97,6 +92,8 @@ class Announcements extends Component {
                   //console.log("values2[key]",values2[key].name);
                   console.log("arrayAnnoun",arrayAnnoun);
                   this.setState({videosDropDown: arrayAnnoun }); 
+
+                  return arrayAnnoun;
              }
           );
           });
@@ -113,6 +110,8 @@ class Announcements extends Component {
               Object.keys(this.state.screens).map((key, index) => {
                   arrayScreens.push({name: key, key:index}); 
                   this.setState({screenList: arrayScreens }); 
+
+                  return arrayScreens;
              }
           );
           });
@@ -160,14 +159,14 @@ class Announcements extends Component {
     }
 
     changeTrigger2 = () =>{  //turns off the "enable aler"
-        let numberOfChildren;
+        //let numberOfChildren;
         this.setState(prevState => {
             screen2Push= this.state.screenName;
             
             if (screen2Push === "all" ){
                 let i=0;
                 updateAnnounRef.once('value', function(snapshot){
-                    numberOfChildren=snapshot.numChildren();
+                    //numberOfChildren=snapshot.numChildren();
                         snapshot.forEach(function(snap){
                             i=i+1;
                             console.log(`Screen${i}`);
@@ -194,7 +193,6 @@ class Announcements extends Component {
     }
 
     sendApplyNow = () => {
-        let numberOfChildren;
         let inputText2;
        
 
@@ -215,21 +213,20 @@ class Announcements extends Component {
                 if (screen2Push === "all" ){
                     let i=0;
                     updateAnnounRef.once('value', function(snapshot){
-                        numberOfChildren=snapshot.numChildren();
-                            snapshot.forEach(function(snap){
-                                i=i+1;
-                                console.log(`Screen${i}`);
-                                updateAnnounRef.child(`Screen${i}`).update({
-                                    "Text2": inputText2,
-                                    "VideoName2": video2Push,
-                                    "startTime": startDB,
-                                    "endTime": endDB,
-                                    "Trigger2": 1
-                                });                
-                            });
+                        snapshot.forEach(function(snap){
+                            i=i+1;
+                            console.log(`Screen${i}`);
+                            updateAnnounRef.child(`Screen${i}`).update({
+                                "Text2": inputText2,
+                                "VideoName2": video2Push,
+                                "startTime": startDB,
+                                "endTime": endDB,
+                                "Trigger2": 1
+                            });                
+                        });
 
-                            alert('Send to all screens');
-                            window.location.reload();
+                        alert('Send to all screens');
+                        window.location.reload();
                     }) 
                 }
         
@@ -274,7 +271,7 @@ class Announcements extends Component {
                         if(values !== 0){
                             firebaseApp.database().ref(`Announcements/${screenName2}`)
                             .on('value', (data) => {
-                                let values2 = data.val();
+                                values2 = data.val();
                                 //console.log("values", values2);
                                 this.setState({ schedulesShow: values2 });
                                 this.setState({ showResults: true});
@@ -312,7 +309,6 @@ class Announcements extends Component {
     }
 
     sendToDb = () => {
-        let numberOfChildren;
         let i=0;
         let inputText1;
 
@@ -370,23 +366,22 @@ class Announcements extends Component {
     
                     else{ 
 
-                        if(screen2Push == "all"){
+                        if(screen2Push === "all"){
                             updateAnnounRef.once('value', function(snapshot){
-                                numberOfChildren=snapshot.numChildren();
-                                    snapshot.forEach(function(snap){
-                                        i=i+1;
-                                        updateAnnounRef.child(`Screen${i}`).update({
-                                            "Text1": inputText1,
-                                            "VideoName1": video2Push,
-                                            "startTime": startDB,
-                                            "endTime": endDB,
-                                            "Trigger1": 1
-                                        });                
-                                    });
-        
-                                    alert('Send to all screens');
-                                    window.location.reload();
-                                })
+                                snapshot.forEach(function(snap){
+                                    i=i+1;
+                                    updateAnnounRef.child(`Screen${i}`).update({
+                                        "Text1": inputText1,
+                                        "VideoName1": video2Push,
+                                        "startTime": startDB,
+                                        "endTime": endDB,
+                                        "Trigger1": 1
+                                    });                
+                                });
+    
+                                alert('Send to all screens');
+                                window.location.reload();
+                            })
                         }
 
                         else{

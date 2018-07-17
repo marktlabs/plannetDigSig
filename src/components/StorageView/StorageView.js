@@ -8,8 +8,7 @@ import firebaseApp from '../../firebase/firebaseApp';
 let initialVideos;
 let videoName;
 let videoSize;
-let screenName2;
-let arrayScreens= [];
+//let screenName2;
 let arrayVideos = [];
 let videoSize2;
 let videoSizeInt;
@@ -28,7 +27,7 @@ class StorageView extends Component {
 
     componentDidMount() {   
        
-        screenName2= 'Screen1'
+        //screenName2= 'Screen1'
         videoName = "";
 
           firebaseApp.database().ref(`General_Inventory/`)
@@ -36,7 +35,6 @@ class StorageView extends Component {
               let values = data.val();
               this.setState({ videos: values }, () => {
                 arrayVideos = [];
-                arrayScreens = [];
                 Object.keys(this.state.videos).map((key, index) => {
                     initialVideos = this.state.videos[key]
                     videoName= initialVideos.name;
@@ -65,6 +63,8 @@ class StorageView extends Component {
                     arrayVideos.push({name: videoName, size:videoSize, key:key});  
                     this.setState({videoList: arrayVideos }) ; 
                     this.setState({available: storageAvailable })
+
+                    return arrayVideos;
                     
               }
             );

@@ -5,14 +5,11 @@ import DropdownScreen from '../DropdownScreen/DropdownScreen';
 
 import './PromoLoop.css';
 
-import firebase from 'firebase';
 import 'firebase/database';
 import firebaseApp from '../../firebase/firebaseApp';
 
-let response = [];
 let screen2Push;
 let video2Push;
-
 let startTime;
 let endTime;
 let startMin;
@@ -98,13 +95,15 @@ class PromoLoop extends Component {
         .on('value', (data) => {
             let values = data.val();
             arrayScreens=[];
-            this.setState({ screens: values }, () => {
+           this.setState({ screens: values }, () => {
               Object.keys(this.state.screens).map((key, index) => {
                   arrayScreens.push({name: key, key:index}); 
                   this.setState({screenList: arrayScreens }); 
+
+                  //return arrayScreens;
              }
           );
-          });
+         });
 
         }, (err) => {
             console.log(err);
@@ -122,7 +121,9 @@ class PromoLoop extends Component {
                     initialVideos = this.state.videos[key]
                     videoName2= initialVideos.name;
                     arrayVideos.push({name: videoName2, key:key});  
-                    this.setState({videoList: arrayVideos }) ; 
+                    //this.setState({videoList: arrayVideos }) ; 
+
+                    return arrayVideos;
               }
             );
             });
@@ -167,6 +168,8 @@ class PromoLoop extends Component {
                         videoName2= initialVideos.name;
                         arrayVideos.push({name: videoName2, key:key});  
                         this.setState({videoList: arrayVideos }) ; 
+
+                        //return arrayVideos;
                   }
                 );
                 });
@@ -211,7 +214,7 @@ class PromoLoop extends Component {
 
     
             else{
-                let numberOfChildren;
+                //let numberOfChildren;
                 let i=0;
                 
                 startDB= this.state.schedules[0].start;
@@ -222,7 +225,7 @@ class PromoLoop extends Component {
                 console.log(endDB);
 
                 promoLoopRef.once('value', function(snapshot) {
-                    numberOfChildren= snapshot.numChildren(); //get number of immediate children
+                    //numberOfChildren= snapshot.numChildren(); //get number of immediate children
                     snapshot.forEach(function(snap){
                         i=i+1;
                         promoLoopRef.child(`Screen${i}`).update({
@@ -362,7 +365,7 @@ class PromoLoop extends Component {
                                             <DropdownScreen 
                                                     handleChange={this.handleVideoChange}
                                                     name="video"
-                                                    items={this.state.videoList}
+                                                    items={arrayVideos}
                                                 /> 
                                             </div> 
                                         </div>

@@ -12,7 +12,6 @@ let uploaded_videos;
 let screenIndex;
 let logFilesRef;
 let videosRef;
-let url_database;
 let progress=0;
 let screenName2;
 let initialVideos;
@@ -64,6 +63,8 @@ class UploadVideo extends Component {
                     
                     this.setState({videoList: arrayVideos }) ;
                     console.log("videoList", this.state.videoList); 
+                
+                    
                     }
                   );
                 });
@@ -71,6 +72,14 @@ class UploadVideo extends Component {
               console.log(err);
         });
         
+        
+        firebaseApp.database().ref(`Inventory/${screenName2}/`)
+        .orderByKey().limitToFirst(1).once('value', function(snap) {
+            let newVal= snap.val();
+            console.log("just one value!",  newVal[0]);
+            
+          });
+
           firebaseApp.database().ref(`Inventory/${screenName2}/`) //show videos per screen
           .on('value', (data) => {
               let values2 = data.val();
@@ -80,10 +89,12 @@ class UploadVideo extends Component {
                 arrayPerScreen= [];
                 Object.keys(this.state.videos).map((key, index) => {
                     initialVideos = this.state.videos[key]
+                    console.log("index", index);
                     videoNamePerScreen= initialVideos.name;
                     arrayPerScreen.push({name: videoNamePerScreen, key:key}); 
                        
                     this.setState({videoListPerScreen: arrayPerScreen }) ; 
+                    //return arrayPerScreen;
                     }
                   );
                 });
@@ -102,6 +113,8 @@ class UploadVideo extends Component {
                 Object.keys(this.state.screens).map((key, index) => {
                     arrayScreens.push({name: key, key:index}); 
                     this.setState({screenList: arrayScreens }); 
+                    //return arrayScreens;
+                    console.log("arrayScreens",arrayScreens);
                }
             );
             });
@@ -145,9 +158,11 @@ class UploadVideo extends Component {
                 Object.keys(this.state.videos).map((key, index) => {
                     initialVideos = this.state.videos[key]
                     videoName2= initialVideos.name;
-                    console.log("key",key);
+                    //console.log("key",key);
                     arrayVideos.push({name: videoName2, key: key});    
                     this.setState({videoList: arrayVideos }) ; 
+
+                    return arrayVideos;
               }
             );
          
@@ -184,6 +199,8 @@ class UploadVideo extends Component {
             screenIndex= this.state.screenName;
             screenIndex= screenIndex.replace(" ","");             
             videoName3= this.state.addContentTo;
+
+            console.log("videoName3",videoName3);
          
             logFilesRef.child(`${screenIndex}`).push({ name: videoName3
             }).on('child_added', function(snap) {
@@ -194,7 +211,7 @@ class UploadVideo extends Component {
                                                                 });
               });
 
-            alert('Send to ' + `${screenIndex}`);
+            alert(`Send to ${screenIndex}`);
             window.location.reload();
             
         }
@@ -203,7 +220,7 @@ class UploadVideo extends Component {
     }
 
     applyAll = () => {
-        let numberOfChildren;
+        //let numberOfChildren;
 
         if (this.state.addContentTo === null){
             alert("Browse a video to upload")
@@ -214,7 +231,7 @@ class UploadVideo extends Component {
             videoName3= this.state.addContentTo;
             
             logFilesRef.once('value', function(snapshot) {
-               numberOfChildren= snapshot.numChildren(); //get number of immediate children
+               //numberOfChildren= snapshot.numChildren(); //get number of immediate children
                let i=0
                snapshot.forEach(function(snap){
                     i=i+1;
@@ -263,7 +280,7 @@ class UploadVideo extends Component {
             existInDatabase= true;
         });
 
-        if (existInDatabase == false){
+        if (existInDatabase === false){
             let uploadTask= storageRef.child(`videosInventory/${videoName}`).put(this.state.selectedVideo);
             const self = this;
 
@@ -362,7 +379,8 @@ class UploadVideo extends Component {
                                 <DropdownScreen 
                                     handleChange={this.handleVideoChange}
                                     name="video"
-                                    items={this.state.videoListPerScreen}
+                                    //items={this.state.videoListPerScreen}
+                                    items={arrayPerScreen}
                                 />  
                        
                     </div>
@@ -377,7 +395,8 @@ class UploadVideo extends Component {
                         <DropdownScreen 
                             handleChange={this.handleScreenChange}
                             name="video"
-                            items={this.state.screenList}
+                            //items={this.state.screenList}
+                            items={arrayScreens}
                         />
                     </div>
                 </div>

@@ -52,6 +52,8 @@ class ProofPlaying extends Component {
               Object.keys(this.state.screens).map((key, index) => {
                   arrayScreens.push({name: key, key:index}); 
                   this.setState({screenList: arrayScreens }); 
+
+                 
              }
           );
           });
