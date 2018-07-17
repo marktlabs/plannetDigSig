@@ -141,7 +141,6 @@ class UploadVideo extends Component {
    
 
     handleScreenChange = (name, value) => {
-        let videoName2 = "";
         arrayVideos = [];
         this.setState({ screenName: value});
 
@@ -156,7 +155,6 @@ class UploadVideo extends Component {
 
 
     filesSelectedHandler = (event) => {
-      
        this.setState({
            selectedVideo: event.target.files[0]
        })
@@ -164,9 +162,7 @@ class UploadVideo extends Component {
     }
 
     applyScreen = () => {  
-        
-        
-        
+         
         if (this.state.sendVideo === null){
             alert("Browse a video to upload")
         }
@@ -177,13 +173,7 @@ class UploadVideo extends Component {
             screenIndex= screenIndex.replace(" ","");             
             videoName3= this.state.sendVideo;
             
-            let initialVideosR;
-            let videoNameR;
-            let arrayVideosRepeated= []
             let repeated=false;
-            
-            //validar que no sean repetidos
-
             //query for same name
             firebaseApp.database().ref(`Inventory/${screenIndex}/`)
             .orderByChild('name').equalTo(`${videoName3}`).on("child_added", function(data) {
@@ -191,7 +181,7 @@ class UploadVideo extends Component {
                 repeated= true;
             });
 
-            if(repeated == true){
+            if(repeated === true){
                 console.log("Repetidoooo");
                 alert(`Video already uploaded to ${screenIndex}, try another video`)
             }

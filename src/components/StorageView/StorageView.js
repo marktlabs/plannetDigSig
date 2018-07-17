@@ -40,16 +40,8 @@ class StorageView extends Component {
                     videoName= initialVideos.name;
                     videoSize= initialVideos.size;
                     
-
                     videoSize2 = videoSize.slice(0, -2);
                     videoSizeInt = parseFloat(videoSize2);
-                 
-
-                    console.log("videoName",videoName);
-                    console.log("videoSize",videoSize);
-                    console.log("videoSize22",videoSize2);
-                    console.log("videoSizeInt",videoSizeInt);
-
                     storageAvailable= storageAvailable+videoSizeInt;
                     
                     //console.log(storageAvailable.toFixed(3));
@@ -57,8 +49,6 @@ class StorageView extends Component {
 
                     storageAvailable = (100 - (  (storageAvailable * 100) /5000 ) );
                     storageAvailable = parseInt(storageAvailable,10);
-                    
-                    console.log("storageAvailable%",storageAvailable+10);
 
                     arrayVideos.push({name: videoName, size:videoSize, key:key});  
                     this.setState({videoList: arrayVideos }) ; 

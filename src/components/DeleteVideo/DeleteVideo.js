@@ -63,7 +63,34 @@ class DeleteVideo extends Component {
         gralInventory= firebaseApp.database().ref().child("General_Inventory");
         screenName2 = this.state.screenName;
         screenName2= screenName2.replace(" ",""); 
+        
         let videoName2 = "";
+        let initialVideos2;
+        let initialVideos3;
+        let videoName3;
+
+        // set SET DEFAULT VALUES for first screen //
+        firebaseApp.database().ref(`Inventory/${screenName2}/`) //first value for dropdowns, screen1
+        .orderByKey().limitToFirst(1).once('value', function(snap) {
+            let newVal= snap.val();
+            Object.keys(newVal).map((key, index) => {
+               
+                console.log("snap.val()",snap.val());
+                initialVideos2 =newVal[key]; //first videoName in list
+                
+                console.log("initial2UP", initialVideos2.name);  
+                //this.setState({sendVideo: initialVideos2});
+                console.log("screen to update", screenName2);
+               
+            })    
+        }).then((dataSnapshot) => {
+            this.setState({deleteVideo: initialVideos2.name});
+        });
+
+        
+        //
+
+
 
         firebaseApp.database().ref(`Inventory/${screenName2}/`) // videos per screen
         .on('value', (data) => {
@@ -76,7 +103,6 @@ class DeleteVideo extends Component {
                     videoName2= initialVideos.name;
                     arrayVideos.push({name: videoName2, key:key});  
                     this.setState({videoList: arrayVideos }) ; 
-                   console.log("arrayVideos",arrayVideos)
               }
             );
             });
@@ -84,16 +110,14 @@ class DeleteVideo extends Component {
               console.log(err);
           });
           
-          firebaseApp.database().ref(`Inventory`) 
+          firebaseApp.database().ref(`Inventory`)  // show all screens in dynamic dropdown
           .on('value', (data) => {
               let values = data.val();
               arrayScreens=[];
               this.setState({ screens: values }, () => {
                 Object.keys(this.state.screens).map((key, index) => {
                     arrayScreens.push({name: key, key:index});    
-                    this.setState({screenList: arrayScreens }); 
-                    console.log("arrayScreens",arrayScreens);
-                  
+                    this.setState({screenList: arrayScreens });       
               }
             );
          
@@ -103,32 +127,24 @@ class DeleteVideo extends Component {
               console.log(err);
           });
 
-          let initialVideos3;
-          let videoName3;
+          
 
           firebaseApp.database().ref(`General_Inventory/`) //all videos root directory
           .on('value', (data) => {
               let values = data.val();
-              this.setState({ videos2: values }, () => {
-                
+              this.setState({ videos2: values }, () => {   
                 arrayRootDirectory =[];
                 Object.keys(this.state.videos2).map((key, index) => {
                     initialVideos3 = this.state.videos2[key]
                     videoName3= initialVideos3.name;
-                    
                     arrayRootDirectory.push({name: videoName3, key:key});  
-                    this.setState({videoRootDir: arrayRootDirectory }) ; 
-                   
-              }
-            );
-         
-            });
+                    this.setState({videoRootDir: arrayRootDirectory }) ;      
+                    });
+               });
            
-          }, (err) => {
+            }, (err) => {
               console.log(err);
-          });     
-           
-         
+          });           
     }
 
     deleteRootDirectory = () =>{
@@ -176,13 +192,14 @@ class DeleteVideo extends Component {
             screenName2 = this.state.screenName;
             screenName2= screenName2.replace(" ",""); 
             let video2delete=  this.state.deleteVideo;
-            
+            console.log("video to delete", this.state.deleteVideo);
+
                 logFilesRef.child(`${screenName2}`).orderByChild('name').equalTo(video2delete).once('value').then(function(snapshot) {  
                         console.log("the key is ",snapshot.key);
                         console.log("snapshot.val()",snapshot.val());
                         
                         let key = Object.keys(snapshot.val())[0];
-                        console.log("thekey", key);
+                        //console.log("thekey", key);
                         
                         logFilesRef.child(`${screenName2}`).child(key).remove();
                         alert(`Deleted: ${video2delete} from ${screenName2}` );
@@ -193,23 +210,18 @@ class DeleteVideo extends Component {
                     });; 
         }
 
-        window.location.reload();
+       window.location.reload();
 
     }
 
     handleScreenChange = (name, value) => {
-        console.log("ENTRA A CAMBIO DE PANTALLA");
+       
         let videoName2 = "";
         arrayVideos = [];
         this.setState({ screenName: value});
-
-        console.log("value",value);
-
         screenName2 = value;
         screenName2= screenName2.replace(" ",""); 
         
-        console.log("the screen value is: ",screenName2 );
-
         firebaseApp.database().ref(`Inventory/${screenName2}/`)
           .on('value', (data) => {
             arrayVideos = [];
@@ -220,12 +232,8 @@ class DeleteVideo extends Component {
                 Object.keys(this.state.videos).map((key, index) => {
                     initialVideos = this.state.videos[key]
                     videoName2= initialVideos.name;
-                    console.log("videoName2", videoName2);
-                    console.log("key",key);
                     arrayVideos.push({name: videoName2, key: key});    
                     this.setState({videoList: arrayVideos }) ; 
-
-                   
               }
             );
          
