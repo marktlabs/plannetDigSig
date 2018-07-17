@@ -85,7 +85,7 @@ class SchedulerContent extends Component {
         schedulerRef= firebaseApp.database().ref().child("Scheduler");
         inventoryRef= firebaseApp.database().ref().child("Inventory");
         screenName2 = this.state.screenName;
-        console.log("screenName2",screenName2);
+        //console.log("screenName2",screenName2);
         videoName2 = "";
         initialVideos;
         numberOfChildren;
@@ -107,25 +107,20 @@ class SchedulerContent extends Component {
                 let values2 = data.val();
                 
                 this.setState({ videos2: values2 }, () => {
-                
-                Object.keys(this.state.videos2).map((key, index) => {
-                        initialVideos2 = this.state.videos2[key]
-                        //arrayVideos2.push({name: initialVideos2.name, key:key, Screen: i});  this is an object
-                        arrayVideos2.push(initialVideos2.name);
-                        
-                        }
-                    );
-                });
-                 
-                }, (err) => {
-                        console.log(err);
-                        });
-                       
+                    Object.keys(this.state.videos2).map((key, index) => {
+                            initialVideos2 = this.state.videos2[key]
+                            arrayVideos2.push(initialVideos2.name);
+                            }
+                        );
+                    });
+                    
+                    }, (err) => {
+                            console.log(err);
+                            });    
             }
             
-           
             let k=0;
-            var  count = {};
+            var count = {};
             commonVideos= [];
             arrayVideos2.forEach(function(i) { 
                 k=k+1;
@@ -137,7 +132,7 @@ class SchedulerContent extends Component {
             });
             //console.log("the count",count); // all videos
             this.setState({commonDropDown:commonVideos});
-            console.log("commonVideos",commonVideos);
+            //console.log("commonVideos",commonVideos);
 
         }, (err) => {
                 console.log(err);
@@ -147,7 +142,6 @@ class SchedulerContent extends Component {
         firebaseApp.database().ref(`Inventory/${screenName2}/`) // videos per screen
         .on('value', (data) => {
               let values = data.val();
-
              // this.setState({ videos: values }, () => {
                 arrayVideos = [];
                 arrayScreens = [];
@@ -156,14 +150,10 @@ class SchedulerContent extends Component {
 
                     initialVideos =values[key];
                     videoName2= initialVideos.name;
-                    console.log("initialVideos",initialVideos);
-                    console.log("videoName2", videoName2);
                     arrayVideos.push({name: videoName2, key:index});
                     this.setState({videoList: arrayVideos }) ; 
-                    //arrayVideos.push({name: videoName2});  
-                    console.log("SCHarrayVideos",arrayVideos);
-                    
-              }
+                 
+                }
             );
             //});
           }, (err) => {
@@ -178,7 +168,7 @@ class SchedulerContent extends Component {
                 Object.keys(this.state.screens).map((key, index) => {
                     arrayScreens.push({name: key, key:index}); 
                     this.setState({screenList: arrayScreens }); 
-                    console.log("screenList",arrayScreens);
+                    //console.log("screenList",arrayScreens);
                }
             );
             });
@@ -210,7 +200,7 @@ class SchedulerContent extends Component {
     }
 
     handleScheduleChange = (index, name, value) => {
-        console.log(index);
+        //console.log(index);
         const schedules = this.state.schedules;
         const scheduleToModify = schedules[index];
 
@@ -229,7 +219,6 @@ class SchedulerContent extends Component {
                 
                 let values = data.val();
                 this.setState({ videos: values }, () => {
-                    console.log
                     Object.keys(this.state.videos).map((key, index) => {
                         initialVideos = this.state.videos[key]
                         videoName2= initialVideos.name;
@@ -298,8 +287,7 @@ class SchedulerContent extends Component {
                     IntEndtHr = parseInt(endHr,10);
                     IntEndMin = parseInt(endMin,10);
                     
-                    console.log("IntStartHr",IntStartHr);
-                    console.log("IntEndtHr",IntEndtHr);
+                   
                     
                     if ((IntStartHr > IntEndtHr) || (IntStartHr === IntEndtHr && IntStartMin > IntEndMin) ||
                         (IntStartHr === IntEndtHr && IntStartMin === IntEndMin))

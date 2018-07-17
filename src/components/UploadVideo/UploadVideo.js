@@ -62,7 +62,7 @@ class UploadVideo extends Component {
                     arrayVideos.push({name: videoName2, key:key});    
                     
                     this.setState({videoList: arrayVideos }) ;
-                    console.log("videoList", this.state.videoList); 
+                    //console.log("videoList", this.state.videoList); 
                 
                     
                     }
