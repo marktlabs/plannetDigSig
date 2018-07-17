@@ -126,8 +126,8 @@ class SchedulerContent extends Component {
                 //console.log("i",i); //i es el contenido del array
                 if(count[i] >= numberOfChildren){
                     commonVideos.push({name: i, key:k});
-                    console.log("i",i);
-                    console.log("commonVideos",commonVideos);
+                  
+                    console.log(`the count is ${k}`,commonVideos);
                 }
             });
             //console.log("the count",count); // all videos

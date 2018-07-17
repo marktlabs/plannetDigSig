@@ -41,15 +41,6 @@ class DeleteVideo extends Component {
     handleVideoRootChange = (name, value) => {
         this.setState({ deleteVideoRoot: value});
     }
-
-    /*
-    componentWillUnmount() {
-        clearInterval(this.state.videos);
-        clearInterval(this.state.screens);
-        clearInterval(this.state.screenName);
-        clearInterval(this.state.videoList);
-    }
-    */
     
     componentDidMount() {
         
@@ -69,29 +60,33 @@ class DeleteVideo extends Component {
         let initialVideos3;
         let videoName3;
 
+        let defaultRootVideos;
+        let newValRoot;
+
         // set SET DEFAULT VALUES for first screen //
         firebaseApp.database().ref(`Inventory/${screenName2}/`) //first value for dropdowns, screen1
         .orderByKey().limitToFirst(1).once('value', function(snap) {
             let newVal= snap.val();
             Object.keys(newVal).map((key, index) => {
-               
-                console.log("snap.val()",snap.val());
-                initialVideos2 =newVal[key]; //first videoName in list
-                
-                console.log("initial2UP", initialVideos2.name);  
-                //this.setState({sendVideo: initialVideos2});
-                console.log("screen to update", screenName2);
-               
+                initialVideos2 =newVal[key]; //first videoName in list       
             })    
         }).then((dataSnapshot) => {
             this.setState({deleteVideo: initialVideos2.name});
         });
 
-        
-        //
+        firebaseApp.database().ref(`General_Inventory/`) //first value for dropdowns, screen1
+        .orderByKey().limitToFirst(1).once('value', function(snap) {
+            let newValRoot= snap.val();
+            Object.keys(newValRoot).map((key, index) => {
+                defaultRootVideos =newValRoot[key]; //first videoName in list 
+                console.log("root defautl", defaultRootVideos);      
+            })    
+        }).then((dataSnapshot) => {
+            this.setState({deleteVideoRoot: defaultRootVideos.name});
+        });
+        // set SET DEFAULT VALUES for first screen //
 
-
-
+        // SET DYNAMIC DROPDOWNS //
         firebaseApp.database().ref(`Inventory/${screenName2}/`) // videos per screen
         .on('value', (data) => {
               let values = data.val();
@@ -144,43 +139,40 @@ class DeleteVideo extends Component {
            
             }, (err) => {
               console.log(err);
-          });           
+          });   
+         // SET DYNAMIC DROPDOWNS //        
     }
 
     deleteRootDirectory = () =>{
+        let videoStorage;
+        let video2delete=  this.state.deleteVideoRoot;
+        videoStorage= video2delete.replace(/\s/g,''); //deletes all blanks in string
 
-        if (this.state.deleteVideoRoot === null){
-            alert("Please, select a video to delete");
-        }
+        var desertRef = storageRef.child(`videosInventory/${videoStorage}`);
 
-        else {
-            let videoStorage;
-            let video2delete=  this.state.deleteVideoRoot;
-            videoStorage= video2delete.replace(/\s/g,''); //deletes all blanks in string
-
-            var desertRef = storageRef.child(`videosInventory/${videoStorage}`);
-
-            //eliminar el archivo y borrarlo destorage a db
-            desertRef.delete().then(function() {
-                console.log("deleted!");
-                gralInventory.orderByChild('name').equalTo(video2delete).once('value').then(function(snapshot) { 
-                    //console.log("the key is ",snapshot.key);
-                    //console.log("snapshot.val()",snapshot.val());
-                    let key = Object.keys(snapshot.val())[0]; //timestamp fb_key
-                    gralInventory.child(key).remove();
-                   
-    
-                }).catch(function(error) {
-                    // Uh-oh, an error occurred!
-                     console.log(error);
-                });
+        //eliminar el archivo y borrarlo destorage a db
+        desertRef.delete().then(function() {
+            console.log("deleted!");
+            gralInventory.orderByChild('name').equalTo(video2delete).once('value').then(function(snapshot) { 
+                //console.log("the key is ",snapshot.key);
+                //console.log("snapshot.val()",snapshot.val());
+                let key = Object.keys(snapshot.val())[0]; //timestamp fb_key
+                gralInventory.child(key).remove();
+                 alert(`${videoStorage} deleted!`);  
                 
+
             }).catch(function(error) {
                 // Uh-oh, an error occurred!
-                    alert("Video not found");
+                    console.log(error);
             });
-            alert(`${videoStorage} deleted!`);             
-        }
+            
+        }).catch(function(error) {
+            // Uh-oh, an error occurred!
+                alert("Video not found");
+        });
+        
+        //window.location.reload();          
+        
     }
 
     deleteVideo = () => {  

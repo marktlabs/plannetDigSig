@@ -195,7 +195,7 @@ class UploadVideo extends Component {
                 });
                 
                 alert(`Send to ${screenIndex}`);
-                // window.location.reload();
+                window.location.reload();
             }
             
         }
