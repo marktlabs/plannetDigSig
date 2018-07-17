@@ -6,6 +6,7 @@ import './UploadVideo.css';
 import firebase from 'firebase';
 import 'firebase/database';
 import firebaseApp from '../../firebase/firebaseApp';
+import { DataSnapshot } from '@firebase/database';
 
 let storageRef;
 let uploaded_videos;
@@ -34,6 +35,7 @@ class UploadVideo extends Component {
         percent: null ,
         videos: [],
         videoList: [],
+        gralInventory: [], //nuevo
         video2: [],
         videoListPerScreen: [],
         sendVideo: null,
@@ -50,16 +52,19 @@ class UploadVideo extends Component {
         screenName2 = this.state.screenName;
         screenName2= screenName2.replace(" ",""); 
         let videoName2 = "";
+        let videosGralInv= [];
 
         firebaseApp.database().ref(`General_Inventory/`) //show all videos in General Inventory in dropdown
           .on('value', (data) => {
               let values = data.val();
               this.setState({ videos: values }, () => {
+                videosGralInv= [];
                 Object.keys(this.state.videos).map((key, index) => {
                     initialVideos = this.state.videos[key];
                     videoName2= initialVideos.name;
-                    arrayVideos.push({name: videoName2, key:key});    
-                    this.setState({videoList: arrayVideos }) ;
+                    //arrayVideos.push({name: videoName2, key:key});
+                    videosGralInv.push({name: videoName2, key:key});  
+                    this.setState({gralInventory:videosGralInv });
                     }
                   );
                 });
@@ -68,20 +73,33 @@ class UploadVideo extends Component {
         });
         
 
+        firebaseApp.database().ref(`General_Inventory/`) //first value for dropdown
+        .orderByKey().limitToFirst(1).once('value', function(snap) {
+            let newVal= snap.val();
+            Object.keys(newVal).map((key, index) => {
+                initialVideos2 =newVal[key]; //first videoName in list
+            })    
+        }).then((dataSnapshot) => {
+            this.setState({sendVideo: initialVideos2.name}); //value name form object in initialVideos2
+        });
+
+        //when is Screen1 the first option
         /*
-        
         firebaseApp.database().ref(`Inventory/${screenName2}/`) //first value for dropdowns, screen1
         .orderByKey().limitToFirst(1).once('value', function(snap) {
             let newVal= snap.val();
             Object.keys(newVal).map((key, index) => {
                
                 console.log("snap.val()",snap.val());
-                initialVideos2 =newVal[key];
-                console.log("initial2UP", initialVideos2);  
-                this.setState({sendVideo: initialVideos2});
+                initialVideos2 =newVal[key]; //first videoName in list
+                
+                console.log("initial2UP", initialVideos2.name);  
+                //this.setState({sendVideo: initialVideos2});
                 console.log("screen to update", screenName2);
-                console.log("video to send", initialVideos2 );
+               
             })    
+        }).then((dataSnapshot) => {
+            this.setState({sendVideo: initialVideos2.name});
         });
         */
         
@@ -129,29 +147,6 @@ class UploadVideo extends Component {
 
         screenName2 = value;
         screenName2= screenName2.replace(" ",""); 
-
-        firebaseApp.database().ref(`Inventory/${screenName2}/`)
-          .on('value', (data) => {
-              let values = data.val();
-              
-              this.setState({ videos: values }, () => {
-                Object.keys(this.state.videos).map((key, index) => {
-                    initialVideos = this.state.videos[key]
-                    videoName2= initialVideos.name;
-                    //console.log("key",key);
-                    arrayVideos.push({name: videoName2, key: key});    
-                    this.setState({videoList: arrayVideos }) ; 
-
-                    return arrayVideos;
-              }
-            );
-         
-            });
-
-          }, (err) => {
-              console.log(err);
-          });
-
     }
 
     handleVideoChange = (name, value) => {
@@ -168,30 +163,50 @@ class UploadVideo extends Component {
 
     }
 
-    applyScreen = () => {   
+    applyScreen = () => {  
+        
+        
         
         if (this.state.sendVideo === null){
             alert("Browse a video to upload")
         }
 
         else{
+            console.log("this.state.sendVideo",this.state.sendVideo);
             screenIndex= this.state.screenName;
             screenIndex= screenIndex.replace(" ","");             
             videoName3= this.state.sendVideo;
+            
+            let initialVideosR;
+            let videoNameR;
+            let arrayVideosRepeated= []
+            let repeated=false;
+            
+            //validar que no sean repetidos
 
-            console.log("videoName3",videoName3);
-         
-            logFilesRef.child(`${screenIndex}`).push({ name: videoName3
-            }).on('child_added', function(snap) {
-                    videoName3= videoName3.replace(/\s/g,'');
-                    uploaded_videos.child(`${screenIndex}`).update({
-                                                                Trigger: 1,
-                                                                Video_Name: videoName3
-                                                                });
-              });
+            //query for same name
+            firebaseApp.database().ref(`Inventory/${screenIndex}/`)
+            .orderByChild('name').equalTo(`${videoName3}`).on("child_added", function(data) {
+                console.log(data.val().name);   
+                repeated= true;
+            });
 
-            alert(`Send to ${screenIndex}`);
-            window.location.reload();
+            if(repeated == true){
+                console.log("Repetidoooo");
+                alert(`Video already uploaded to ${screenIndex}, try another video`)
+            }
+
+            else{
+                 //push to inventory and update "Uploaded Video"
+                logFilesRef.child(`${screenIndex}`).push({ name: videoName3})
+                .on('child_added', function(snap) {
+                        videoName3= videoName3.replace(/\s/g,'');
+                        uploaded_videos.child(`${screenIndex}`).update({ Trigger: 1, Video_Name: videoName3}); 
+                });
+                
+                alert(`Send to ${screenIndex}`);
+                // window.location.reload();
+            }
             
         }
        
@@ -212,12 +227,10 @@ class UploadVideo extends Component {
                snapshot.forEach(function(snap){
                     i=i+1;
                     logFilesRef.child(`Screen${i}`).push({ name: videoName3})
-                                .on('child_added', function(snap) {
-                                    videoName3= videoName3.replace(/\s/g,'');
-                                    uploaded_videos.child(`Screen${i}`)
-                                                        .update({ Trigger: 1,
-                                                                  Video_Name: videoName3 });
-                                                        });
+                        .on('child_added', function(snap) {
+                            videoName3= videoName3.replace(/\s/g,'');
+                            uploaded_videos.child(`Screen${i}`).update({ Trigger: 1, Video_Name: videoName3 });
+                    });
                                             
                });
             })
@@ -353,7 +366,7 @@ class UploadVideo extends Component {
                                 <DropdownScreen 
                                     handleChange={this.handleVideoChange}
                                     name="video"
-                                    items={this.state.videoList}
+                                    items={this.state.gralInventory}
                                     
                                 />  
                        
