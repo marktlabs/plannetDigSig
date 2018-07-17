@@ -126,6 +126,8 @@ class SchedulerContent extends Component {
                 //console.log("i",i); //i es el contenido del array
                 if(count[i] >= numberOfChildren){
                     commonVideos.push({name: i, key:k});
+                    console.log("i",i);
+                    console.log("commonVideos",commonVideos);
                 }
             });
             //console.log("the count",count); // all videos
@@ -158,6 +160,20 @@ class SchedulerContent extends Component {
               console.log(err);
           });
 
+          //when is Screen1 the first option
+            firebaseApp.database().ref(`Inventory/${screenName2}/`) //first value for dropdowns, screen1
+            .orderByKey().limitToFirst(1).once('value', function(snap) {
+                let newVal= snap.val();
+                Object.keys(newVal).map((key, index) => {
+                    initialVideos =newVal[key]; //first videoName in list
+                     
+                })    
+            }).then((dataSnapshot) => {
+                console.log("inside query", initialVideos.name);
+                this.setState({sendVideo: initialVideos.name});
+            });
+        
+
           firebaseApp.database().ref(`Inventory`) //screens
           .on('value', (data) => {
               let values = data.val();
@@ -166,7 +182,7 @@ class SchedulerContent extends Component {
                 Object.keys(this.state.screens).map((key, index) => {
                     arrayScreens.push({name: key, key:index}); 
                     this.setState({screenList: arrayScreens }); 
-                    //console.log("screenList",arrayScreens);
+                  
                }
             );
             });
@@ -257,6 +273,7 @@ class SchedulerContent extends Component {
     sendToDb = () => {        
         this.setState(prevState => {
             let daySelected= this.props.dayIndex;
+            console.log("SEND VIDEOOO********",this.state.sendVideo);
 
              for (let i=0; i < this.state.schedules.length; i++ ){
                  
@@ -301,53 +318,59 @@ class SchedulerContent extends Component {
                         if (screen2Push === 'all' ){
 
                             if(self.state.schedules[i].video === "video 1"){
-                                alert('No video selected, please select a video');
+                                console.log('updateNAme');
+                                videoNameDB= self.state.sendVideo;
                             }
 
                             else{
                                 videoNameDB=self.state.schedules[i].video;
-                                schedulerRef.once('value', function(snapshot){
-                                numberOfChildren=snapshot.numChildren();
-                                let j=0;
-                                videoNameDB= videoNameDB.replace(/\s/g,'');
-                                snapshot.forEach(function(snap){
-                                    j=j+1;
-                                    schedulerRef.child(`Screen${j}/${daySelected}/schedule${i+1}`).update({
-                                        "VideoName": videoNameDB,
-                                        "startTime": self.state.schedules[i].start,
-                                        "endTime":  self.state.schedules[i].end, 
-                                    });            
-                                });
-        
-                                alert('Send to all screens');
-                                window.location.reload();
+                            }
+
+                            schedulerRef.once('value', function(snapshot){
+                            numberOfChildren=snapshot.numChildren();
+                            let j=0;
+                            videoNameDB= videoNameDB.replace(/\s/g,'');
+                            snapshot.forEach(function(snap){
+                                j=j+1;
+                                schedulerRef.child(`Screen${j}/${daySelected}/schedule${i+1}`).update({
+                                    "VideoName": videoNameDB,
+                                    "startTime": self.state.schedules[i].start,
+                                    "endTime":  self.state.schedules[i].end, 
+                                });            
+                            });
+    
+                            alert('Send to all screens');
+                            window.location.reload();
 
                             })
-                            }
+                            
                         }   
 
                         else{
                             screen2Push= screen2Push.replace(" ",""); 
                             
                             if(self.state.schedules[i].video === "video 1"){
-                                alert('No video selected, please select a video');
+                                console.log('updateNAme');
+                                videoNameDB= self.state.sendVideo;
                             }
 
                             else{
                                 videoNameDB=self.state.schedules[i].video;
-                                videoNameDB= videoNameDB.replace(/\s/g,'');
-                                schedulerRef.once('value', function(snapshot){
-                                    schedulerRef.child(`${self.state.screenName}/${daySelected}/schedule${i+1}`).update({
-                                        "VideoName":videoNameDB,
-                                        "startTime": self.state.schedules[i].start,
-                                        "endTime":  self.state.schedules[i].end,
-                                    });            
-                            
-                                    alert(`Send to ${self.state.screenName}`);
-                                    window.location.reload();
-
-                                })
                             }
+                            
+                            videoNameDB=self.state.schedules[i].video;
+                            videoNameDB= videoNameDB.replace(/\s/g,'');
+                            schedulerRef.once('value', function(snapshot){
+                                schedulerRef.child(`${self.state.screenName}/${daySelected}/schedule${i+1}`).update({
+                                    "VideoName":videoNameDB,
+                                    "startTime": self.state.schedules[i].start,
+                                    "endTime":  self.state.schedules[i].end,
+                                });            
+                        
+                                alert(`Send to ${self.state.screenName}`);
+                                window.location.reload();
+
+                            })
                         }
                     }
                 }
