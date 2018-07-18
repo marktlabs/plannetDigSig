@@ -12,26 +12,18 @@ class HomeIndex extends Component {
 
     render() {
         return (
-            <Router>
+           
             <div>
-                <div className="headerTitle">
-                <ul id="dropdown1" class="dropdown-content">
-                    <li><a href="#!">one</a></li>
-                    <li><a href="#!">two</a></li>
-                    <li class="divider"></li>
-                    <li><a href="#!">three</a></li>
-                </ul>
-                </div>
                 <div className="navigation-bar">
+                    
                     <div id="navigation-container">
                             <img src={require("./logo.png")} alt="" className=" logoNavBar" />
                             <div>
                             <ul className="dropdown" >
-                                <li><a href="#">About</a></li>
-                                <li><a href="#">Get in Touch</a></li>
-                                <li><a href="#">Home</a></li>
-                                <li><a class="dropdown-trigger" href="#!" data-target="dropdown1">Dropdown</a></li>
-                                <li><a href="#">Projects</a>
+                                <li><a href="#sdf">About</a></li>
+                                <li><a href="#adc">Get in Touch</a></li>
+                                <li><a href="#ert">Home</a></li>
+                                <li><a href="http://192.168.65.19:3006/">Projects</a>
                                     <ul className="dropdown-content">
                                         <li>
                                         <a href="#!">Web Design</a>
@@ -45,24 +37,20 @@ class HomeIndex extends Component {
                                     </ul>
                                 </li>
                                 
+                                
                             </ul>
                             </div>
                     </div>
                 </div>
 
                 <div>
+                    <br/>
+                    <br/>
+                    <br/>
                     <img src={require("./marktlabs.png")} alt="" className=" banner" />
                 </div>                
-            
-            <hr/>
-            
-                <Switch>
-                    <Route exact path="/digitalSignage" render={() => <App/>}/>
-                </Switch>
-                
-                </div>
-
-            </Router>
+            </div>
+           
         )
     }
 }

@@ -6,7 +6,7 @@ import HomeIndex from './HomeIndex/HomeIndex'
 
 import registerServiceWorker from './registerServiceWorker';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<HomeIndex />, document.getElementById('root'));
 registerServiceWorker();
 
 if (module.hot) module.hot.accept()
