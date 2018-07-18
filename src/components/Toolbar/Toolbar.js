@@ -71,7 +71,7 @@ class Toolbar extends Component {
           </li>
 
           <li>
-              <Link to="/uploadVideo"><Icon className="material-icons left">file_upload</Icon> Upload Video </Link>
+              <Link to="/uploadVideo"><Icon className="material-icons left">file_upload</Icon> Upload Content </Link>
           </li>
 
           <li>

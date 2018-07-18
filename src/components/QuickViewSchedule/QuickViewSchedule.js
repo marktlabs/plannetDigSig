@@ -109,7 +109,7 @@ class PromoLoop extends Component {
                 <div className="row">
                     <div className="col s6">
                         <div className="selectScreenQS">
-                            <p className="subtitlesHead2"> Select the screen for scheduling content </p>
+                            <p className="titleHead"> Select the screen  </p>
                             <DropdownScreen
                                 handleChange={this.handleScreenChange}
                                 name="video"
@@ -120,7 +120,7 @@ class PromoLoop extends Component {
 
                     <div className="col s6">
                         <div className="selectScreenQS">
-                            <p className="subtitlesHead2"> Select day for view schedule content </p>
+                            <p className="titleHead"> Select day  </p>
                             <DropdownScreen
                                 handleChange={this.handleDayChange}
                                 name="video"

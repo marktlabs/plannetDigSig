@@ -383,7 +383,7 @@ class SchedulerContent extends Component {
             <div className="ScheduleContent" >
                 <div className="row">
                     <div className="col s12">
-                        <h6 className="headerSContent"> Only four schedules per day can be added </h6>
+                        <h6 className="headerSContent"> Four schedules per day can be added </h6>
                     </div>
                     <br />
                     <br />

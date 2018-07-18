@@ -605,13 +605,13 @@ class Announcements extends Component {
                         <div className="col s12">
                             <div className="col s6">
                                 <div className="fixTop">
-                                    <p> Trigger with scheduled configure </p>
+                                    <p> Set with schedule</p>
                                 </div>
                             </div>
                             
                             <div className="col s6"> 
                                 <div className="fixTop">
-                                    <p> No schedule (Disable by user) </p>
+                                    <p> Set with NO schedule </p>
                                 </div>
                             </div>
                         </div>

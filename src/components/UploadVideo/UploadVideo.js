@@ -316,7 +316,7 @@ class UploadVideo extends Component {
                 <div className="addBorderUpload">
                     <div className="row">
                         
-                            <h5> Upload new content to central directory </h5>
+                            <h5> Upload new content to root directory </h5>
                             
                             <div className="row">
                                 <div className= "col s6 ">
