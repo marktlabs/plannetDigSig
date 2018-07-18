@@ -59,7 +59,7 @@ class Announcements extends Component {
         name: '',
         schedules: [
             {
-                video: 'video 1',
+                video: 'Welcome',
                 start: '00:00',
                 end: '00:00',
             },
@@ -71,6 +71,7 @@ class Announcements extends Component {
         screens: [],
         annoucements: [],
         videosDropDown: [],
+        videoDefault: 'null',
         quantityInput: 0,
         warning: false
     }
@@ -110,7 +111,6 @@ class Announcements extends Component {
               Object.keys(this.state.screens).map((key, index) => {
                   arrayScreens.push({name: key, key:index}); 
                   this.setState({screenList: arrayScreens }); 
-
                   return arrayScreens;
              }
           );
@@ -194,8 +194,6 @@ class Announcements extends Component {
 
     sendApplyNow = () => {
         let inputText2;
-       
-
         this.setState(prevState => {
             
             inputText2= this.state.name;
@@ -210,6 +208,10 @@ class Announcements extends Component {
             }  
 
             else {
+
+                if (screen2Push === "video1"){
+                    video2Push= this.state.videoDefault;
+                }
                 if (screen2Push === "all" ){
                     let i=0;
                     updateAnnounRef.once('value', function(snapshot){

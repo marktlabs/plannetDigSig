@@ -15,23 +15,36 @@ class HomeIndex extends Component {
             <Router>
             <div>
                 <div className="headerTitle">
-                  
+                <ul id="dropdown1" class="dropdown-content">
+                    <li><a href="#!">one</a></li>
+                    <li><a href="#!">two</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#!">three</a></li>
+                </ul>
                 </div>
                 <div className="navigation-bar">
                     <div id="navigation-container">
                             <img src={require("./logo.png")} alt="" className=" logoNavBar" />
                             <div>
-                            <ul>
-                                <li>
-                                    <a href="#">Home</a></li>
-                                <li><a href="#">Projects</a></li>
+                            <ul className="dropdown" >
                                 <li><a href="#">About</a></li>
-                                <li>
-                                    <Link to="/digitalSignage">
-                                     Services
-                                    </Link>
-                                </li>
                                 <li><a href="#">Get in Touch</a></li>
+                                <li><a href="#">Home</a></li>
+                                <li><a class="dropdown-trigger" href="#!" data-target="dropdown1">Dropdown</a></li>
+                                <li><a href="#">Projects</a>
+                                    <ul className="dropdown-content">
+                                        <li>
+                                        <a href="#!">Web Design</a>
+                                        </li>
+                                        <li>
+                                        <a href="#!">Web Development</a>
+                                        </li>
+                                        <li>
+                                        <a href="#!">Graphic Design</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                
                             </ul>
                             </div>
                     </div>

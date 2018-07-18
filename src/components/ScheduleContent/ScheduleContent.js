@@ -82,6 +82,7 @@ class SchedulerContent extends Component {
     }
 
     componentDidMount() {
+        
         schedulerRef= firebaseApp.database().ref().child("Scheduler");
         inventoryRef= firebaseApp.database().ref().child("Inventory");
         screenName2 = this.state.screenName;
@@ -127,7 +128,7 @@ class SchedulerContent extends Component {
                 if(count[i] >= numberOfChildren){
                     commonVideos.push({name: i, key:k});
                   
-                    console.log(`the count is ${k}`,commonVideos);
+                   console.log(`the count is ${k}`,commonVideos);
                 }
             });
             this.setState({commonDropDown:commonVideos});
@@ -167,7 +168,6 @@ class SchedulerContent extends Component {
                      
                 })    
             }).then((dataSnapshot) => {
-                console.log("inside query", initialVideos.name);
                 this.setState({sendVideo: initialVideos.name});
             });
         
@@ -192,10 +192,11 @@ class SchedulerContent extends Component {
 
     selectAll = () => { //Select all screens!
         console.log("Select all screens!");
+        
         alert("Selected all screens")
         this.setState({screenName: "all"});
         this.setState({showCommonDrop:true});
-
+        
         
     }
 
@@ -273,7 +274,6 @@ class SchedulerContent extends Component {
     sendToDb = () => {        
         this.setState(prevState => {
             let daySelected= this.props.dayIndex;
-            console.log("SEND VIDEOOO********",this.state.sendVideo);
 
              for (let i=0; i < this.state.schedules.length; i++ ){
                  
@@ -429,7 +429,8 @@ class SchedulerContent extends Component {
                                                     handleChange={this.handleScheduleChange}
                                                     name="video"
                                                     index={index}
-                                                    items={this.state.commonDropDown}
+                                                    //items={this.state.commonDropDown}
+                                                    items= {commonVideos}
                                                 />            
                                         </div>
                                         </div>): ( 

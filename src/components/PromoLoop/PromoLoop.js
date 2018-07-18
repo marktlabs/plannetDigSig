@@ -88,7 +88,7 @@ class PromoLoop extends Component {
         ]
     }
     componentDidMount() {
-        
+        let initialVideos2;
         promoLoopRef= firebaseApp.database().ref().child("LoopPromo");
 
         firebaseApp.database().ref(`Inventory`) //screens
@@ -110,6 +110,18 @@ class PromoLoop extends Component {
         });
         
         screenName2 = this.state.screenName;
+
+         // set SET DEFAULT VALUES for first screen //
+         firebaseApp.database().ref(`Inventory/${screenName2}/`) //first value for dropdowns, screen1
+         .orderByKey().limitToFirst(1).once('value', function(snap) {
+             let newVal= snap.val();
+             Object.keys(newVal).map((key, index) => {
+                 initialVideos2 =newVal[key]; //first videoName in list       
+             })    
+         }).then((dataSnapshot) => {
+             this.setState({selectedVideo: initialVideos2.name});
+         });
+         // set SET DEFAULT VALUES for first screen //
 
         firebaseApp.database().ref(`Inventory/${screenName2}/`) // videos per screen
         .on('value', (data) => {
